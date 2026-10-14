@@ -34,7 +34,7 @@ svg{display:block}
 #isl{position:absolute;top:11px;left:50%;width:120px;height:34px;margin-left:-60px;border-radius:20px;background:#000;z-index:60;color:#fff;font-size:13px;font-variant-numeric:tabular-nums;display:flex;align-items:center;justify-content:center;transition:width .35s,margin-left .35s}
 #isl.on{width:168px;margin-left:-84px}
 #home{position:absolute;inset:0;z-index:5}
-#track{position:absolute;left:0;top:0;width:780px;height:100%;display:flex;transition:transform .42s cubic-bezier(.2,.8,.2,1)}
+#track{position:absolute;left:0;top:0;width:calc(var(--pw,390px)*2);height:100%;display:flex;transition:transform .42s cubic-bezier(.2,.8,.2,1)}
 .pg{width:var(--pw,390px);height:100%;flex:none;position:relative}
 .ic{position:absolute;width:85.5px;height:94px;display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:left .25s,top .25s}
 .ic i{width:60px;height:60px;border-radius:18px;background:rgba(var(--wc),.8);box-shadow:0 0 0 .5px rgba(0,0,0,.07),0 8px 20px rgba(0,0,0,.05);display:grid;place-items:center;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
@@ -1489,7 +1489,7 @@ function fit() {
     const VB = KB.base || VH(), ap = isApp();
     k = Math.min(VW() / 390, VB / 780) * Math.min(u, 1);
     if (!(k > 0.2)) k = 1;
-    pw = Math.min(600, Math.max(390, Math.ceil(VW() / k)));
+    pw = Math.min(CFG.shell === 0 ? 2400 : 600, Math.max(390, Math.ceil(VW() / k)));
     const T2 = (KB.on ? KB.vt : 0) + dy, B = KB.on ? KB.vb : (ap ? Math.max(VH(), KB.base) : VH());
     H2 = Math.max(300, Math.ceil((B - T2) / k));
     ty = T2;
@@ -2780,7 +2780,7 @@ function ml() {
       if (m.p) return tm + `<div class="mr"><div class="mc"><div class="bb gf ge typ"><i></i><i></i><i></i></div></div></div>`;
       const g2 = grpCls(L, i), rx = m.rx ? `<i class="rx" aria-label="已回应">${rxh(m.rx)}</i>` : "";
       const body = m.stk ? stkHtml(m) : m.loc ? locHtml(m, i) : m.tf ? tfHtml(m, i) : m.pic && typeof igHtml == "function" ? igHtml(m, i) : m.img ? `<img${m.shot ? ' class="shot"' : ""} src="${m.img}" alt="${m.shot ? "聊天截图" : "图片"}">` : m.v ? voiceHtml(m, i) : m.call !== void 0 ? callHtml(m, i) : m.off ? offHtml(m) : esc(rxRun(m.t, m.me ? "user" : "ai", "show"));
-      return tm + `<div class="mr${m.me ? " me" : ""}${g2}${m.q ? " hq" : ""}${m.off ? " off" : ""}" data-i="${i}"><div class="mc">${m.q ? qpHtml(m.q) : ""}${!m.me && g2.includes("gf") ? `<div class="nl">${esc(nm(c))}</div>` : ""}<div class="bb${g2}${m.stk ? " sk" : m.tf || m.loc ? " tfx" + (m.tf && m.tf.k == "hb" ? " hbk" : "") : m.pic ? " pk" : m.img ? " im" : m.v ? " vo" : m.call !== void 0 ? " ca" : ""}${m.off ? " offb" : ""}">${body}${rx}</div>${m.xs || m.xp ? xsHtml(m, c) : ""}${m.me && i == li ? `<div class="dl">${late ? "已读" : "已送达"}</div>` : ""}</div></div>`;
+      return tm + `<div class="mr${m.me ? " me" : ""}${g2}${m.q ? " hq" : ""}${m.off ? " off" : ""}" data-i="${i}"><div class="mc">${m.q ? qpHtml(m.q) : ""}${!m.me && g2.includes("gf") ? `<div class="nl">${esc(nm(c))}</div>` : ""}<div class="bb${g2}${m.stk ? " sk" : m.tf || m.loc ? " tfx" + (m.tf && m.tf.k == "hb" ? " hbk" : "") : m.pic ? " pk" : m.img ? " im" : m.v ? " vo" : m.call !== void 0 ? " ca" : ""}${m.off ? " offb" : ""}">${body}${rx}</div>${m.xs || m.xp || m.cot ? xsHtml(m, c) : ""}${m.me && i == li ? `<div class="dl">${late ? "已读" : "已送达"}</div>` : ""}</div></div>`;
     }).join("");
     fitIb("#vk");
   });
@@ -3469,10 +3469,11 @@ async function call(x, msgs, sys, onD, retry, nb, tl) {
           try {
             const j2 = JSON.parse(d);
             tcFeed(j2, an, TC);
+            try { const rz = an ? (j2.type == "content_block_delta" && j2.delta && j2.delta.thinking) : (j2.choices && j2.choices[0] && j2.choices[0].delta && (j2.choices[0].delta.reasoning_content || j2.choices[0].delta.reasoning)); if (rz) COT.t += rz; } catch (e) {}
             const t = an ? j2.type == "content_block_delta" && j2.delta && j2.delta.text : j2.choices && j2.choices[0] && j2.choices[0].delta && j2.choices[0].delta.content;
             if (t) {
               out += t;
-              onD && onD(out);
+              onD && onD(cotLive(out));
             }
           } catch (e) {
           }
@@ -3481,11 +3482,14 @@ async function call(x, msgs, sys, onD, retry, nb, tl) {
       CFG.tok += est();
       save();
       out += tcTag(TC, TCM);
+      out = cotStrip(out);
       if (!out) throw new Error("流式无内容");
       return out;
     }
     const j = await res.json();
     out = an ? j.content.filter((c) => c.type == "text").map((c) => c.text).join("") : j.choices[0].message.content || "";
+    try { if (an) j.content.filter((c) => c.type == "thinking").forEach((c) => cotAdd(c.thinking)); else cotAdd(j.choices[0].message.reasoning_content || j.choices[0].message.reasoning); } catch (e) {}
+    out = cotStrip(out);
     if (tl) out += tcTag(tcFromJ(j, an), TCM);
     CFG.tok += j.usage ? j.usage.total_tokens || j.usage.input_tokens + j.usage.output_tokens : est();
     save();
@@ -16098,6 +16102,7 @@ document.addEventListener("click", (e) => {
   e.stopPropagation();
   const d = $("#wxkick"), c = d && WX.cons.find((x) => x.id == d.dataset.cid);
   if (d) d.remove();
+  if (b.dataset.kk == "out") { try { setTimeout(() => { try { if (typeof closeApp == "function") closeApp(); } catch (e) {} try { if (typeof go == "function") go(0); } catch (e) {} }, 30); } catch (e) {} }
   if (b.dataset.kk == "re" && c) {
     c.ev = Object.assign({}, c.ev || { k: "kick", ts: Date.now() }, { back: 1 });
     ((WX.msgs[c.id] = WX.msgs[c.id] || [])).push({ s: 1, t: "你重新登录了账号，对方已被下线", h: hm() });
@@ -17771,6 +17776,127 @@ document.addEventListener("click", (e) => {
 .pkc .pks{height:120px;margin:0 14px;border-radius:12px;background:linear-gradient(100deg,var(--soft) 30%,var(--card) 50%,var(--soft) 70%);background-size:200% 100%;animation:pksh 1.4s linear infinite}@keyframes pksh{to{background-position:-200% 0}}
 #igv{position:absolute;inset:0;z-index:99;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;padding:20px}#igv img{max-width:100%;max-height:100%;border-radius:12px}
 .igf .igt{font-size:12px;color:var(--t4);margin:6px 0;min-height:4px}.igf .igt img{width:100%;border-radius:12px}`;
+  document.head.appendChild(s);
+}
+//XEND
+</script>
+<script type="text/plain" class="mp">
+/* ---- 思维链 / 账号信息 / 人设丰满 ---- */
+var COT = { t: "" };
+function cotAdd(s) { s = String(s || "").trim(); if (s) COT.t += (COT.t ? "\n" : "") + s; }
+function cotStrip(o) {
+  return String(o || "").replace(/<think(?:ing)?>([\s\S]*?)<\/think(?:ing)?>/gi, (m, a) => { cotAdd(a); return ""; }).replace(/^\s+/, "");
+}
+function cotLive(o) { return String(o || "").replace(/<think(?:ing)?>[\s\S]*?(<\/think(?:ing)?>|$)/gi, "").replace(/^\s+/, ""); }
+function cotHtml(m) {
+  if (!m || !m.cot) return "";
+  if (m.cox) return `<div class="xs card cot" role="button" tabindex="0" data-cot="1" aria-label="收起思维链"><b>思维链</b>${esc(m.cot)}</div>`;
+  return `<button class="xs pill cot" data-cot="1" aria-label="查看思维链">${ic("spark")}<span>思维链</span></button>`;
+}
+{
+  const x0 = xsHtml;
+  xsHtml = function (m, c) { let r = ""; try { r = x0(m, c) || ""; } catch (e) {} return r + (m && m.cot && c && c.cot ? cotHtml(m) : ""); };
+  const w0 = wxReply;
+  wxReply = async function (id) {
+    const L = WX.msgs[id] || [], pre = new Set(L), c = WX.cons.find((x) => x.id == id);
+    COT.t = "";
+    const r = await w0.apply(this, arguments);
+    try {
+      const t = COT.t.trim(), L2 = WX.msgs[id] || [];
+      if (c && c.cot && t) {
+        const m = L2.find((y) => y && !pre.has(y) && !y.me && !y.s && !y.p);
+        if (m) { m.cot = t.slice(0, 6000); wsave(); if (WX.cur == id) ml(); }
+      }
+    } catch (e) {}
+    return r;
+  };
+  const a0 = acctTxt;
+  acctTxt = function (c) {
+    let t = a0(c);
+    try {
+      if (c) {
+        const A = c.lka || {}, d = PX[c.id], nick = A.nick || nm(c), wid = A.wid || c.wid || "", sig = A.sig || c.sig || "";
+        t += "\n\n【你自己的微信账号资料（对方问到时可以如实回答）】昵称：" + nick + "；微信号：" + (wid || "未设置") + "；个性签名：" + (sig || "未设置") + (d && d.fr ? "；好友约 " + d.fr.length + " 人" : "") + "。";
+        if (c.cot) t += "\n\n【思维链】回复之前，先在 <think>…</think> 里用第一人称写下你此刻真实的思考（对对方这句话的理解、你的情绪、你打算怎么回，150 字内），然后换行再写正式回复。<think> 里的内容只有对方点开才能看到，正式回复里不要提到它。";
+      }
+    } catch (e) {}
+    return t;
+  };
+}
+/* 人设丰满 */
+async function peEnrich(c, done) {
+  if (!CFG.a.url || !CFG.a.model) return gtoast("请先在「设置」中配置接口与模型");
+  gtoast("正在丰满人设…", 2000);
+  try {
+    const q = "请把下面这个角色的人设扩写得更丰满：补充性格细节、说话习惯、口头禅、爱好、生活习惯、与我的关系和相处方式，保持原设定不矛盾，第一人称或第三人称均可，400 字以内。只输出扩写后的人设本身，不要加标题或解释。\n\n角色名：" + c.name + "\n原人设：" + (c.persona || "（暂无，请根据名字合理创作）");
+    const t = cotLive(await chat([{ role: "user", content: q }], "你是一个擅长塑造角色的写作助手。", null, 1)).trim();
+    if (!t) throw new Error("没有生成内容");
+    editSheet("丰满后的人设（可修改，确认后覆盖）", t, (v) => { c.persona = v.trim(); wsave(); gtoast("人设已更新", 1400); if (done) done(); });
+  } catch (e) { gtoast("生成失败：" + em(e), 2800); }
+}
+{
+  const l0 = lkInfo;
+  lkInfo = function (c) {
+    const A = c.lka = c.lka || {};
+    const ed = (k, t, v) => editSheet("TA 的" + t, v, (z) => { A[k] = z.trim(); wsave(); gtoast("已保存", 1200); setTimeout(() => lkInfo(c), 260); });
+    const d = { nick: A.nick || nm(c), wid: A.wid || c.wid || "", sig: A.sig || c.sig || "" };
+    actSheet("TA 的账号信息", [
+      { t: "昵称：" + (d.nick || "未设置"), f: () => ed("nick", "昵称", d.nick) },
+      { t: "微信号：" + (d.wid || "自动"), f: () => ed("wid", "微信号", d.wid) },
+      { t: "个性签名：" + (d.sig || "未设置"), f: () => ed("sig", "个性签名", d.sig) },
+      { t: "按人设自动填充账号资料", f: () => peFill(c) },
+      { t: "按人设丰满人设", f: () => peEnrich(c, () => setTimeout(() => lkInfo(c), 260)) },
+    ], "顶号 / 关联时会以这些资料显示 TA 的账号；TA 也会知道并能回答这些资料");
+  };
+}
+async function peFill(c) {
+  if (!CFG.a.url || !CFG.a.model) return gtoast("请先在「设置」中配置接口与模型");
+  gtoast("正在根据人设填充…", 2000);
+  try {
+    const q = "根据下面的角色人设，为 TA 的微信账号设计资料。只输出 JSON：{\"nick\":\"昵称\",\"wid\":\"微信号（字母数字下划线，6-16位）\",\"sig\":\"个性签名（20字内）\"}\n\n角色名：" + c.name + "\n人设：" + (c.persona || "普通朋友");
+    const t = cotLive(await chat([{ role: "user", content: q }], "你只输出 JSON。", null, 1));
+    const j = JSON.parse((t.match(/\{[\s\S]*\}/) || [""])[0]);
+    const A = c.lka = c.lka || {};
+    if (j.nick) A.nick = String(j.nick).slice(0, 20);
+    if (j.wid) A.wid = String(j.wid).replace(/[^\w-]/g, "").slice(0, 20);
+    if (j.sig) A.sig = String(j.sig).slice(0, 40);
+    wsave(); gtoast("已填充", 1400); setTimeout(() => lkInfo(c), 260);
+  } catch (e) { gtoast("填充失败：" + em(e), 2800); }
+}
+{
+  const r0 = rCS;
+  rCS = function (id) {
+    const r = r0.apply(this, arguments), c = WX.cons.find((x) => x.id == id), box = document.querySelector("#vc .sc");
+    if (c && box && !box.querySelector("[data-cotsw]")) {
+      const h = document.createElement("div");
+      h.innerHTML = `<h4 class="cst">思维链</h4><div class="ls"><div class="lr"><div><b>显示 TA 的思维链</b><small>开启后 TA 回复前会先思考，消息下方出现「思维链」按钮，点开查看（接口自带的推理内容也会一并显示）</small></div><button class="sw${c.cot ? " on" : ""}" role="switch" aria-checked="${c.cot ? "true" : "false"}" aria-label="显示思维链" data-cotsw="1" data-cid="${id}"><i></i></button></div><div class="lr btn" role="button" tabindex="0" data-persona="1" data-cid="${id}" style="cursor:pointer"><div><b>按人设丰满人设</b><small>让 AI 扩写 TA 的人设，确认后覆盖</small></div></div></div>`;
+      box.appendChild(h);
+    }
+    return r;
+  };
+}
+document.addEventListener("click", (e) => {
+  const t = e.target.closest && e.target.closest("[data-cotsw],[data-persona],[data-cot]");
+  if (!t) return;
+  if (t.dataset.cot) {
+    const mr = t.closest(".mr"), L = WX.msgs[WX.cur] || [], m = mr && L[+mr.dataset.i];
+    if (m) { m.cox = m.cox ? 0 : 1; wsave(); ml(); }
+    return;
+  }
+  const c = WX.cons.find((x) => x.id == t.dataset.cid);
+  if (!c) return;
+  if (t.dataset.cotsw) {
+    c.cot = c.cot ? 0 : 1; wsave();
+    t.classList.toggle("on", !!c.cot); t.setAttribute("aria-checked", c.cot ? "true" : "false");
+  } else if (t.dataset.persona) peEnrich(c);
+}, true);
+{
+  const s = document.createElement("style");
+  s.id = "cotcss";
+  s.textContent = `.xs.cot.card{white-space:pre-wrap;font-size:12px;line-height:1.55;max-height:240px;overflow:auto}
+.mr:not(.me) .qp{left:0!important;right:auto!important;margin-left:0!important;margin-right:0!important;transform:none}
+.mr:not(.me) .mc:has(>.qp)::after{left:6px!important;right:auto!important;transform:none!important}
+.qp{font-size:13px!important;line-height:24px!important;height:46px!important;padding:5px 18px 17px!important;text-align:center!important}`;
   document.head.appendChild(s);
 }
 //XEND
