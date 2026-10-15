@@ -19114,5 +19114,106 @@ function cstDo(c, k) {
 
 //XEND
 </script>
+<script type="text/plain" class="mp">
+// ===== 线下剧情：HTML 模块 / 自定义标签 / <style> 渲染（安全白名单）=====
+const OHX_OK = new Set("div span p br hr h1 h2 h3 h4 h5 h6 b strong i em u s del ins mark small sub sup blockquote pre code ul ol li dl dt dd table thead tbody tfoot tr td th caption details summary a img center font section article aside header footer figure figcaption ruby rt rp abbr cite q time".split(" "));
+const OHX_DROP = new Set("script style iframe object embed link meta form input button textarea select svg audio video noscript template head base title canvas".split(" "));
+function ohxDecl(str, inl) {
+  return String(str).split(";").map((d) => {
+    const k = d.indexOf(":"); if (k < 0) return "";
+    const n = d.slice(0, k).trim().toLowerCase(); let v = d.slice(k + 1).trim();
+    if (!n || /[^a-z-]/.test(n.replace(/^--/, ""))) return "";
+    if (/url\s*\(|expression|javascript:|@import|behavior|binding/i.test(v)) return "";
+    if (n == "position" && /fixed|sticky/i.test(v)) return "";
+    if (/^(z-index|behavior|-moz-binding)$/.test(n)) return "";
+    let nn = n;
+    if (inl && n == "height" && /^(\d+)px$/.test(v) && +RegExp.$1 >= 300) nn = "max-height";
+    return nn + ":" + v;
+  }).filter(Boolean).join(";");
+}
+function ohxCss(css) {
+  css = String(css).replace(/\/\*[\s\S]*?\*\//g, "").replace(/@import[^;]*;?/gi, "");
+  let out = "", i = 0;
+  while (i < css.length) {
+    const b = css.indexOf("{", i); if (b < 0) break;
+    const sel = css.slice(i, b).trim();
+    let d = 1, j = b + 1;
+    while (j < css.length && d > 0) { const ch = css[j]; if (ch == "{") d++; else if (ch == "}") d--; j++; }
+    const body = css.slice(b + 1, d ? j : j - 1); i = j;
+    if (sel[0] == "@") {
+      if (/^@(media|supports)/i.test(sel)) out += sel + "{" + ohxCss(body) + "}";
+      else if (/^@keyframes/i.test(sel) && !/url\s*\(|expression|javascript:/i.test(body)) out += sel + "{" + body + "}";
+      continue;
+    }
+    const ss = sel.split(",").map((s) => {
+      s = s.trim().replace(/\.([\w一-龥-]+)/g, ".ox-$1").replace(/#[\w-]+/g, "").replace(/^(html|body|:root|\*)(?![\w-])/, "").trim();
+      return s ? ".ohx " + s : "";
+    }).filter(Boolean).join(",");
+    if (!ss) continue;
+    const dc = ohxDecl(body, 0);
+    if (dc) out += ss + "{" + dc + "}";
+  }
+  return out;
+}
+function ohxNode(n, top, st, c, ctx) {
+  if (n.nodeType == 3) {
+    const v = n.nodeValue;
+    if (top) return v.split(/\n+/).map((x) => x.trim()).filter(Boolean).map((p) => "<p>" + offP(p, st, c) + "</p>").join("");
+    if (!/\S/.test(v)) return v.includes("\n") ? "" : " ";
+    return offP(v.replace(/\s+/g, " "), st, c);
+  }
+  if (n.nodeType != 1) return "";
+  const t = n.localName;
+  if (t == "style") { ctx.css += ohxCss(n.textContent) + "\n"; return ""; }
+  if (OHX_DROP.has(t)) return "";
+  const kids = () => [...n.childNodes].map((x) => ohxNode(x, 0, st, c, ctx)).join("");
+  if (!OHX_OK.has(t)) return [...n.childNodes].map((x) => ohxNode(x, top, st, c, ctx)).join("");
+  let at = "";
+  const g = (k) => n.getAttribute(k);
+  if (g("style")) { const s = ohxDecl(g("style"), 1); if (s) at += ` style="${esc(s)}"`; }
+  if (g("class")) { const s = g("class").split(/\s+/).filter((x) => /^[\w一-龥-]+$/.test(x)).map((x) => "ox-" + x).join(" "); if (s) at += ` class="${esc(s)}"`; }
+  if (g("title")) at += ` title="${esc(g("title"))}"`;
+  if (t == "details" && n.hasAttribute("open")) at += " open";
+  if (/^(td|th)$/.test(t)) { ["colspan", "rowspan"].forEach((k) => { if (/^\d{1,2}$/.test(g(k) || "")) at += ` ${k}="${g(k)}"`; }); }
+  if (/^(div|p|td|th|h\d)$/.test(t) && /^(left|right|center)$/.test(g("align") || "")) at += ` align="${g("align")}"`;
+  if (t == "font" && /^#?[\w]{3,12}$/.test(g("color") || "")) at += ` color="${g("color")}"`;
+  if (t == "br" || t == "hr") return "<" + t + at + ">";
+  if (t == "img") {
+    const s = g("src") || "";
+    if (!/^(https?:\/\/|data:image\/(png|jpe?g|gif|webp);)/i.test(s)) return "";
+    return `<img src="${esc(s)}" alt="${esc(g("alt") || "")}" loading="lazy"${at}>`;
+  }
+  if (t == "a") {
+    const h = g("href") || "";
+    return /^https?:\/\//i.test(h) ? `<a href="${esc(h)}" target="_blank" rel="noopener noreferrer"${at}>${kids()}</a>` : `<span${at}>${kids()}</span>`;
+  }
+  return `<${t}${at}>${kids()}</${t}>`;
+}
+{
+  const or0 = offRender;
+  offRender = function (t, role) {
+    const c = OF.id != null ? WX.cons.find((x) => x.id == OF.id) : null;
+    RXH = { store: [] };
+    let s;
+    try { s = rxRun(t, role, "show"); } finally { var st = RXH.store; RXH = null; }
+    s = String(s);
+    if (!/<\/?[A-Za-z][^>]*>|<!--|(^|\n)\s*:::/.test(s)) return or0.apply(this, arguments);
+    s = s.replace(/<!--[\s\S]*?(-->|$)/g, "");
+    s = s.replace(/(^|\n)[ \t]*:::[ \t]*([\w一-龥-]+)[ \t]*\n?([\s\S]*?)\s*:::/g, (m, a, n, b) => a + '<div class="blk"><small>' + esc(n) + "</small>" + esc(b).replace(/\s[#\/]\s/g, "<br>") + "</div>");
+    const tp = document.createElement("template");
+    tp.innerHTML = s;
+    const ctx = { css: "" };
+    const body = [...tp.content.childNodes].map((x) => ohxNode(x, 1, st, c, ctx)).join("");
+    return '<div class="ohx">' + (ctx.css ? "<style>" + ctx.css + "</style>" : "") + body + "</div>";
+  };
+  const st = document.createElement("style");
+  st.id = "ohxcss";
+  st.textContent = `.ohx{max-width:100%;overflow-wrap:anywhere}.ohx *{max-width:100%;box-sizing:border-box}.ohx img{height:auto;border-radius:8px}.ohx table{border-collapse:collapse}.ohx td,.ohx th{padding:3px 8px;border:1px solid rgba(128,128,128,.25)}.ohx details>summary{cursor:pointer;list-style-position:inside}.ohx>p{margin:.6em 0}.ox-blk{margin:10px 0;padding:10px 14px;border-radius:12px;background:rgba(128,128,128,.1);font-size:.9em;line-height:1.7}.ox-blk small{display:block;opacity:.55;letter-spacing:.08em;margin-bottom:2px}.ohx h1,.ohx h2,.ohx h3,.ohx h4{margin:.7em 0 .3em}`;
+  document.head.appendChild(st);
+  document.addEventListener("click", (e) => { const t = e.target; if (t && t.closest && t.closest(".ohx summary,.ohx a,.ohx details")) e.stopPropagation(); }, true);
+}
+
+//XEND
+</script>
 <i id="xend" hidden></i>
 </body></html>
