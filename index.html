@@ -3352,10 +3352,10 @@ $("#wx").addEventListener("change", async (e) => {
   v.textContent = "";
   l.querySelector("span").textContent = "更换头像";
 });
-const PREF_KEYS = ["pst", "pstd", "hdr", "ccss", "pam", "wzs", "uim", "pcap", "nolock", "lkbg", "lkc", "lkts", "lkdim", "nln", "fold", "lb", "rs", "ico", "icn", "ist", "isz", "wz", "wzd", "shell", "sbar", "isl", "hbar", "tb", "momAuto", "amapKey", "ka", "persona", "rx", "ui", "rad", "hap", "pace", "snd", "theme", "af", "bc", "gl", "sp", "sm", "sn", "sv", "sti", "sys", "qh", "dy", "kg", "kbf"];
+const PREF_KEYS = ["cst", "pst", "pstd", "hdr", "ccss", "pam", "wzs", "uim", "pcap", "nolock", "lkbg", "lkc", "lkts", "lkdim", "nln", "fold", "lb", "rs", "ico", "icn", "ist", "isz", "wz", "wzd", "shell", "sbar", "isl", "hbar", "tb", "momAuto", "amapKey", "ka", "persona", "rx", "ui", "rad", "hap", "pace", "snd", "theme", "af", "bc", "gl", "sp", "sm", "sn", "sv", "sti", "sys", "qh", "dy", "kg", "kbf"];
 const nx = () => ({ type: "openai", url: "", key: "", model: "" });
 const apiDef = () => ({ a: nx(), b: nx(), presets: [], pi: -1, stream: "auto", temp: 0.8, reason: "off", bare: 0, fb: 1, black: [], tok: 0, vis: { on: 1, detail: "high", n: 3, re: "high", desc: 1, px: 1280 }, tts: {}, net: { direct: 1, proxy: "" }, ml: { a: { sig: "", list: [] }, b: { sig: "", list: [] } } });
-const prefDef = () => ({ pst: [], pstd: 0, hdr: 0, ccss: "", pam: {}, tb: {}, momAuto: 0, amapKey: "", ka: 0, wzs: {}, uim: 0, pcap: 0, nolock: 0, lkbg: "", lkc: "", lkts: 0, lkdim: 12, nln: 0, fold: {}, lb: {}, rs: {}, ico: {}, icn: {}, ist: "", isz: 0, wz: { l: "one", a: "date", b: "clock" }, wzd: {}, shell: 1, sbar: 1, isl: 1, hbar: 1, persona: "", rx: [{ id: 1, name: "隐藏思考内容", find: "<think>[\\s\\S]*?</think>", flags: "gi", rep: "", scope: "ai", where: "both", on: 1 }], ui: 100, dy: 0, kg: 8, kbf: 1, rad: 19, hap: 1, pace: 1, snd: 1, theme: "auto", af: {}, bc: {}, gl: 0, sp: 1, sm: "both", sn: {}, sv: 70, sti: 0, sys: 0, qh: { on: 0, s: 23, e: 7 } });
+const prefDef = () => ({ cst: {}, pst: [], pstd: 0, hdr: 0, ccss: "", pam: {}, tb: {}, momAuto: 0, amapKey: "", ka: 0, wzs: {}, uim: 0, pcap: 0, nolock: 0, lkbg: "", lkc: "", lkts: 0, lkdim: 12, nln: 0, fold: {}, lb: {}, rs: {}, ico: {}, icn: {}, ist: "", isz: 0, wz: { l: "one", a: "date", b: "clock" }, wzd: {}, shell: 1, sbar: 1, isl: 1, hbar: 1, persona: "", rx: [{ id: 1, name: "隐藏思考内容", find: "<think>[\\s\\S]*?</think>", flags: "gi", rep: "", scope: "ai", where: "both", on: 1 }], ui: 100, dy: 0, kg: 8, kbf: 1, rad: 19, hap: 1, pace: 1, snd: 1, theme: "auto", af: {}, bc: {}, gl: 0, sp: 1, sm: "both", sn: {}, sv: 70, sti: 0, sys: 0, qh: { on: 0, s: 23, e: 7 } });
 let CFG = Object.assign(apiDef(), prefDef());
 function fixCfg() {
   for (const x of ["a", "b"]) CFG[x] = Object.assign(nx(), isObj(CFG[x]) ? CFG[x] : {});
@@ -18831,6 +18831,287 @@ function pnInfo(i) {
   s.textContent = `.rw>div>small.pns{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pni{flex:none;width:30px;height:30px;border:0;background:none;color:var(--t4);display:grid;place-items:center;padding:0;margin-left:4px;cursor:pointer}.pni .ico{width:18px;height:18px}`;
   document.head.appendChild(s);
 }
+//XEND
+</script>
+<script type="text/plain" class="mp">
+// ===== 角色状态 / 跨App一致性 / 匿名来电隔离 =====
+const CST_DEF = () => ({ m: 65, e: 80, h: 25, s: 20, sick: 0, per: 0, hang: 0, sleep: 0, track: 0, auto: 1, on: 1, ts: Date.now(), ev: [] });
+function cstOf(c) {
+  if (!CFG.cst) CFG.cst = {};
+  let s = CFG.cst[c.id];
+  if (!s) { s = CFG.cst[c.id] = CST_DEF(); }
+  return s;
+}
+const cstClamp = (v) => Math.max(0, Math.min(100, Math.round(v)));
+function cstEv(s, t) { s.ev.push({ t, ts: Date.now() }); if (s.ev.length > 12) s.ev.shift(); }
+function cstTick(c) {
+  const s = cstOf(c);
+  if (s.on === 0) return s;
+  const now = Date.now();
+  let dt = Math.min(48, Math.max(0, (now - (s.ts || now)) / 36e5));
+  s.ts = now;
+  if (dt <= 0) return s;
+  const hr = new Date().getHours(), night = hr >= 23 || hr < 6;
+  const asleep = s.sleep && s.sleep > now;
+  if (s.sleep && s.sleep <= now) { s.sleep = 0; s.s = Math.min(s.s, 15); s.e = Math.max(s.e, 85); cstEv(s, "睡醒了"); }
+  if (asleep) { s.s = cstClamp(s.s - 12 * dt); s.e = cstClamp(s.e + 10 * dt); s.h = cstClamp(s.h + 2 * dt); }
+  else {
+    s.h = cstClamp(s.h + 4.5 * dt);
+    s.e = cstClamp(s.e - (night ? 5 : 3) * dt);
+    s.s = cstClamp(s.s + (night ? 9 : 2.5) * dt);
+    if (hr >= 7 && hr <= 10 && s.s > 40 && dt > 4) s.s = cstClamp(s.s - 20);
+  }
+  let tgt = 65 - (s.sick ? 25 : 0) - (s.hang ? 18 : 0) - (s.per ? 12 : 0) - (s.h > 75 ? 12 : 0) - (s.s > 80 ? 10 : 0);
+  s.m = cstClamp(s.m + (tgt - s.m) * Math.min(1, 0.15 * dt));
+  if (s.auto !== 0 && dt >= 1) {
+    if (!s.sick && Math.random() < 0.012 * dt) { s.sick = 1; cstEv(s, "感觉不太舒服，像是感冒了"); }
+    else if (s.sick && Math.random() < 0.06 * dt) { s.sick = 0; cstEv(s, "病好了"); }
+    if (s.hang && Math.random() < 0.25 * dt) { s.hang = 0; cstEv(s, "宿醉缓过来了"); }
+    if (!s.hang && (new Date().getDay() == 5 || new Date().getDay() == 6) && hr >= 8 && hr < 12 && Math.random() < 0.02 * dt) { s.hang = 1; cstEv(s, "昨晚喝多了，宿醉"); }
+  }
+  if (s.track) {
+    if (!s.pstart) s.pstart = now - 20 * 864e5;
+    const d = (now - s.pstart) / 864e5;
+    if (d >= 28) { s.pstart = now; s.per = 1; cstEv(s, "生理期来了"); }
+    else if (s.per && d >= 5) { s.per = 0; cstEv(s, "生理期结束了"); }
+    else if (d < 5) s.per = 1;
+  }
+  return s;
+}
+function cstTxt(c, noEv) {
+  const s = cstTick(c);
+  if (s.on === 0) return "";
+  const now = Date.now(), asleep = s.sleep && s.sleep > now, L = [], eff = [];
+  if (asleep) { L.push("你正在睡觉（还要睡约 " + Math.max(1, Math.round((s.sleep - now) / 36e5)) + " 小时）"); eff.push("你被吵醒了：迷迷糊糊，只回很短的一两句，语气含糊，可以抱怨被吵醒，不要长篇大论"); }
+  const lv = (v, a, b, c2, d) => v >= 80 ? a : v >= 60 ? b : v >= 35 ? c2 : d;
+  L.push("心情：" + lv(s.m, "很好", "不错", "一般", "很低落") + "（" + s.m + "/100）");
+  L.push("体力：" + lv(s.e, "充沛", "还行", "有点累", "筋疲力尽") + "（" + s.e + "/100）");
+  L.push("饥饿：" + (s.h >= 80 ? "饿坏了" : s.h >= 60 ? "有点饿" : s.h >= 30 ? "还不饿" : "刚吃饱") + "（" + s.h + "/100）");
+  L.push("困倦：" + (s.s >= 80 ? "困得睁不开眼" : s.s >= 60 ? "有点困" : s.s >= 30 ? "清醒" : "精神很好") + "（" + s.s + "/100）");
+  const st = [];
+  if (s.sick) st.push("生病"); if (s.per) st.push("生理期"); if (s.hang) st.push("宿醉");
+  if (st.length) L.push("身体状况：" + st.join("、"));
+  if (s.sick) eff.push("你生病了：没精神，回复偏短，语气虚弱，可以想要对方关心、提到吃药");
+  if (s.hang) eff.push("你宿醉：头疼、反应慢、有点烦躁，回复偏短，不想多说");
+  if (s.per) eff.push("你在生理期：有点怕冷、肚子不舒服、情绪更敏感，希望被体贴");
+  if (s.e < 30) eff.push("体力很低：回复偏短，懒得打字");
+  if (s.s >= 75 && !asleep) eff.push("很困：回复偏短，偶尔打哈欠，可能说想睡了");
+  if (s.h >= 75) eff.push("很饿：可以自然提到肚子饿、想吃东西，注意力不太集中");
+  if (s.m < 30) eff.push("心情很差：语气偏冷淡或低落，话少");
+  else if (s.m >= 85) eff.push("心情很好：话更多，语气更活泼");
+  const ev = noEv ? [] : s.ev.filter((e) => now - e.ts < 36e5 * 12).slice(-5).map((e) => "· " + fmtT(e.ts) + " " + e.t);
+  return "【角色当前状态】（这是你此刻真实的身体与情绪状态，所有 App 共享；自然地体现在语气和回复长短上，不要像念数据一样报数值）\n" + L.join("；") + (eff.length ? "\n对回复的影响：\n- " + eff.join("\n- ") : "") + (ev.length ? "\n最近发生的事：\n" + ev.join("\n") : "");
+}
+function cstCross(c) {
+  const now = Date.now(), W = 36e5 * 48, out = [], cut = (t, n) => { t = String(t || "").replace(/\s+/g, " "); return t.length > n ? t.slice(0, n) + "…" : t; };
+  try {
+    const wl = (WX.msgs[c.id] || []).filter((m) => !m.s && !m.p && (!m.ts || now - m.ts < W)).slice(-4);
+    if (wl.length) out.push("微信最近：" + wl.map((m) => (m.me ? "我说" : "你说") + "「" + cut(histOf(m), 30) + "」").join("；"));
+  } catch (e) {}
+  try {
+    const k = smsThread(c);
+    if (k) { const sl = (SMS.t[k] || []).filter((m) => !m.s && !m.p && (!m.ts || now - m.ts < W)).slice(-3); if (sl.length) out.push("短信最近：" + sl.map((m) => (m.me ? "我发" : "你发") + "「" + cut(m.t, 30) + "」").join("；")); }
+  } catch (e) {}
+  try {
+    const mm = (WX.mom || []).filter((m) => m.w == c.id && (!m.ts || now - m.ts < 36e5 * 72)).slice(0, 2);
+    if (mm.length) out.push("你最近发的朋友圈：" + mm.map((m) => "「" + cut(m.t, 36) + "」" + ((m.cm || []).length ? "（有 " + m.cm.length + " 条评论）" : "")).join("；"));
+  } catch (e) {}
+  try {
+    const om = (WX.msgs["o" + c.id] || []).filter((m) => !m.s && !m.p).slice(-2);
+    if (om.length) out.push("线下剧情最近：" + om.map((m) => cut(m.t || m.c, 40)).join(" / "));
+  } catch (e) {}
+  try {
+    const pl = (PH.log || []).filter((x) => x.id == c.id && now - x.ts < 36e5 * 72).slice(0, 3);
+    pl.forEach((x) => {
+      const an = /匿名/.test(x.via || "");
+      if (an && x.dir != "in") out.push("有一个陌生匿名号码打来过电话" + (x.tr && x.tr.length ? "，通话内容：" + x.tr.slice(0, 8).map((l) => (l.me ? "对方" : "你") + "：" + cut(l.t, 24)).join(" / ") : "") + "（你不知道那是谁，不要认定是我；除非对方自己表明身份）");
+      else out.push((x.dir == "in" ? "你打给我的电话" : "我打给你的电话") + (x.miss ? "（未接通）" : x.sec ? "（" + x.sec + " 秒）" : "") + (x.tr && x.tr.length ? "，内容：" + x.tr.slice(0, 10).map((l) => (l.me ? "我" : "你") + "：" + cut(l.t, 24)).join(" / ") : ""));
+    });
+  } catch (e) {}
+  return out.length ? "【跨 App 近况】（这些都是你真实经历过的，在不同 App 里保持一致；合适时可以自然提起或接着聊，不要生硬复述）\n- " + out.join("\n- ") : "";
+}
+function cstWho(body, an) {
+  const sy = an ? body.system : body.messages && body.messages[0] && body.messages[0].content;
+  if (typeof sy !== "string") return null;
+  if (OFX.sys && sy === OFX.sys && OFX.cc) return { c: OFX.cc, sy, off: 1 };
+  const m = sy.match(/你是「([^」]{1,30})」/);
+  if (!m) return null;
+  const c = WX.cons.find((x) => x.name === m[1] || nm(x) === m[1]);
+  return c ? { c, sy } : null;
+}
+{
+  const cx0 = window.CALLX;
+  window.CALLX = function (body, an) {
+    try { cx0 && cx0(body, an); } catch (e) {}
+    const w = cstWho(body, an);
+    if (!w || w.sy.includes("【角色当前状态】") || w.sy.includes("【匿名来电】")) return;
+    const add = "\n\n" + cstTxt(w.c) + (w.off ? "" : "\n\n" + cstCross(w.c));
+    if (an) body.system = body.system + add; else body.messages[0].content = body.messages[0].content + add;
+  };
+  const or0 = ofReply;
+  ofReply = async function (id) {
+    OFX.cc = WX.cons.find((x) => x.id == id) || null;
+    try { return await or0.apply(this, arguments); } finally { OFX.cc = null; }
+  };
+}
+// ---- 匿名来电：角色不知道对方是谁 ----
+const anonCallSys = (c) => `你是「${c.name}」，人设：${c.persona || "普通朋友"}。现在是${nowStr()}。
+【匿名来电】你的手机上显示「未知号码」，有一个陌生人打来了电话（可能是营销、骚扰、打错，也可能是别的什么人），你接起来了。
+- 你完全不知道对方是谁，只把对方当作陌生人；不认识对方的声音，不要提到任何与你有关系的人、你们的聊天、共同的经历。
+- 先用符合你性格的方式问「喂？哪位？」之类；对方不说明来意你就保持警惕，可以直接问清楚、说「打错了吧」、或者挂断。
+- 只有对方在通话里明确说出身份、并且说得可信时，你才会半信半疑地调整态度；仍然不能凭空知道对方没有说过的事。
+- 只说你会说出口的话，口语化、简短，不要写动作描写和旁白；想挂断就单独一行写「[挂断]」。
+` + (typeof cstTxt == "function" ? cstTxt(c, 1) : "");
+{
+  const cs0 = callSay;
+  callSay = async function (first) {
+    if (!(CALL.via && /匿名/.test(CALL.via) && CALL.dir != "in")) return cs0.apply(this, arguments);
+    const c = WX.cons.find((x) => x.id == CALL.id);
+    if (!c || !CALL.on) return;
+    if (!CFG.a.url || !CFG.a.model) return cs0.apply(this, arguments);
+    CALL.busy = 1; callLog();
+    const id = CALL.id;
+    const live = CALL.log.map((l) => ({ role: l.me ? "user" : "assistant", content: l.t }));
+    let hist = mergeH((first ? [{ role: "user", content: "（电话接通了，对方还没出声）" }] : []).concat(live));
+    if (!hist.length || hist[hist.length - 1].role != "user") hist.push({ role: "user", content: "（对方沉默了一会儿）" });
+    CALL.note = "";
+    try {
+      const out = await chat(hist, anonCallSys(c), null, 1);
+      if (!CALL.on || CALL.id != id) return;
+      const sp = callSplit(out);
+      if (sp.t || sp.n) { CALL.log.push({ me: 0, t: sp.t || "……", n: sp.n || void 0 }); if (CALL.spk && sp.t) ttsSpeak(sp.t, c, { quiet: 1 }); }
+    } catch (e) { if (CALL.on) CALL.log.push({ me: 0, t: "（连接不稳定：" + em(e) + "）" }); }
+    CALL.busy = 0;
+    callLog();
+  };
+}
+// ---- 把通话内容发给 TA ----
+{
+  const pi0 = pnInfo;
+  pnInfo = function (i) {
+    const x = PH.log[i], c = x && x.id && WX.cons.find((z) => z.id == x.id);
+    if (!x || !c || !(x.tr && x.tr.length)) return pi0(i);
+    const an = /匿名/.test(x.via || "");
+    const real = actSheet;
+    actSheet = function (t, items, sub, cancel) {
+      actSheet = real;
+      if (!an) items.splice(2, 0, { t: "把通话内容发给 TA（微信）", f: () => {
+        const L = WX.msgs[c.id] || (WX.msgs[c.id] = []);
+        L.push({ me: 1, t: "（给你看看我们刚才的通话内容）\n" + x.tr.map((l) => (l.me ? "我" : nm(c)) + "：" + l.t).join("\n"), ts: Date.now() });
+        wsave(); gtoast("已发送，TA 会读到"); try { wxReply(c.id); } catch (e) {}
+      } });
+      else items.splice(2, 0, { t: "表明身份：微信告诉 TA 那通匿名电话是我", f: () => {
+        const L = WX.msgs[c.id] || (WX.msgs[c.id] = []);
+        L.push({ me: 1, t: "刚才那通匿名电话是我打的。内容是：\n" + x.tr.map((l) => (l.me ? "我" : nm(c)) + "：" + l.t).join("\n"), ts: Date.now() });
+        wsave(); gtoast("已告诉 TA"); try { wxReply(c.id); } catch (e) {}
+      } });
+      return real.call(this, t, items, sub, cancel);
+    };
+    try { return pi0(i); } finally { actSheet = real; }
+  };
+}
+// ---- 状态面板 ----
+const CST_MED = [["感冒药", 18, "sick"], ["退烧药", 22, "sick"], ["解酒药", 15, "hang"], ["止痛药（经期）", 12, "per"], ["维生素", 30, ""]];
+const CST_FOOD = [["黄焖鸡米饭", 26], ["热粥", 22], ["奶茶", 16], ["麻辣烫", 32], ["夜宵烧烤", 48]];
+function cstSay(c, t, hint) {
+  const L = WX.msgs[c.id] || (WX.msgs[c.id] = []);
+  L.push({ s: 1, t });
+  wsave();
+  if (WX.cur == c.id) try { ml(); } catch (e) {}
+  try { wxReply(c.id, hint); } catch (e) {}
+}
+function cstSheet(c) {
+  const s = cstTick(c), now = Date.now();
+  const bar = (l, v, col) => `<div style="display:flex;align-items:center;gap:8px;margin:7px 0;font-size:14px"><span style="width:38px">${l}</span><div style="flex:1;height:8px;border-radius:4px;background:var(--f2,#e8e8ec);overflow:hidden"><i style="display:block;height:100%;width:${v}%;background:${col}"></i></div><span style="width:28px;text-align:right;color:var(--t4)">${v}</span></div>`;
+  const chip = (l, on) => on ? `<span style="display:inline-block;padding:2px 9px;margin:2px 4px 2px 0;border-radius:11px;background:#ff3b30;color:#fff;font-size:12px">${l}</span>` : "";
+  const asleep = s.sleep && s.sleep > now;
+  const html = `<div style="padding:4px 16px 14px">${bar("心情", s.m, "#ff9f0a")}${bar("体力", s.e, "#34c759")}${bar("饥饿", s.h, "#ff6b35")}${bar("困倦", s.s, "#5e5ce6")}
+<div style="margin:8px 0">${chip("生病", s.sick)}${chip("生理期", s.per)}${chip("宿醉", s.hang)}${chip("睡觉中", asleep)}${!(s.sick || s.per || s.hang || asleep) ? '<span style="color:var(--t4);font-size:13px">身体状况良好</span>' : ""}</div>
+<div class="ls" style="margin-top:10px"><div class="lr btn" role="button" tabindex="0" data-cst="med"><div><b>送药</b></div></div><div class="lr btn" role="button" tabindex="0" data-cst="food"><div><b>点外卖</b></div></div><div class="lr btn" role="button" tabindex="0" data-cst="sleep"><div><b>${asleep ? "叫醒 TA" : "哄睡"}</b></div></div><div class="lr btn" role="button" tabindex="0" data-cst="set"><div><b>调整状态 / 设置</b></div></div></div>
+<p class="stt" style="margin:8px 0 0">状态会随时间变化，并影响 TA 在微信、短信、通话、朋友圈、线下剧情里的语气与回复长短。记忆库是单独的界面。</p></div>`;
+  shOpen("角色状态 · " + nm(c), s.ev.length ? "最近：" + s.ev[s.ev.length - 1].t : "", html);
+  setTimeout(() => {
+    document.querySelectorAll("#sh [data-cst]").forEach((b) => { b.onclick = () => { const k = b.dataset.cst; try { SHs && 0; } catch (e) {} cstDo(c, k); }; });
+  }, 30);
+}
+function cstClose() { try { const b = document.querySelector("#sh .x,#sh [data-sc]"); if (b) b.click(); } catch (e) {} }
+function cstDo(c, k) {
+  const s = cstOf(c);
+  const again = () => setTimeout(() => cstSheet(c), 350);
+  if (k == "med") return actSheet("送药", CST_MED.map((d) => ({ t: d[0] + "  ¥" + d[1], f: () => {
+    if (!walPay(d[1], "给" + nm(c) + "买" + d[0])) return;
+    const eff = [];
+    if (d[2] == "sick" && s.sick) { s.sick = 0; eff.push("病情好转"); s.m = cstClamp(s.m + 8); }
+    else if (d[2] == "hang" && s.hang) { s.hang = 0; eff.push("宿醉缓解"); s.m = cstClamp(s.m + 6); }
+    else if (d[2] == "per" && s.per) { eff.push("肚子没那么疼了"); s.m = cstClamp(s.m + 8); }
+    else if (d[2] == "") { s.e = cstClamp(s.e + 10); s.m = cstClamp(s.m + 3); }
+    else eff.push("其实 TA 现在并不需要这个");
+    cstEv(s, "收到我送的" + d[0] + (eff.length ? "（" + eff[0] + "）" : ""));
+    wsave(); savePrefs();
+    cstSay(c, "你给 TA 送去了" + d[0] + "（¥" + d[1] + "）", "（我刚给你送了" + d[0] + "，快递员已经送到你手上了。请按你现在的状态和性格自然地回应，比如道谢、吐槽或撒娇。）");
+    cstClose(); again();
+  } })), "从钱包扣款");
+  if (k == "food") return actSheet("点外卖", CST_FOOD.map((d) => ({ t: d[0] + "  ¥" + d[1], f: () => {
+    if (!walPay(d[1], "给" + nm(c) + "点外卖：" + d[0])) return;
+    s.h = cstClamp(s.h - 55); s.e = cstClamp(s.e + 8); s.m = cstClamp(s.m + 6); s.s = cstClamp(s.s + 6);
+    cstEv(s, "吃了我点的外卖：" + d[0]);
+    wsave(); savePrefs();
+    cstSay(c, "你给 TA 点了外卖：" + d[0] + "（¥" + d[1] + "）", "（我刚给你点了外卖「" + d[0] + "」，已经送到了。请按你现在的状态（是不是正饿着）和性格自然地回应。）");
+    cstClose(); again();
+  } })), "从钱包扣款");
+  if (k == "sleep") {
+    if (s.sleep && s.sleep > Date.now()) {
+      s.sleep = 0; s.s = Math.min(s.s, 40); s.m = cstClamp(s.m - 6); cstEv(s, "被我叫醒了");
+      wsave(); savePrefs(); cstSay(c, "你叫醒了 TA", "（我把你叫醒了。你刚被吵醒，请按状态回应。）"); cstClose(); again(); return;
+    }
+    return actSheet("哄睡", [["唱摇篮曲", 12], ["讲睡前故事", 18], ["说晚安", 8], ["陪聊到睡着", 15]].map((d) => ({ t: d[0], f: () => {
+      const p = Math.min(0.95, 0.15 + s.s / 120 + d[1] / 100);
+      if (Math.random() < p) {
+        s.sleep = Date.now() + (6 + Math.random() * 3) * 36e5; s.ts = Date.now(); cstEv(s, "被我哄睡着了（" + d[0] + "）");
+        wsave(); savePrefs();
+        cstSay(c, "你对 TA " + d[0] + "，TA 慢慢睡着了", "（我在" + d[0] + "哄你睡觉。你已经很困了：请只回一两句困倦、含糊的话作为睡前最后一句，然后睡着。）");
+      } else {
+        s.m = cstClamp(s.m - 2); cstEv(s, "我想哄 TA 睡但没睡着"); wsave(); savePrefs();
+        cstSay(c, "你对 TA " + d[0] + "，但 TA 还不太困", "（我想哄你睡觉（" + d[0] + "），但你现在还不太困。请按状态自然地回应。）");
+      }
+      cstClose(); again();
+    } })), "越困越容易睡着");
+  }
+  if (k == "set") {
+    const tg = (l, key) => ({ t: l + "：" + (s[key] ? "是" : "否") + "（点击切换）", f: () => {
+      s[key] = s[key] ? 0 : 1;
+      if (key == "sick" && s.sick) cstEv(s, "生病了"); if (key == "hang" && s.hang) cstEv(s, "宿醉了");
+      if (key == "per") { s.pstart = s.per ? Date.now() : s.pstart; cstEv(s, s.per ? "生理期来了" : "生理期结束"); }
+      wsave(); savePrefs(); cstClose(); again();
+    } });
+    return actSheet("调整状态", [tg("生病", "sick"), tg("宿醉", "hang"), tg("生理期", "per"),
+      { t: "生理期自动追踪：" + (s.track ? "开" : "关"), f: () => { s.track = s.track ? 0 : 1; if (s.track && !s.pstart) s.pstart = Date.now() - 20 * 864e5; savePrefs(); cstClose(); again(); } },
+      { t: "随机事件（生病/宿醉）：" + (s.auto === 0 ? "关" : "开"), f: () => { s.auto = s.auto === 0 ? 1 : 0; savePrefs(); cstClose(); again(); } },
+      { t: "启用状态系统：" + (s.on === 0 ? "关" : "开"), f: () => { s.on = s.on === 0 ? 1 : 0; savePrefs(); cstClose(); again(); } },
+      { t: "重置为默认", dg: 1, f: () => { CFG.cst[c.id] = CST_DEF(); savePrefs(); cstClose(); again(); } }]);
+  }
+}
+{
+  const rc0 = rCS;
+  rCS = function (id) {
+    rc0(id);
+    const c = WX.cons.find((x) => x.id == id);
+    if (!c) return;
+    const hs = document.querySelectorAll("#vc h4.cst"), h = [...hs].find((e) => e.textContent == "记忆与剧情");
+    if (!h) return;
+    const s = cstTick(c), asleep = s.sleep && s.sleep > Date.now();
+    const d = document.createElement("div");
+    d.innerHTML = `<h4 class="cst">角色状态</h4><div class="ls"><div class="lr btn" role="button" tabindex="0" data-a="cstate" data-id="${id}"><div><b>状态面板（送药 / 外卖 / 哄睡）</b><small>${asleep ? "睡觉中" : "心情 " + s.m + " · 体力 " + s.e + " · 饥饿 " + s.h + " · 困倦 " + s.s}${s.sick ? " · 生病" : ""}${s.hang ? " · 宿醉" : ""}${s.per ? " · 生理期" : ""}</small></div>${ic("chev").replace('class="ico"', 'class="ico ch"')}</div></div>`;
+    h.parentNode.insertBefore(d.firstChild, h);
+    h.parentNode.insertBefore(d.firstChild, h);
+  };
+  const cd0 = csDo;
+  csDo = function (a, el) {
+    if (a == "cstate") { const c = WX.cons.find((x) => x.id == WX.cur); if (c) cstSheet(c); return; }
+    return cd0.apply(this, arguments);
+  };
+}
+
 //XEND
 </script>
 <i id="xend" hidden></i>
