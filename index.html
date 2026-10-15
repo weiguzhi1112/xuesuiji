@@ -6779,7 +6779,8 @@ function pnRec() {
   const l = [...PH.log].reverse();
   return `<div class="sc">${l.length ? l.map((x, i) => {
     const k = PH.log.length - 1 - i;
-    return `<div class="rw" data-pn="redial" data-i="${k}"><div class="pnd">${x.id ? "" : ""}${(x.name || "?")[0]}</div><div><b${x.miss ? ' class="pnm"' : ""}>${esc(x.name)}</b><small class="pns">微信语音 · ${x.miss ? "未接来电" : x.dir == "in" ? "来电" : "呼出"}${x.sec ? " · " + mmss(x.sec) : x.dir == "out" && !x.id ? " · 无人接听" : ""}</small></div><em class="pnt">${pnAgo(x.ts)}</em></div>`;
+    const c2 = x.id && WX.cons.find((z) => z.id == x.id);
+    return `<div class="rw" data-pn="redial" data-i="${k}">${c2 ? av(c2, 44) : av({ name: (x.name || "?")[0] }, 44)}<div><b${x.miss ? ' class="pnm"' : ""}>${esc(x.name)}</b><small class="pns">${x.via ? "电话" : "微信语音"} · ${x.miss ? "未接来电" : x.dir == "in" ? "来电" : "呼出"}${x.sec ? " · " + mmss(x.sec) : x.dir == "out" && !x.id ? " · 无人接听" : ""}${x.via ? " · " + esc(x.via) : ""}${x.tr && x.tr.length ? " · " + x.tr.length + " 句" : ""}</small></div><em class="pnt">${pnAgo(x.ts)}</em><button class="pni" data-pn="info" data-i="${k}" aria-label="通话详情">${ic("more")}</button></div>`;
   }).join("") : '<p class="em">暂无通话记录</p>'}</div>`;
 }
 const PNK = [["1", ""], ["2", "ABC"], ["3", "DEF"], ["4", "GHI"], ["5", "JKL"], ["6", "MNO"], ["7", "PQRS"], ["8", "TUV"], ["9", "WXYZ"], ["*", ""], ["0", "+"], ["#", ""]];
@@ -18702,6 +18703,133 @@ document.addEventListener("input", (e) => { if (e.target && e.target.id == "pr_t
     } catch (e) {}
     return t;
   };
+}
+//XEND
+</script>
+<script type="text/plain" class="mp">
+/* ---- 电话：拨打角色时选择匿名号 / 本机号 ---- */
+var PNVIA = null;
+{
+  const pc0 = pnCall;
+  pnCall = function (c) {
+    const nums = (typeof CAR != "undefined" && CAR.nums) || [];
+    const go = (v) => { PNVIA = v; PNFROM = 1; pc0(c); };
+    const items = [{ t: "匿名号码（对方看到「未知号码」）", f: () => go({ anon: 1 }) }].concat(nums.map((x, i) => ({ t: "本机号 " + x.n + "（中国" + x.c + (i == CAR.act ? " · 当前" : "") + "）", f: () => go({ n: x.n, c: x.c }) })));
+    actSheet("用哪个号码拨打 " + nm(c) + "？", items, nums.length ? "共 " + nums.length + " 个本机号码，选一个拨出" : "还没有本机号码，可到营业厅办理；现在只能用匿名号码拨出");
+  };
+  const co0 = callOpen;
+  callOpen = function (id, dir) {
+    const was = CALL.on, r = co0.apply(this, arguments), v = PNVIA;
+    if (dir == "out" && CALL.on && !was && v) {
+      PNVIA = null;
+      CALL.via = v.anon ? "匿名号码" : "本机号 " + v.n;
+      CALL.note = v.anon ? "（对方是用匿名号码打给你的，你的手机来电显示是「未知号码」，你并不能确定是谁打来的，请按你的人设和性格自然地反应，比如犹豫、警惕或直接接听。）" : "（来电显示：" + v.n + "，是对方的手机号码打来的。）";
+      PH.lastVia = { v: CALL.via, ts: Date.now() };
+    }
+    return r;
+  };
+  const pl0 = pnLog;
+  pnLog = function (c, dir, secs, raw) {
+    const r = pl0.apply(this, arguments);
+    try {
+      const lv = PH.lastVia, x = PH.log[PH.log.length - 1];
+      if (dir == "out" && lv && x && Date.now() - lv.ts < 6e5) { x.via = lv.v; PH.lastVia = null; pnSave(); if (cur == "phone") pnRender(); }
+    } catch (e) {}
+    return r;
+  };
+}
+//XEND
+</script>
+<script type="text/plain" class="mp">
+/* ---- 电话 App：拨打结果 / 通话结束回到电话 / 通话详情与内容记录 ---- */
+var PNFROM = 0;
+{
+  const co1 = callOpen;
+  callOpen = function (id, dir) {
+    if (!CALL.on) { CALL.via = ""; if (dir != "out") PNFROM = 0; }
+    const was = CALL.on, r = co1.apply(this, arguments);
+    try { if (CALL.on && !was && CALL.via) callPaint(); } catch (e) {}
+    if (dir == "out" && CALL.on && !was && PNFROM) {
+      const anon = /匿名/.test(CALL.via || ""), roll = Math.random();
+      const out = anon ? (roll < 0.3 ? ["对方已拒接", 2600 + Math.random() * 2200] : roll < 0.42 ? ["对方暂时无人接听", 14000 + Math.random() * 6000] : null) : (roll < 0.08 ? ["对方暂时无人接听", 14000 + Math.random() * 6000] : null);
+      if (out) {
+        clearTimeout(CALL.tm);
+        CALL.tm = setTimeout(() => { if (CALL.on && CALL.st == "ring-out") callEnd(out[0]); }, out[1]);
+      }
+    }
+    return r;
+  };
+  const cp0 = callPaint;
+  callPaint = function () {
+    const r = cp0.apply(this, arguments);
+    try {
+      const o = $("#vcall"), cid = o && o.querySelector(".cid, .cvn");
+      if (cid && CALL.via && !cid.querySelector(".cvia")) { const s = document.createElement("small"); s.className = "cvia"; s.textContent = "电话 · " + CALL.via; s.style.cssText = "display:block;margin-top:6px;font-size:12px;opacity:.55;letter-spacing:.04em"; cid.appendChild(s); }
+    } catch (e) {}
+    return r;
+  };
+  const ce1 = callEnd;
+  callEnd = function (why) {
+    const was = CALL.on, lg = was && CALL.log ? CALL.log.slice(-80).map((l) => ({ me: l.me ? 1 : 0, t: l.t })) : [], via = CALL.via, dir = CALL.dir, fromPn = PNFROM, c = was && WX.cons.find((x) => x.id == CALL.id), live = was && CALL.st == "live", secs = live ? Math.max(1, Math.floor((Date.now() - CALL.t0) / 1e3)) : 0;
+    const r = ce1.apply(this, arguments);
+    if (was) {
+      try {
+        const x = PH.log[PH.log.length - 1];
+        if (x) { if (lg.length) x.tr = lg; if (via && dir == "out") x.via = via; if (typeof why == "string" && !secs) x.why = why; pnSave(); }
+      } catch (e) {}
+      if (fromPn) {
+        PNFROM = 0;
+        if (c) gtoast(secs ? "通话结束 · " + mmss(secs) : (typeof why == "string" ? why : "通话已取消"), 2200);
+        if (cur == "chat") setTimeout(() => { try { openApp("phone"); setTimeout(() => { PH.tab = 0; PH.v = "l"; pnRender(); }, 480); } catch (e) {} }, 500);
+      }
+    }
+    return r;
+  };
+  const pd0 = pnDo;
+  pnDo = function (a, d) {
+    if (a == "dial" && PH.num && !pnFind(PH.num)) {
+      const n = PH.num, SP = { "10086": "中国移动客服：您好，欢迎致电中国移动，人工服务请稍候……（模拟语音，暂无后续服务）", "10010": "中国联通客服：您好，欢迎致电中国联通……（模拟语音，暂无后续服务）", "10000": "中国电信客服：您好，欢迎致电中国电信……（模拟语音，暂无后续服务）", "110": "这是模拟手机，不会真的拨通报警电话。如遇紧急情况请使用真实手机拨打 110。", "120": "这是模拟手机，不会真的拨通急救电话。如遇紧急情况请使用真实手机拨打 120。", "119": "这是模拟手机，不会真的拨通消防电话。如遇紧急情况请使用真实手机拨打 119。" };
+      const R = ["您拨打的电话暂时无人接听", "您拨打的号码是空号，请核对后再拨", "您拨打的用户已关机", "您拨打的用户正在通话中，请稍后再拨"], msg = SP[n] || R[Math.floor(Math.random() * R.length)];
+      pnLog(null, "out", 0, n);
+      const x = PH.log[PH.log.length - 1];
+      if (x) { x.why = msg; pnSave(); }
+      PH.num = "";
+      pnRender();
+      actSheet("拨打 " + n, [{ t: "好的", f: () => {} }], msg);
+      return;
+    }
+    if (a == "info") return pnInfo(+d.i);
+    if (a == "tr") return pnTr(+d.i);
+    return pd0.apply(this, arguments);
+  };
+}
+function pnTr(i) {
+  const x = PH.log[i];
+  if (!x || !x.tr || !x.tr.length) return gtoast("这通电话没有留下通话内容");
+  shOpen("通话内容 · " + (x.name || ""), pnAgo(x.ts) + " · " + (x.sec ? mmss(x.sec) : "未接通") + (x.via ? " · " + x.via : ""), `<div class="l" id="pkl">${x.tr.map((l) => `<div style="padding:7px 0;font-size:14px;line-height:1.6;${l.me ? "text-align:right;color:var(--t3)" : ""}"><small style="display:block;font-size:11px;color:var(--t4)">${l.me ? "我" : esc(x.name || "对方")}</small>${esc(l.t)}</div>`).join("")}<button class="si" data-sk="x"><span>关闭</span></button></div>`);
+  SHs.items = [];
+}
+function pnInfo(i) {
+  const x = PH.log[i];
+  if (!x) return;
+  const c = x.id && WX.cons.find((z) => z.id == x.id), it = [];
+  const d = new Date(x.ts), p = (n) => String(n).padStart(2, "0");
+  const sub = d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate()) + " " + p(d.getHours()) + ":" + p(d.getMinutes()) + " · " + (x.dir == "in" ? (x.miss ? "未接来电" : "来电") : "呼出") + (x.sec ? " · 时长 " + mmss(x.sec) : "") + (x.via ? " · " + x.via : "") + (x.why ? "\n" + x.why : "");
+  it.push({ t: "拨打", f: () => pnDo("redial", { i }) });
+  if (x.tr && x.tr.length) it.push({ t: "查看通话内容（" + x.tr.length + " 句）", f: () => setTimeout(() => pnTr(i), 260) });
+  if (c) {
+    it.push({ t: "发微信", f: () => pnDo("wx", { id: c.id }) });
+    it.push({ t: "发短信", f: () => pnDo("sms", { id: c.id }) });
+    it.push({ t: "联系人资料", f: () => { PH.id = c.id; PH.v = "d"; pnRender(); } });
+  } else if (x.ph) it.push({ t: "添加到通讯录", f: () => { PH.d = { ph: x.ph }; PH.edit = 0; PH.v = "a"; pnRender(); } });
+  it.push({ t: "删除这条记录", dg: 1, f: () => { PH.log.splice(i, 1); pnSave(); pnRender(); } });
+  actSheet(x.name || "通话详情", it, sub);
+}
+{
+  const s = document.createElement("style");
+  s.id = "pncss";
+  s.textContent = `.rw>div>small.pns{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pni{flex:none;width:30px;height:30px;border:0;background:none;color:var(--t4);display:grid;place-items:center;padding:0;margin-left:4px;cursor:pointer}.pni .ico{width:18px;height:18px}`;
+  document.head.appendChild(s);
 }
 //XEND
 </script>
