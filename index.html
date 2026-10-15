@@ -100,8 +100,8 @@ svg{display:block}
 #app.open{transform:none;opacity:1;pointer-events:auto}
 #app h1{margin:96px 0 0 36px;font-size:34px;font-weight:300;letter-spacing:-.5px}
 #app p{margin:14px 36px;font-size:14px;line-height:1.7;color:var(--mut)}
-#lock{position:absolute;inset:0;z-index:45;transition:transform .5s cubic-bezier(.3,.8,.2,1);display:flex;flex-direction:column;align-items:center}
-#lock.up{transform:translateY(-100%)}
+#lock{position:absolute;inset:0;z-index:45;transition:transform .5s cubic-bezier(.3,.8,.2,1),visibility 0s;display:flex;flex-direction:column;align-items:center}
+#lock.up{transform:translateY(-100%);visibility:hidden;pointer-events:none;transition:transform .5s cubic-bezier(.3,.8,.2,1),visibility 0s linear .52s}
 #lock::before{content:'';position:absolute;inset:0;z-index:-1;background:rgba(var(--lockbg),var(--lo,.8));backdrop-filter:blur(30px) saturate(1.4);-webkit-backdrop-filter:blur(30px) saturate(1.4)}
 .glass #lock::before{background:linear-gradient(160deg,rgba(var(--wc),calc(var(--lo,.8)*.78)),rgba(var(--wc),calc(var(--lo,.8)*.3)));backdrop-filter:blur(40px) saturate(1.9);-webkit-backdrop-filter:blur(40px) saturate(1.9);box-shadow:inset 0 1px 0 rgba(255,255,255,calc(.9*var(--hk))),inset 0 0 0 .5px rgba(255,255,255,calc(.5*var(--hk)))}
 #lk{margin-top:66px;height:20px;transition:.3s}
@@ -2342,7 +2342,7 @@ const lineOf = (m) => m.shot ? "[截图]" + (m.shot && m.shot.q || "") : m.loc ?
 const mmss = (n) => String(Math.floor(n / 60)).padStart(2, "0") + ":" + String(n % 60).padStart(2, "0");
 const msgLabel = (m) => m.stk ? "[表情]" : m.pat ? "[拍一拍]" : m.loc ? "[位置]" : m.img ? "[图片]" : m.v ? "[语音]" : m.call !== void 0 ? "[语音通话]" : m.t;
 const offHtml = (m) => {
-  const t = rxRun(m.t, "ai", "show"), ps = t.split(/\n+/).map((x) => x.trim()).filter(Boolean).map((p) => "<p>" + esc(p).replace(/\*([^*\n]+)\*/g, '<i class="oa">$1</i>') + "</p>").join("");
+  const ps = offRender(m.t, "ai");
   return `<div class="oh" data-a="otog" role="button" tabindex="0">线下剧情 · ${[...String(m.t)].length} 字<span>${m.oc ? "展开" : "收起"}</span></div><div class="ot${m.oc ? " cl" : ""}">${ps}</div>`;
 };
 const OF = { id: null, busy: {} };
@@ -2357,7 +2357,7 @@ function ofBg(c) {
 function ofHist(c) {
   return mergeH(ofL(c.id).filter((m) => !m.p).slice(-(+c.ctx || 500)).map((m) => ({ role: m.me ? "user" : "assistant", content: rxRun(m.t, m.me ? "user" : "ai", "prompt") })));
 }
-const xoP = (t, role) => rxRun(t, role, "show").split(/\n+/).map((x) => x.trim()).filter(Boolean).map((p) => "<p>" + esc(p).replace(/\*([^*\n]+)\*/g, '<i class="oa">$1</i>') + "</p>").join("");
+const xoP = (t, role) => offRender(t, role);
 function rOff(id) {
   const c = WX.cons.find((x) => x.id == id);
   if (!c) return;
@@ -2379,7 +2379,7 @@ function ofPaint() {
   const L = ofL(OF.id);
   e.style.setProperty("--xof", (c.ofs || 16) + "px");
   keepScroll(e, () => {
-    e.innerHTML = (L.length ? "" : `<div class="xo-empty"><b>线下剧情</b><p>和${esc(nm(c))}面对面的长篇剧情。写下你的第一个动作或对白，或者让对方先开场。</p><button class="cb" data-a="ofadv">让对方开场</button> <button class="cb" data-a="ofset">剧情设置</button></div>`) + L.map((m, i) => m.p ? m.t && m.t != "…" ? `<div class="xo-ai">${xoP(m.t, "ai")}</div>` : '<div class="xo-t"><i></i><i></i><i></i></div>' : m.me ? `<div class="xo-me" data-i="${i}" role="button" tabindex="0"><small>你</small>${xoP(m.t, "user")}</div>` : `<div class="xo-ai" data-i="${i}" role="button" tabindex="0">${xoP(m.t, "ai")}</div>`).join("") + '<div class="xo-end"></div>';
+    e.innerHTML = (L.length ? "" : `<div class="xo-empty"><b>线下剧情</b><p>和${esc(nm(c))}面对面的长篇剧情。写下你的第一个动作或对白，或者让对方先开场。</p><button class="cb" data-a="ofadv">让对方开场</button> <button class="cb" data-a="ofset">剧情设置</button></div>`) + L.map((m, i) => m.p ? m.t && m.t != "…" ? `<div class="xo-ai">${xoP(m.t, "ai")}</div>` : '<div class="xo-t"><i></i><i></i><i></i></div>' : m.me ? `<div class="xo-me" data-i="${i}" role="button" tabindex="0"><small>你</small>${xoP(m.t, "user")}</div>` : `<div class="xo-ai" data-i="${i}" role="button" tabindex="0">${xoP(m.t, "ai")}${m.cot ? ofCotHtml(m, i) : ""}</div>`).join("") + '<div class="xo-end"></div>';
   });
   a11y();
 }
@@ -2627,7 +2627,7 @@ $("#vo").addEventListener("input", (e) => {
   }
 });
 const histOf = (m) => (m.q ? "（回复「" + m.q.t + "」）" : "") + (m.stk ? stkHist(m) : m.loc ? (m.me ? "（我发给你一个位置：" : "[位置] ") + m.loc.n + (m.loc.a ? "，" + m.loc.a : "") + (m.me ? "）" : "") : m.tf ? tfHist(m) : m.img ? (m.gif ? "[GIF 动图]" : "") + (m.shot ? "[我发给对方一张聊天截图，截图里是：" + (m.alt || "") + "]" : m.alt ? "[图片，内容：" + m.alt + "]" : "[图片]") : m.v ? "[语音]" + m.t : m.call !== void 0 ? "[语音通话" + (m.call ? " " + mmss(m.call) : "：" + m.t) + "]" + ((m.log || []).length ? "\n" + m.log.map((l) => (l.me ? "我" : "对方") + "：" + l.t).join("\n") : "") : m.t);
-const qpHtml = (q) => `<div class="qp ${q.me ? "qm" : "qo"}">${esc(q.t)}</div>`;
+const qpHtml = (q) => `<div class="qp ${q.me ? "qm" : "qo"}"><span>${esc(q.t)}</span></div>`;
 const splitLines = (t) => String(t || "").split(/\n+/).map((x) => x.trim()).filter(Boolean);
 const newGid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 const mergeH = (a) => a.reduce((o, h) => {
@@ -3352,10 +3352,10 @@ $("#wx").addEventListener("change", async (e) => {
   v.textContent = "";
   l.querySelector("span").textContent = "更换头像";
 });
-const PREF_KEYS = ["hdr", "ccss", "pam", "wzs", "uim", "pcap", "nolock", "lkbg", "lkc", "lkts", "lkdim", "nln", "fold", "lb", "rs", "ico", "icn", "ist", "isz", "wz", "wzd", "shell", "sbar", "isl", "hbar", "tb", "momAuto", "amapKey", "ka", "persona", "rx", "ui", "rad", "hap", "pace", "snd", "theme", "af", "bc", "gl", "sp", "sm", "sn", "sv", "sti", "sys", "qh", "dy", "kg", "kbf"];
+const PREF_KEYS = ["pst", "pstd", "hdr", "ccss", "pam", "wzs", "uim", "pcap", "nolock", "lkbg", "lkc", "lkts", "lkdim", "nln", "fold", "lb", "rs", "ico", "icn", "ist", "isz", "wz", "wzd", "shell", "sbar", "isl", "hbar", "tb", "momAuto", "amapKey", "ka", "persona", "rx", "ui", "rad", "hap", "pace", "snd", "theme", "af", "bc", "gl", "sp", "sm", "sn", "sv", "sti", "sys", "qh", "dy", "kg", "kbf"];
 const nx = () => ({ type: "openai", url: "", key: "", model: "" });
 const apiDef = () => ({ a: nx(), b: nx(), presets: [], pi: -1, stream: "auto", temp: 0.8, reason: "off", bare: 0, fb: 1, black: [], tok: 0, vis: { on: 1, detail: "high", n: 3, re: "high", desc: 1, px: 1280 }, tts: {}, net: { direct: 1, proxy: "" }, ml: { a: { sig: "", list: [] }, b: { sig: "", list: [] } } });
-const prefDef = () => ({ hdr: 0, ccss: "", pam: {}, tb: {}, momAuto: 0, amapKey: "", ka: 0, wzs: {}, uim: 0, pcap: 0, nolock: 0, lkbg: "", lkc: "", lkts: 0, lkdim: 12, nln: 0, fold: {}, lb: {}, rs: {}, ico: {}, icn: {}, ist: "", isz: 0, wz: { l: "one", a: "date", b: "clock" }, wzd: {}, shell: 1, sbar: 1, isl: 1, hbar: 1, persona: "", rx: [{ id: 1, name: "隐藏思考内容", find: "<think>[\\s\\S]*?</think>", flags: "gi", rep: "", scope: "ai", where: "both", on: 1 }], ui: 100, dy: 0, kg: 8, kbf: 1, rad: 19, hap: 1, pace: 1, snd: 1, theme: "auto", af: {}, bc: {}, gl: 0, sp: 1, sm: "both", sn: {}, sv: 70, sti: 0, sys: 0, qh: { on: 0, s: 23, e: 7 } });
+const prefDef = () => ({ pst: [], pstd: 0, hdr: 0, ccss: "", pam: {}, tb: {}, momAuto: 0, amapKey: "", ka: 0, wzs: {}, uim: 0, pcap: 0, nolock: 0, lkbg: "", lkc: "", lkts: 0, lkdim: 12, nln: 0, fold: {}, lb: {}, rs: {}, ico: {}, icn: {}, ist: "", isz: 0, wz: { l: "one", a: "date", b: "clock" }, wzd: {}, shell: 1, sbar: 1, isl: 1, hbar: 1, persona: "", rx: [{ id: 1, name: "隐藏思考内容", find: "<think>[\\s\\S]*?</think>", flags: "gi", rep: "", scope: "ai", where: "both", on: 1 }], ui: 100, dy: 0, kg: 8, kbf: 1, rad: 19, hap: 1, pace: 1, snd: 1, theme: "auto", af: {}, bc: {}, gl: 0, sp: 1, sm: "both", sn: {}, sv: 70, sti: 0, sys: 0, qh: { on: 0, s: 23, e: 7 } });
 let CFG = Object.assign(apiDef(), prefDef());
 function fixCfg() {
   for (const x of ["a", "b"]) CFG[x] = Object.assign(nx(), isObj(CFG[x]) ? CFG[x] : {});
@@ -3438,6 +3438,7 @@ async function call(x, msgs, sys, onD, retry, nb, tl) {
     if (eff) body.reasoning_effort = eff;
   }
   const TCM = {}, TC = {};
+  try { if (window.CALLX) window.CALLX(body, an); } catch (e) {}
   tl = Array.isArray(tl) && tl.length && !TLBAD.has(host) ? tl : null;
   if (tl) {
     const ls = tl.slice(0, 64).map((t) => {
@@ -3703,10 +3704,11 @@ function rSet(keep) {
   let body = "";
   if (t == 4) body = dataBody();
   const sub = t == 4 && ST.dv;
-  let h = `<div class="ph" style="padding-top:20px"><b>设置</b></div>${sub ? dataSubHead() : `<div class="seg">${[["接口", 0], ["提示词", 5], ["高级", 2], ["外观", 3], ["数据", 4]].map((x) => `<button data-s="${x[1]}"${x[1] == t ? ' class="on"' : ""}>${x[0]}</button>`).join("")}</div>`}<div class="sc">`;
+  let h = `<div class="ph" style="padding-top:20px"><b>设置</b></div>${sub ? dataSubHead() : `<div class="seg">${[["接口", 0], ["提示词", 5], ["预设", 6], ["高级", 2], ["外观", 3], ["数据", 4]].map((x) => `<button data-s="${x[1]}"${x[1] == t ? ' class="on"' : ""}>${x[0]}</button>`).join("")}</div>`}<div class="sc">`;
   if (t == 0) h += api("a") + api("b");
   if (t == 0) h += `<div class="card"><h3>API 预设</h3><div class="fd"><small>选择预设</small>${sel('id="psel"', [["-1", "未选择"]].concat(CFG.presets.map((p, i) => [i, esc(p.name)])), CFG.pi)}</div><div class="fd"><small>预设名称</small><input id="pnm" value="${esc((CFG.presets[CFG.pi] || {}).name || "")}" autocomplete="off"></div><div class="r2"><button class="cb" data-a="pupd">更新当前</button><button class="cb" data-a="pnew">另存为新</button></div><div class="r2"><button class="cb" data-a="pdel">删除此预设</button></div><p class="stt" id="s_p">预设包含主副接口与高级参数</p></div>`;
   if (t == 5) h += persTab();
+  if (t == 6) h += (typeof prTab == "function" ? prTab() : "");
   if (t == 2) h += `<div class="card"><h3>请求方式</h3><div class="fd"><small>流式模式</small>${sel('data-b="stream"', [["auto", "自动推荐"], ["off", "强制非流式"], ["on", "强制流式"]], CFG.stream)}</div><div class="fd"><small>温度 <span id="tv">${(+CFG.temp).toFixed(1)}</span></small><input type="range" data-b="temp" data-n="1" min="0" max="2" step="0.1" value="${CFG.temp}"></div><div class="fd"><small>推理深度</small>${sel('data-b="reason"', [["off", "关闭"], ["low", "低"], ["mid", "中"], ["high", "高"]], CFG.reason)}</div></div>
 <div class="card"><h3>兼容与备用</h3><div class="fd"><small>裸反代 Anthropic 格式</small>${sel('data-b="bare" data-n="1"', [[0, "关闭"], [1, "开启"]], CFG.bare)}</div><div class="fd"><small>主接口失败时切换副接口</small>${sel('data-b="fb" data-n="1"', [[1, "开启"], [0, "关闭"]], CFG.fb)}</div><div class="r2"><button class="cb" data-a="rblack">重置流式黑名单（${CFG.black.length}）</button></div><p class="stt">累计 token（估算）：${CFG.tok}</p></div>`;
   if (t == 2) h += `<div class="card"><h3>MCP 服务</h3><p class="stt">让微信里的角色调用外部工具。服务器、工具、资源、调用记录都在桌面的「MCP」应用里管理。目前已添加 ${MC.srv.length} 个服务器，${mcpTools().length} 个工具可用。</p><div class="r2"><button class="cb" data-mxo="1">打开 MCP 控制台</button></div></div>`;
@@ -8901,7 +8903,7 @@ function promptPreview(c, kind) {
   return "【System 提示词】\n" + W.sys + "\n\n【对话历史】共 " + h.length + " 条" + (h.length > 6 ? "，以下是最后 6 条" : "") + "\n" + (last.length ? last.map((x) => "[" + x.role + "] " + x.content).join("\n") : "（还没有对话）") + "\n\n※ 世界书里设有触发概率的条目，每次发送时命中情况可能不同。" + (sample ? "\n※ 这是示例角色的预览，选择具体联系人可以看到真实内容。" : "");
 }
 function persTab() {
-  return persTab0() + rxTab();
+  return persTab0() + '<div class="card"><h3>正则脚本</h3><p class="stt">正则脚本已和预设合并到「预设」标签里统一管理，支持分组、导入酒馆正则，并可绑定到线下剧情。</p><button class="cb" data-pr="goto">前往「预设 / 正则」</button></div>';
 }
 function persTab0() {
   const cs = WX.cons;
@@ -17898,6 +17900,808 @@ document.addEventListener("click", (e) => {
 .mr:not(.me) .mc:has(>.qp)::after{left:6px!important;right:auto!important;transform:none!important}
 .qp{font-size:13px!important;line-height:24px!important;height:46px!important;padding:5px 18px 17px!important;text-align:center!important}`;
   document.head.appendChild(s);
+}
+//XEND
+</script>
+<script type="text/plain" class="mp">
+/* ---- 引用胶囊（iOS26 短信风）/ 模型列表滑动 / 关联账号自动回复 ---- */
+{
+  const s = document.createElement("style");
+  s.id = "qpcss";
+  s.textContent = `
+.mr.hq,.mr.hq.gf{margin-top:42px!important}
+.qp{-webkit-mask-image:none!important;mask-image:none!important;background:var(--card)!important;border:1.2px solid #9ED0F7;color:#4798F1!important;height:24px!important;min-width:0!important;width:max-content;max-width:210px!important;padding:0 11px!important;box-sizing:border-box;border-radius:999px!important;font-size:12.5px!important;line-height:1!important;display:flex!important;align-items:center;justify-content:center;text-align:center!important;overflow:visible!important;position:absolute;bottom:100%!important;margin:0 0 13px 0!important;white-space:nowrap}
+.qp>span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:188px}
+.qp.qm{border-color:#CCCCCC;color:#8E8E8E!important}
+.qp::after,.qp::before{content:"";position:absolute;border-radius:50%;background:var(--card);border:1.2px solid currentColor;box-sizing:border-box;opacity:.9}
+.qp::after{width:8px;height:8px;bottom:-9px}.qp::before{width:4px;height:4px;bottom:-14px}
+.qp.qo{border-color:#9ED0F7}.qp.qo::after,.qp.qo::before{border-color:#9ED0F7}.qp.qm::after,.qp.qm::before{border-color:#CCCCCC}
+.mr:not(.me) .qp,.mr:not(.me) .qp.qm,.mr:not(.me) .qp.qo{border-color:#9ED0F7;color:#4798F1!important}.mr:not(.me) .qp::after,.mr:not(.me) .qp::before{border-color:#9ED0F7!important}
+.mr.me .qp,.mr.me .qp.qm,.mr.me .qp.qo{border-color:#CCCCCC;color:#8E8E8E!important}.mr.me .qp::after,.mr.me .qp::before{border-color:#CCCCCC!important}
+.mr:not(.me) .qp{left:4px!important;right:auto!important;margin-left:0!important;transform:none}
+.mr:not(.me) .qp::after{left:12px}.mr:not(.me) .qp::before{left:8px}
+.mr.me .qp{right:4px!important;left:auto!important;margin-right:0!important}
+.mr.me .qp::after{right:12px}.mr.me .qp::before{right:8px}
+.mc:has(>.qp)::after,.mr.me .mc:has(>.qp)::after,.mr:not(.me) .mc:has(>.qp)::after{display:none!important}
+#sh .b>.l{flex:0 1 auto!important;min-height:0;overflow-y:auto!important;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y}
+#sh .b>#pkl{flex:1 1 auto!important;max-height:56vh;max-height:min(56vh,440px)}
+#sh .b>#pkl .si{flex:none}
+.si.on{font-weight:500}`;
+  document.head.appendChild(s);
+  const st = document.getElementById("cotcss");
+  if (st) st.textContent = st.textContent.split("\n").filter((l) => !/\.qp|\.mr:not\(\.me\) \.mc:has/.test(l)).join("\n");
+  document.addEventListener("touchmove", (e) => { if (e.target.closest && e.target.closest("#sh .l")) e.stopPropagation(); }, { capture: true, passive: true });
+  document.addEventListener("wheel", (e) => { if (e.target.closest && e.target.closest("#sh .l")) e.stopPropagation(); }, { capture: true, passive: true });
+  const op0 = openPicker;
+  openPicker = function (x) {
+    op0.apply(this, arguments);
+    setTimeout(() => { const l = document.getElementById("pkl"), on = l && l.querySelector(".si.on"); if (on && on.scrollIntoView) on.scrollIntoView({ block: "center" }); }, 120);
+  };
+}
+/* 关联账号：TA 自己也会回复好友发到 TA 账号里的消息 */
+async function lkAutoReply(c, fid) {
+  const d = PX[c.id], L = c.ls = c.ls || {};
+  if (!d || d.busy || L.ar === 0 || (PXW.on && PXW.cid == c.id)) return;
+  if (!CFG.a.url && !lkApi(c)) return;
+  const now = Date.now(), wait = (L.ard || 2) * 6e4;
+  const f = d.fr.find((x) => { const m = x.m[x.m.length - 1]; return m && !m.me && m.ts && (fid ? x.id == fid : now - m.ts > wait) && now - m.ts < 864e5 && x.arb !== m.ts; });
+  if (!f) return;
+  const last = f.m[f.m.length - 1];
+  f.arb = last.ts;
+  d.busy = 1;
+  try {
+    const j = pxJson(await lkChat(c, [{ role: "user", content: pxCtx(c) + `\n\n好友「${f.rm || f.n}」（${f.g}，签名：${f.sig || "无"}）刚给 ${nm(c)} 发了微信，${nm(c)} 现在自己看到了。最近的聊天：\n${f.m.slice(-10).map((y) => (y.me ? nm(c) : f.n) + "：" + (y.t || "")).join("\n")}\n\n请以 ${nm(c)} 本人的身份、按人设和与这位好友的关系，回复好友最后那句话，口语自然，1 到 2 条。只输出 JSON：{"r":["回复内容"]}` }], "只输出 JSON，不要解释。"));
+    const r = ((j && j.r) || []).filter((x) => typeof x == "string" && x.trim()).slice(0, 2);
+    const t = Date.now();
+    r.forEach((x, i) => f.m.push({ me: 1, t: pxS(x, 120), ts: t + i }));
+    if (r.length) {
+      f.un = 0; f.ts = Date.now(); f.last = lkHr();
+      c.rep = ((c.rep || []).concat([{ to: f.rm || f.n, t: pxS(r[0], 40), ts: Date.now() }])).slice(-3);
+      pxSave();
+      try { wxTouch(); } catch (e) {}
+    }
+  } catch (e) {}
+  d.busy = 0;
+}
+{
+  const t0 = pxTick;
+  pxTick = async function () {
+    try { await t0.apply(this, arguments); } catch (e) {}
+    try { for (const c of (PXW.on ? PXW.s.cons : WX.cons)) if (c.link && PX[c.id]) await lkAutoReply(c); } catch (e) {}
+  };
+  const s0 = lkSet;
+  lkSet = function (c) {
+    const L = c.ls = c.ls || {};
+    actSheet(nm(c) + " 的关联设置", [
+      { t: "TA 自己回复好友消息：" + (L.ar === 0 ? "关" : "开（好友来消息后约 " + (L.ard || 2) + " 分钟）"), f: () => { L.ar = L.ar === 0 ? 1 : 0; wsave(); gtoast(L.ar === 0 ? "TA 不再自己回复好友" : "TA 会自己回复好友消息", 1600); setTimeout(() => lkSet(c), 260); } },
+      { t: "TA 回复等待时间：" + (L.ard || 2) + " 分钟", f: () => setTimeout(() => editSheet("TA 回复前等待（分钟）", String(L.ard || 2), (v) => { const n = Math.max(1, Math.min(120, parseInt(v) || 3)); L.ard = n; wsave(); setTimeout(() => lkSet(c), 260); }), 260) },
+      { t: "其他关联设置  ›", f: () => setTimeout(() => s0(c), 260) },
+    ], "TA 看到好友消息后，会按人设自己回复，你也可以在关联会话里亲自回");
+  };
+  const a1 = acctTxt;
+  acctTxt = function (c) {
+    let t = a1(c);
+    try {
+      const d = c && c.link && PX[c.id];
+      if (d && d.fr) {
+        const now = Date.now(), inc = [];
+        d.fr.forEach((f) => (f.m || []).forEach((y) => { if (!y.me && y.ts && now - y.ts < 864e5) inc.push({ f, y }); }));
+        inc.sort((a, b) => b.y.ts - a.y.ts);
+        const nt = inc.slice(0, 8).map((x) => fmtT(x.y.ts) + " 「" + (x.f.rm || x.f.n) + "」发来：“" + String(x.y.t || "").slice(0, 40) + "”" + (x.f.un ? "（你还没回）" : "")).join("\n- ");
+        t += "\n\n【你自己的微信账号收到的消息提醒】对方把你的微信关联到了TA的客户端，你账号收到的消息提醒TA都能看到，这不影响你们正常聊天，你照常回复TA。" + (nt ? "最近你账号收到的消息：\n- " + nt + "\n对方可能会问起、转述或评论这些消息，你要把它们当作自己账号里真实收到的消息，自然地接话、解释或回应，不要说不知道、也不要回避。" : "最近你的账号没有新消息。");
+        const rc = d.fr.filter((f) => f.m && f.m.length).sort((a, b) => (b.ts || 0) - (a.ts || 0)).slice(0, 4).map((f) => "「" + (f.rm || f.n) + "」：" + f.m.slice(-2).map((y) => (y.me ? "你回了" : "对方说") + "“" + String(y.t || "").slice(0, 30) + "”").join("，")).join("；");
+        if (rc) t += "\n【你和好友最近的聊天】" + rc + "。";
+      }
+    } catch (e) {}
+    return t;
+  };
+}
+//XEND
+</script>
+<script type="text/plain" class="mp">
+/* ================= 预设 / 正则（仿酒馆）+ 线下剧情增强 ================= */
+var OFX = { on: 0, c: null, sys: null, p: null, kw: null };
+var RXH = null;
+const prUid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const prRid = () => Date.now() + Math.floor(Math.random() * 1e4);
+const pstList = () => (Array.isArray(CFG.pst) ? CFG.pst : (CFG.pst = []));
+const pstGet = (id) => (id ? pstList().find((p) => p && p.id == id) : null);
+const pstOf = (c) => (c ? pstGet(c.opre === undefined ? CFG.pstd : c.opre) : null);
+const prUser = () => (WX.acc && (WX.acc.nick || WX.acc.name)) || "我";
+const prMK = { chatHistory: "聊天记录", worldInfoBefore: "世界书（前）", worldInfoAfter: "世界书（后）", charDescription: "角色人设", charPersonality: "角色性格", scenario: "开场设定", personaDescription: "我的人设", dialogueExamples: "对话示例" };
+const prRoleL = { system: "系统", user: "用户", assistant: "助手" };
+
+/* ---------- 宏 ---------- */
+const PRV = {};
+function pstMacro(s, c, ex) {
+  s = String(s == null ? "" : s);
+  if (s.indexOf("{{") < 0 && !/<(user|char|bot)>/i.test(s)) return s;
+  ex = ex || {};
+  const d = new Date(), z = (n) => String(n).padStart(2, "0"), L = (c && WX.msgs[c.id] || []).filter((m) => m && !m.s && !m.p && m.t != null);
+  const last = (f) => { for (let i = L.length - 1; i >= 0; i--) if (f(L[i])) return String(L[i].t); return ""; };
+  s = s.replace(/<user>/gi, prUser()).replace(/<(char|bot)>/gi, c ? nm(c) : "角色");
+  s = s.replace(/\{\{\/\/[\s\S]*?\}\}/g, "");
+  s = s.replace(/\{\{setvar::([^:}]+)::([\s\S]*?)\}\}/g, (m, k, v) => { PRV[k] = v; return ""; });
+  s = s.replace(/\{\{addvar::([^:}]+)::([\s\S]*?)\}\}/g, (m, k, v) => { PRV[k] = (PRV[k] || "") + v; return ""; });
+  s = s.replace(/\{\{getvar::([^}]+)\}\}/g, (m, k) => PRV[k] || "");
+  s = s.replace(/\{\{random(?:::|:)([\s\S]*?)\}\}/gi, (m, a) => { const o = a.split(a.indexOf("::") >= 0 ? "::" : ",").map((x) => x.trim()).filter(Boolean); return o.length ? o[Math.floor(Math.random() * o.length)] : ""; });
+  s = s.replace(/\{\{pick::([\s\S]*?)\}\}/gi, (m, a) => { const o = a.split("::"); return o[Math.floor(Math.random() * o.length)] || ""; });
+  s = s.replace(/\{\{roll[ :]\s*(\d*)d?(\d+)\}\}/gi, (m, n, f) => { n = +n || 1; f = Math.max(1, +f || 6); let t = 0; for (let i = 0; i < Math.min(n, 100); i++) t += 1 + Math.floor(Math.random() * f); return String(t); });
+  const map = {
+    char: c ? nm(c) : "角色", user: prUser(), persona: CFG.persona || "", description: c ? c.persona || "" : "", scenario: c ? c.oscene || "" : "", personality: "", mesexamples: "",
+    time: z(d.getHours()) + ":" + z(d.getMinutes()), date: d.getFullYear() + "年" + (d.getMonth() + 1) + "月" + d.getDate() + "日", weekday: "星期" + "日一二三四五六"[d.getDay()],
+    isotime: z(d.getHours()) + ":" + z(d.getMinutes()), isodate: d.getFullYear() + "-" + z(d.getMonth() + 1) + "-" + z(d.getDate()), idle_duration: "刚刚", model: (CFG.a && CFG.a.model) || "",
+    lastmessage: last(() => true), lastusermessage: last((m) => m.me), lastcharmessage: last((m) => !m.me), input: ex.input || "", newline: "\n", noop: "", original: "", group: c ? nm(c) : "", charprompt: "", sysprompt: ""
+  };
+  s = s.replace(/\{\{\s*([a-z_]+)\s*\}\}/gi, (m, k) => { const v = map[k.toLowerCase()]; return v === undefined ? m : v; });
+  s = s.replace(/\s*\{\{trim\}\}\s*/gi, "");
+  return s;
+}
+
+/* ---------- 正则：支持生效域 / 绑定 / 裁剪 / HTML / 酒馆格式 ---------- */
+function rxParseOne(r) {
+  let f = String(r.find || ""), fl = String(r.flags == null ? "g" : r.flags);
+  const m = /^\/([\s\S]*)\/([a-z]*)$/.exec(f);
+  if (m) { f = m[1]; fl = m[2]; }
+  return new RegExp(f, fl.replace(/[^dgimsuy]/g, ""));
+}
+function rxExpand(rep, a) {
+  const g = a.slice(1, a.findIndex((x, i) => i > 0 && typeof x == "number") );
+  return rep.replace(/\$(\$|&|\d{1,2})/g, (m, k) => k == "$" ? "$" : k == "&" ? a[0] : g[+k - 1] === undefined ? "" : g[+k - 1]);
+}
+function htmlSan(h) {
+  try {
+    const d = new DOMParser().parseFromString("<body>" + h, "text/html");
+    d.querySelectorAll("script,iframe,object,embed,link,meta,style,base,form,input,button,textarea,select,svg,math").forEach((n) => n.remove());
+    d.body.querySelectorAll("*").forEach((n) => {
+      [...n.attributes].forEach((a) => {
+        const k = a.name.toLowerCase(), v = a.value;
+        if (k.startsWith("on") || (k == "style" && /url\(|expression|@import|behavior/i.test(v)) || ((k == "src" || k == "href" || k == "srcset" || k == "xlink:href") && !/^(https?:|#)/i.test(v.trim())) || k == "formaction") n.removeAttribute(a.name);
+      });
+    });
+    return d.body.innerHTML;
+  } catch (e) { return esc(h); }
+}
+function rxActive(r, ctx, c, pr) {
+  const x = r.ctx || "all";
+  if (ctx == "on") return x == "all" || x == "on";
+  if (!c) return x == "all" || x == "off";
+  if (c.orxm === "none") return false;
+  if (x == "all" || x == "off") return true;
+  if (x == "bind") return (Array.isArray(c.orx) && c.orx.includes(r.id)) || !!(pr && Array.isArray(pr.rx) && pr.rx.includes(r.id));
+  return false;
+}
+rxRun = function (t, role, phase) {
+  t = String(t == null ? "" : t);
+  const ctx = OFX.on ? "off" : "on", c = OFX.on ? OFX.c : null, pr = c ? pstOf(c) : null;
+  for (const r of rxList()) {
+    if (!r.on || !r.find || r.hl) continue;
+    if (!rxActive(r, ctx, c, pr)) continue;
+    if (r.scope && r.scope != "both" && r.scope != role) continue;
+    if (r.where && r.where != "both" && r.where != phase) continue;
+    try {
+      const re = rxParseOne(r), rep = String(r.rep || "").replace(/\\n/g, "\n").replace(/\{\{match\}\}/gi, "$&"), isH = r.html && phase == "show" && RXH;
+      t = t.replace(re, (...a) => {
+        let o = rxExpand(rep, a);
+        o = pstMacro(o, c);
+        if (isH) { RXH.store.push(htmlSan(o)); return "\u0001" + (RXH.store.length - 1) + "\u0002"; }
+        return o;
+      });
+      if (r.trim) for (const x of String(r.trim).split("\n")) if (x) t = t.split(x).join("");
+    } catch (e) {}
+  }
+  return t;
+};
+function rxHlRules() {
+  const o = [];
+  for (const r of rxList()) {
+    if (!r.on || !r.hl || !r.find || !/^#?[\w(),.% -]{1,30}$/.test(String(r.hl))) continue;
+    try { const re = rxParseOne(r); o.push({ re: new RegExp(re.source, re.flags.includes("g") ? re.flags : re.flags + "g"), c: String(r.hl) }); } catch (e) {}
+  }
+  return o;
+}
+
+/* ---------- 预设：酒馆格式导入 / 导出 ---------- */
+function pstFromTavern(j, name) {
+  const items = [];
+  const MKS = Object.keys(prMK);
+  const mk = (p) => (p.marker ? p.identifier : !p.content && MKS.includes(p.identifier) ? p.identifier : "");
+  if (Array.isArray(j.prompts)) {
+    const by = {};
+    j.prompts.forEach((p) => { if (p && p.identifier != null) by[p.identifier] = p; });
+    let order = null;
+    if (Array.isArray(j.prompt_order)) {
+      const cand = j.prompt_order.filter((o) => o && Array.isArray(o.order));
+      const pick = cand.find((o) => o.character_id == 100001) || cand.slice().sort((a, b) => b.order.length - a.order.length)[0];
+      order = pick && pick.order;
+    }
+    const used = new Set();
+    const push = (p, on) => {
+      used.add(p.identifier);
+      items.push({ id: prUid(), name: p.name || prMK[p.identifier] || String(p.identifier), role: ["system", "user", "assistant"].includes(p.role) ? p.role : "system", content: String(p.content || ""), on: !!on, mk: mk(p), pos: p.injection_position == 1 ? 1 : 0, depth: p.injection_depth != null ? +p.injection_depth : 4, idf: String(p.identifier) });
+    };
+    if (order) {
+      order.forEach((o) => { const p = by[o.identifier]; if (p) push(p, o.enabled !== false); });
+      j.prompts.forEach((p) => { if (p && !used.has(p.identifier) && !p.marker) push(p, false); });
+    } else j.prompts.forEach((p) => { if (p) push(p, p.enabled !== false); });
+  } else {
+    const L = [["main_prompt", "主提示词", "system"], ["nsfw_prompt", "辅助提示词", "system"], ["jailbreak_prompt", "后置提示词", "system"], ["impersonation_prompt", "代入提示词", "system"], ["new_chat_prompt", "新聊天提示", "system"]];
+    L.forEach(([k, n, r]) => { if (typeof j[k] == "string" && j[k].trim()) items.push({ id: prUid(), name: n, role: r, content: j[k], on: true, mk: "", pos: 0, depth: 4, idf: k }); });
+    if (items.length) {
+      const jb = items.findIndex((x) => x.idf == "jailbreak_prompt");
+      const h = { id: prUid(), name: "聊天记录", role: "system", content: "", on: true, mk: "chatHistory", pos: 0, depth: 4, idf: "chatHistory" };
+      if (jb >= 0) items.splice(jb, 0, h); else items.push(h);
+    }
+  }
+  if (!items.length) return null;
+  const n = (v) => (v === undefined || v === null || v === "" || isNaN(+v) ? null : +v);
+  return { id: prUid(), name: String(j.name || name || "导入的预设").slice(0, 40), items, p: { temp: n(j.temperature), top_p: n(j.top_p), fp: n(j.frequency_penalty), pp: n(j.presence_penalty), max: n(j.openai_max_tokens || j.max_tokens) }, rx: [], src: "tavern" };
+}
+function pstToTavern(p) {
+  return {
+    name: p.name, temperature: p.p && p.p.temp, top_p: p.p && p.p.top_p, frequency_penalty: p.p && p.p.fp, presence_penalty: p.p && p.p.pp, openai_max_tokens: p.p && p.p.max,
+    prompts: p.items.map((e) => ({ identifier: e.idf || e.id, name: e.name, role: e.role, content: e.content, system_prompt: !e.mk, marker: !!e.mk, injection_position: e.pos ? 1 : 0, injection_depth: e.depth, forbid_overrides: false })),
+    prompt_order: [{ character_id: 100001, order: p.items.map((e) => ({ identifier: e.idf || e.id, enabled: !!e.on })) }]
+  };
+}
+function rxFromTavern(s, grp) {
+  if (!s || typeof s != "object" || s.findRegex == null) return null;
+  const pl = Array.isArray(s.placement) ? s.placement : [2], u = pl.includes(1), a = pl.includes(2);
+  let find = String(s.findRegex), fl = "g";
+  const m = /^\/([\s\S]*)\/([a-z]*)$/.exec(find);
+  if (m) { find = m[1]; fl = m[2]; }
+  const rep = String(s.replaceString || "");
+  const mo = !!s.markdownOnly, po = !!s.promptOnly;
+  return { id: prRid(), name: String(s.scriptName || "导入的正则").slice(0, 40), find, flags: fl, rep: rep.replace(/\{\{match\}\}/gi, "$&").replace(/\n/g, "\\n"), scope: u && a ? "both" : u ? "user" : "ai", where: mo && !po ? "show" : po && !mo ? "prompt" : "both", on: !s.disabled, ctx: "all", g: grp || "酒馆导入", trim: Array.isArray(s.trimStrings) ? s.trimStrings.join("\n") : "", html: mo && /<[a-z][\s\S]*>/i.test(rep) ? 1 : 0 };
+}
+function rxToTavern(r) {
+  return { id: String(r.id), scriptName: r.name, findRegex: "/" + r.find + "/" + (r.flags || "g"), replaceString: String(r.rep || "").replace(/\\n/g, "\n").replace(/\$&/g, "{{match}}"), trimStrings: r.trim ? String(r.trim).split("\n").filter(Boolean) : [], placement: r.scope == "both" ? [1, 2] : r.scope == "user" ? [1] : [2], disabled: !r.on, markdownOnly: r.where == "show", promptOnly: r.where == "prompt", runOnEdit: true, substituteRegex: 0, minDepth: null, maxDepth: null };
+}
+function prImport(text, fname) {
+  let j;
+  try { j = JSON.parse(String(text).replace(/^﻿/, "")); } catch (e) { return gtoast("不是有效的 JSON 文件", 2400), 0; }
+  const base = String(fname || "").replace(/\.[^.]+$/, "");
+  let np = 0, nr = 0;
+  const addRx = (s, grp) => { const r = rxFromTavern(s, grp); if (r) { CFG.rx = rxList().concat([r]); nr++; return r; } return null; };
+  const one = (x) => {
+    if (!x || typeof x != "object") return;
+    if (x.findRegex != null) { addRx(x, base || "酒馆导入"); return; }
+    if (Array.isArray(x.prompts) || x.main_prompt || x.jailbreak_prompt || x.nsfw_prompt || x.temperature !== undefined) {
+      const p = pstFromTavern(x, base);
+      if (p) {
+        const rs = x.extensions && Array.isArray(x.extensions.regex_scripts) ? x.extensions.regex_scripts : [];
+        rs.forEach((s) => { const r = addRx(s, p.name); if (r) { r.ctx = "bind"; p.rx.push(r.id); } });
+        pstList().push(p); np++;
+      }
+      return;
+    }
+    if (Array.isArray(x.regex_scripts)) x.regex_scripts.forEach((s) => addRx(s, base || "酒馆导入"));
+  };
+  if (Array.isArray(j)) j.forEach(one); else one(j);
+  if (!np && !nr) return gtoast("没有识别到酒馆预设或正则", 2600), 0;
+  savePrefs();
+  gtoast("已导入：" + (np ? np + " 个预设" : "") + (np && nr ? "、" : "") + (nr ? nr + " 条正则" : ""), 2400);
+  return 1;
+}
+
+/* ---------- 线下剧情：提示词装配 ---------- */
+const OCOT = "\n\n【思维链】正式写剧情之前，先在 <think>…</think> 里用第一人称写下你对这一幕的构思（场景怎么推进、此刻的心理、想埋的细节，200 字内），然后换行再写正式剧情。<think> 里的内容只给对方点开查看，正文里不要提到它。";
+const ofCot = (c) => (c.ocot === undefined ? !!c.cot : !!c.ocot);
+{
+  const wb0 = wbBuild;
+  wbBuild = function (cid, hist) {
+    const c = OFX.on ? OFX.c : null, m = c && c.owb;
+    if (!c || m === undefined || m === "all") return wb0(cid, hist);
+    if (m === "none") return { before: [], after: [], depth: [] };
+    if (!Array.isArray(m)) return wb0(cid, hist);
+    const sv = WB.e;
+    try { WB.e = sv.filter((e) => m.includes(e.id)); return wb0(cid, hist); } finally { WB.e = sv; }
+  };
+}
+function ofBuild(c, hist, meta) {
+  OFX.on = 1; OFX.c = c;
+  try {
+    const pr = pstOf(c), an = CFG.a.type == "anthropic", cot = ofCot(c) ? OCOT : "";
+    if (!pr) { const W = wbApply(c.id, hist, offSys(c) + cot, meta); return W; }
+    const w = wbBuild(c.id, hist), ex = { input: (hist[hist.length - 1] || {}).content || "" };
+    const mkv = {
+      worldInfoBefore: w.before.join("\n"), worldInfoAfter: w.after.join("\n"), charDescription: "角色「" + nm(c) + "」：" + (c.persona || "普通朋友"),
+      charPersonality: "", scenario: c.oscene || "", personaDescription: CFG.persona || "", dialogueExamples: ""
+    };
+    const before = [], after = [], abs = [];
+    let seen = 0, usedBef = 0, usedAft = 0, usedChar = 0;
+    for (const e of pr.items) {
+      if (!e.on) continue;
+      if (e.mk) {
+        if (e.mk == "chatHistory") { seen = 1; continue; }
+        const t = mkv[e.mk];
+        if (e.mk == "worldInfoBefore") usedBef = 1;
+        if (e.mk == "worldInfoAfter") usedAft = 1;
+        if (e.mk == "charDescription") usedChar = 1;
+        if (t && t.trim()) (seen ? after : before).push({ role: "system", t });
+        continue;
+      }
+      const t = pstMacro(e.content, c, ex);
+      if (!t.trim()) continue;
+      if (e.pos == 1) abs.push({ d: Math.max(0, +e.depth || 0), role: e.role || "system", t });
+      else (seen ? after : before).push({ role: e.role || "system", t });
+    }
+    let sys = before.filter((x) => x.role == "system").map((x) => x.t).join("\n\n");
+    const pre = before.filter((x) => x.role != "system").map((x) => ({ role: x.role, content: x.t }));
+    if (!usedChar) sys = "角色「" + nm(c) + "」：" + (c.persona || "普通朋友") + (sys ? "\n\n" + sys : "");
+    if (!usedBef && w.before.length) sys = "【世界设定】\n" + w.before.join("\n") + "\n\n" + sys;
+    if (!usedAft && w.after.length) sys += "\n\n【补充设定】\n" + w.after.join("\n");
+    sys += "\n\n（本次剧情篇幅约 " + olenN(c) + " 字；只写你自己的言行，不替对方行动。）" + (c.oscene && !usedChar && !pr.items.some((e) => e.on && e.mk == "scenario") ? "\n【开场设定】\n" + c.oscene : "") + timeBlock(WX.msgs["o" + c.id]) + ofBg(c) + cot;
+    try { const mb = typeof memBlock == "function" ? memBlock(c.id, hist, meta) : ""; if (mb) sys += "\n\n" + mb; } catch (e) {}
+    const rl = (r) => (an && r == "system" ? "user" : r);
+    let H = pre.map((x) => ({ role: rl(x.role), content: x.content })).concat(hist);
+    abs.forEach((x) => { H.splice(Math.max(0, H.length - x.d), 0, { role: rl(x.role), content: x.t }); });
+    w.depth.forEach((x) => { H.splice(Math.max(0, H.length - x.d), 0, { role: rl(x.role), content: x.content }); });
+    after.forEach((x) => H.push({ role: an && x.role != "user" ? "user" : x.role, content: x.t }));
+    H = mergeH(H);
+    if (!H.length || H[H.length - 1].role != "user") H.push({ role: "user", content: "（请继续。）" });
+    return { sys, hist: H };
+  } finally { OFX.on = 0; OFX.c = null; }
+}
+window.CALLX = function (body, an) {
+  const o = OFX.p;
+  if (!o || !OFX.sys) return;
+  const sy = an ? body.system : body.messages && body.messages[0] && body.messages[0].content;
+  if (sy !== OFX.sys) return;
+  if (o.temp != null && !body.thinking) body.temperature = Math.max(0, Math.min(an ? 1 : 2, o.temp));
+  if (!an) {
+    if (o.top_p != null) body.top_p = o.top_p;
+    if (o.fp != null) body.frequency_penalty = o.fp;
+    if (o.pp != null) body.presence_penalty = o.pp;
+  }
+};
+{
+  const oh0 = ofHist;
+  ofHist = function (c) { const s = [OFX.on, OFX.c]; OFX.on = 1; OFX.c = c; try { return oh0(c); } finally { OFX.on = s[0]; OFX.c = s[1]; } };
+  let pt = 0, pq = 0;
+  const op0 = ofPaint;
+  ofPaint = function () {
+    const c = OF.id != null && WX.cons.find((x) => x.id == OF.id), s = [OFX.on, OFX.c, OFX.kw];
+    OFX.on = 1; OFX.c = c || null; OFX.kw = null;
+    try { return op0.apply(this, arguments); } finally { OFX.on = s[0]; OFX.c = s[1]; OFX.kw = s[2]; }
+  };
+  const ofp = ofPaint;
+  ofPaintT = function () {
+    const n = Date.now();
+    if (n - pt >= 110) { pt = n; ofp(); return; }
+    if (!pq) pq = setTimeout(() => { pq = 0; pt = Date.now(); ofp(); }, 110);
+  };
+}
+var ofPaintT;
+function ofKw(c) {
+  if (OFX.kw !== null) return OFX.kw;
+  let re = false;
+  try {
+    const ks = [];
+    if (WB.on) WB.e.forEach((e) => { if (e.on && (!e.chars.length || e.chars.includes(c.id)) && (!Array.isArray(c.owb) || c.owb.includes(e.id)) && c.owb !== "none") (e.keys || []).forEach((k) => { k = String(k).trim(); if (k.length >= 2 && k.length <= 20 && !/[\\^$*+?.()|[\]{}]/.test(k)) ks.push(k); }); });
+    const u = [...new Set(ks)].sort((a, b) => b.length - a.length).slice(0, 60);
+    if (u.length) re = new RegExp(u.map((k) => esc(k).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|"), "g");
+  } catch (e) { re = false; }
+  OFX.kw = re;
+  return re;
+}
+function offP(p, store, c) {
+  let s = esc(p);
+  const hl = !c || c.ohl !== 0;
+  try { for (const r of rxHlRules()) s = s.replace(r.re, (m) => '<span class="ohl" style="color:' + r.c + '">' + m + "</span>"); } catch (e) {}
+  if (hl) {
+    const kw = c && ofKw(c);
+    if (kw) s = s.replace(kw, '<mark class="ow">$&</mark>');
+    s = s.replace(/(「[^」\n]*」|『[^』\n]*』|“[^”\n]*”|&quot;[^\n]*?&quot;)/g, '<span class="od">$1</span>').replace(/（[^）\n]*）|\([^)\n]*\)/g, '<span class="ot2">$&</span>').replace(/【[^】\n]*】/g, '<span class="osy">$&</span>');
+  }
+  s = s.replace(/\*([^*\n]+)\*/g, '<i class="oa">$1</i>');
+  if (store && store.length) s = s.replace(/\u0001(\d+)\u0002/g, (m, i) => store[+i] || "");
+  return s;
+}
+function offRender(t, role) {
+  const c = OF.id != null ? WX.cons.find((x) => x.id == OF.id) : null;
+  RXH = { store: [] };
+  let s;
+  try { s = rxRun(t, role, "show"); } finally { var st = RXH.store; RXH = null; }
+  return String(s).split(/\n+/).map((x) => x.trim()).filter(Boolean).map((p) => "<p>" + offP(p, st, c) + "</p>").join("");
+}
+function ofCotHtml(m, i) {
+  return m.cox ? `<div class="ocot on" data-ocot="${i}"><b>思维链 · 点击收起</b>${esc(m.cot)}</div>` : `<div class="ocot" data-ocot="${i}"><b>思维链</b><span>点击展开</span></div>`;
+}
+ofReply = async function (id, hint) {
+  const c = WX.cons.find((x) => x.id == id), L = ofL(id);
+  if (!c || OF.busy[id]) return;
+  if (!CFG.a.url || !CFG.a.model) { gtoast("请先在「设置」中配置接口与模型"); return; }
+  OF.busy[id] = 1;
+  const r = { p: 1, t: "…" };
+  let out = "", err = null, cot = "";
+  try {
+    const hist = ofHist(c);
+    if (hint !== void 0) {
+      const dir = { role: "user", content: "（推进剧情" + (hint ? "：" + hint : "") + "——请接着上文继续写，让场景自然往下走一段，不需要等待对方回应。）" }, l = hist[hist.length - 1];
+      if (l && l.role == "user") l.content += "\n" + dir.content; else hist.push(dir);
+    } else if (!hist.length || hist[hist.length - 1].role != "user") hist.push({ role: "user", content: "（请开场：写出此刻的场景，并让你的角色自然登场。）" });
+    L.push(r);
+    ofPaint();
+    try { await memPrep(c.id, hist); } catch (e) {}
+    COT.t = "";
+    const W = ofBuild(c, hist, { ck: "wx:o" + c.id }), pr = pstOf(c);
+    OFX.sys = W.sys; OFX.p = pr && pr.p ? pr.p : null;
+    window.CHATMAX = Math.min(16e3, Math.max(2048, pr && pr.p && pr.p.max > 0 ? pr.p.max : Math.round(olenN(c) * 2.2)));
+    try {
+      out = await chat(W.hist, W.sys, (t) => { r.t = t; if (OF.id == id) ofPaintT(); });
+    } finally { window.CHATMAX = 0; OFX.sys = null; OFX.p = null; }
+    cot = COT.t.trim();
+  } catch (e) { err = e; }
+  const i = L.indexOf(r), tx = String(out || "").trim();
+  if (i >= 0) {
+    const part = String(r.t || "").trim();
+    if (tx) L.splice(i, 1, Object.assign({ t: tx, ts: Date.now() }, cot && ofCot(c) ? { cot: cot.slice(0, 8000) } : {}));
+    else if (err && part && part != "…" && part.length > 40) { L.splice(i, 1, { t: part, ts: Date.now(), part: 1 }); gtoast("生成中断，已保留写出的部分，可点「推进剧情」接着写", 3200); }
+    else { L.splice(i, 1); gtoast(err ? "生成失败：" + em(err) : "没有生成内容，可以再点一次「重新生成」", 3000); }
+  } else if (err) gtoast("生成失败：" + em(err), 3000);
+  OF.busy[id] = 0;
+  const seen = cur == "chat" && OF.id == id && $("#vo").classList.contains("on") && $("#wx").classList.contains("open");
+  if (tx && !seen) {
+    c.unread = (c.unread || 0) + 1;
+    if (!c.mute) notify("chat", nm(c) + " · 线下", rxRun(tx.slice(0, 60), "ai", "show"));
+  }
+  wsave();
+  if (OF.id == id) ofPaint();
+};
+{
+  const sd0 = ofSend;
+  ofSend = function () {
+    if (OF.id != null && OF.busy[OF.id]) { gtoast("上一段还在生成，稍等一下", 1600); return; }
+    try { const c = WX.cons.find((x) => x.id == OF.id); if (c) delete c.odraft; } catch (e) {}
+    return sd0.apply(this, arguments);
+  };
+  const ro0 = rOff;
+  rOff = function (id) {
+    try { const L = WX.msgs["o" + id]; if (L && !OF.busy[id]) { const k = L.filter((m) => !m.p); if (k.length != L.length) { L.length = 0; k.forEach((m) => L.push(m)); } } } catch (e) {}
+    const r = ro0.apply(this, arguments);
+    try { const c = WX.cons.find((x) => x.id == id), i = $("#oin"); if (c && c.odraft && i && !i.value) i.value = c.odraft; } catch (e) {}
+    return r;
+  };
+  document.addEventListener("input", (e) => {
+    if (e.target && e.target.id == "oin") { const c = WX.cons.find((x) => x.id == OF.id); if (c) { c.odraft = e.target.value; clearTimeout(ofSend.dt); ofSend.dt = setTimeout(() => { try { wsave(); } catch (x) {} }, 700); } }
+  }, true);
+  const os0 = ofSet;
+  ofSet = function () {
+    os0.apply(this, arguments);
+    const l = document.querySelector("#sh .b .l");
+    if (l) { const b = document.createElement("button"); b.className = "si"; b.dataset.ob = "bind"; b.innerHTML = "<span>预设 · 世界书 · 正则 · 思维链 · 高亮  ›</span>"; l.insertBefore(b, l.firstChild); }
+  };
+  try { for (const k in WX.msgs) if (k[0] == "o" && Array.isArray(WX.msgs[k])) { const a = WX.msgs[k].filter((m) => !m.p); if (a.length != WX.msgs[k].length) { WX.msgs[k].length = 0; a.forEach((m) => WX.msgs[k].push(m)); } } } catch (e) {}
+}
+
+/* ---------- 绑定面板（线下剧情） ---------- */
+function prBindSheet(c) {
+  PRS.bc = c.id;
+  const pl = pstList(), cur = c.opre === undefined ? "d" : c.opre ? c.opre : "0";
+  const seg = (a, arr, v) => `<div class="sgc" role="group">${arr.map(([k, l]) => `<button class="${k == v ? "on" : ""}" data-ob="${a}" data-v="${k}">${l}</button>`).join("")}</div>`;
+  const wbm = c.owb === undefined || c.owb === "all" ? "all" : c.owb === "none" ? "none" : "pick";
+  const bound = rxList().filter((r) => r.ctx == "bind").length;
+  shOpen(nm(c) + " · 线下绑定", "每个角色单独保存；预设和正则在「设置 → 预设」里管理", `<div class="osr"><b>预设</b><div class="fd"><select data-ob="pre"><option value="d"${cur == "d" ? " selected" : ""}>跟随默认（${esc((pstGet(CFG.pstd) || {}).name || "无")}）</option><option value="0"${cur == "0" ? " selected" : ""}>不使用预设</option>${pl.map((p) => `<option value="${esc(p.id)}"${cur == p.id ? " selected" : ""}>${esc(p.name)}</option>`).join("")}</select></div></div>
+<div class="osr"><b>世界书</b>${seg("wb", [["all", "全部"], ["pick", "指定条目"], ["none", "不使用"]], wbm)}</div>
+<div class="osr"><b>正则</b>${seg("rx", [["all", "按设置生效"], ["none", "全部关闭"]], c.orxm === "none" ? "none" : "all")}</div>
+<div class="osr"><b>思维链</b>${seg("cot", [["1", "开"], ["0", "关"]], ofCot(c) ? "1" : "0")}</div>
+<div class="osr"><b>剧情高亮</b>${seg("hl", [["1", "开"], ["0", "关"]], c.ohl === 0 ? "0" : "1")}</div>
+<div class="l"><button class="si" data-ob="wbp"><span>选择世界书条目（${Array.isArray(c.owb) ? c.owb.length : "未指定"}）  ›</span></button><button class="si" data-ob="rxp"><span>选择绑定的正则（已选 ${Array.isArray(c.orx) ? c.orx.length : 0} / 可绑定 ${bound}）  ›</span></button><button class="si" data-sk="x"><span>完成</span></button></div>`);
+  SHs.items = [];
+}
+function prPick(c, kind) {
+  const isW = kind == "wb", arr = isW ? (Array.isArray(c.owb) ? c.owb : (c.owb = [])) : (Array.isArray(c.orx) ? c.orx : (c.orx = []));
+  const src = isW ? WB.e.filter((e) => !e.chars.length || e.chars.includes(c.id)) : rxList().filter((r) => r.ctx == "bind");
+  const row = (x) => { const id = x.id, on = arr.includes(id); return `<button class="si${on ? " on" : ""}" data-ob="pk${kind}" data-id="${esc(id)}"><span>${esc(isW ? wbTitle(x) : x.name || "未命名")}</span>${on ? "<i>已选</i>" : ""}</button>`; };
+  shOpen(isW ? "选择世界书条目" : "选择绑定的正则", isW ? "只有勾选的条目会用于这个角色的线下剧情" : "这里只列出「生效域」设为「仅绑定」的正则", `<div class="l" id="pkl">${src.length ? src.map(row).join("") : '<p class="hint" style="padding:18px 0">' + (isW ? "还没有世界书条目" : "还没有可绑定的正则：在「设置 → 预设 → 正则」里把某条的生效域设为「仅绑定」") + "</p>"}<button class="si" data-ob="back"><span>返回</span></button></div>`);
+  SHs.items = [];
+}
+document.addEventListener("click", (e) => {
+  const b = e.target.closest && e.target.closest("[data-ob]");
+  if (!b) return;
+  const k = b.dataset.ob, v = b.dataset.v;
+  const c = k == "bind" ? WX.cons.find((x) => x.id == OF.id) : WX.cons.find((x) => x.id == PRS.bc);
+  if (!c) return;
+  e.stopPropagation();
+  if (k == "bind") return prBindSheet(c);
+  if (k == "back") return prBindSheet(c);
+  if (k == "wb") {
+    if (v == "pick") { if (!Array.isArray(c.owb)) c.owb = WB.e.filter((x) => x.on && (!x.chars.length || x.chars.includes(c.id))).map((x) => x.id); wsave(); return prPick(c, "wb"); }
+    c.owb = v; wsave(); return prBindSheet(c);
+  }
+  if (k == "rx") { c.orxm = v == "none" ? "none" : "all"; wsave(); return prBindSheet(c); }
+  if (k == "cot") { c.ocot = v == "1" ? 1 : 0; wsave(); return prBindSheet(c); }
+  if (k == "hl") { c.ohl = v == "1" ? 1 : 0; wsave(); try { ofPaint(); } catch (x) {} return prBindSheet(c); }
+  if (k == "wbp") return prPick(c, "wb");
+  if (k == "rxp") return prPick(c, "rx");
+  if (k == "pkwb" || k == "pkrx") {
+    const w = k == "pkwb", arr = w ? c.owb : c.orx, id = b.dataset.id, ix = arr.findIndex((x) => String(x) == id);
+    if (ix >= 0) arr.splice(ix, 1); else arr.push(w ? (WB.e.find((x) => String(x.id) == id) || {}).id : (rxList().find((x) => String(x.id) == id) || {}).id);
+    wsave();
+    const l = document.getElementById("pkl"), y = l ? l.scrollTop : 0;
+    prPick(c, w ? "wb" : "rx");
+    const l2 = document.getElementById("pkl"); if (l2) l2.scrollTop = y;
+  }
+}, true);
+document.addEventListener("change", (e) => {
+  const t = e.target;
+  if (!t || !t.dataset || t.dataset.ob != "pre") return;
+  const c = WX.cons.find((x) => x.id == PRS.bc);
+  if (!c) return;
+  c.opre = t.value == "d" ? undefined : t.value == "0" ? 0 : t.value;
+  if (c.opre === undefined) delete c.opre;
+  wsave(); gtoast("已绑定", 1200);
+}, true);
+document.addEventListener("click", (e) => {
+  const t = e.target.closest && e.target.closest("[data-ocot]");
+  if (!t) return;
+  e.stopPropagation();
+  const m = ofL(OF.id)[+t.dataset.ocot];
+  if (m) { m.cox = m.cox ? 0 : 1; wsave(); ofPaint(); }
+}, true);
+
+/* ---------- 设置 · 预设 / 正则 标签页 ---------- */
+var PRS = { v: "pre", pe: null, g: {}, bc: null };
+const prChev = () => ic("chev").replace('class="ico"', 'class="ico ch"');
+function prTab() {
+  const seg = `<div class="sgc" role="group" style="margin:4px 0 4px">${[["pre", "预设"], ["rx", "正则"], ["bind", "绑定"]].map(([k, l]) => `<button class="${PRS.v == k ? "on" : ""}" data-pr="v" data-v="${k}">${l}</button>`).join("")}</div>`;
+  const head = `<div class="card"><h3>预设 / 正则</h3><p class="stt">仿酒馆：预设决定线下剧情发给模型的提示词结构（顺序、角色、深度注入、宏），正则对消息做查找替换，两者可以直接导入酒馆导出的 .json，再到「绑定」里指定给哪个角色的线下剧情用。</p>${seg}</div>`;
+  return head + (PRS.v == "rx" ? prRx() : PRS.v == "bind" ? prBind() : PRS.pe && pstGet(PRS.pe) ? prEdit(pstGet(PRS.pe)) : prPre());
+}
+const prFileBtn = (l) => `<label class="cb" style="display:flex;align-items:center;justify-content:center;cursor:pointer">${l}<input type="file" id="pr_f" accept=".json,.txt,application/json" multiple hidden></label>`;
+function prPre() {
+  const L = pstList();
+  return `<div class="card"><h3>我的预设</h3><div class="r2">${prFileBtn("导入酒馆文件")}<button class="cb" data-pr="paste">粘贴 JSON 导入</button></div><div class="r2" style="margin-top:8px"><button class="cb" data-pr="newp">新建预设</button><button class="cb" data-pr="defp">线下默认：${esc((pstGet(CFG.pstd) || {}).name || "无")}</button></div>` + (L.length ? `<div class="ls" style="margin-top:12px">${L.map((p) => `<div class="lr btn" role="button" tabindex="0" data-pr="po" data-id="${esc(p.id)}" style="cursor:pointer"><div><b>${esc(p.name)}</b><small>${p.items.length} 条提示词（启用 ${p.items.filter((e) => e.on).length}）${p.p && p.p.temp != null ? " · 温度 " + p.p.temp : ""}${CFG.pstd == p.id ? " · 线下默认" : ""}${p.src == "tavern" ? " · 酒馆" : ""}</small></div>${prChev()}</div>`).join("")}</div>` : '<p class="stt" style="margin-top:12px">还没有预设。可以导入酒馆的聊天补全预设（.json），或新建一个。</p>') + "</div>";
+}
+function prEdit(p) {
+  return `<div class="card"><div class="r2"><button class="cb" data-pr="pback">‹ 返回预设列表</button><button class="cb" data-pr="po" data-id="${esc(p.id)}">预设菜单</button></div><h3 style="margin-top:14px">${esc(p.name)}</h3><p class="stt">按从上到下的顺序组成提示词。「聊天记录」是对话历史的位置，它之前的相当于 system 部分，之后的相当于后置提示词。点条目可编辑、调整顺序。可用宏：{{char}} {{user}} {{persona}} {{scenario}} {{time}} {{random:a,b}} {{roll:2d6}} {{lastMessage}} 等。</p><div class="ls">${p.items.map((e, i) => `<div class="lr btn" role="button" tabindex="0" data-pr="eo" data-i="${i}" style="cursor:pointer"><div><b>${esc(e.name || "未命名")}</b><small>${e.mk ? "内置 · " + esc(prMK[e.mk] || e.mk) : (prRoleL[e.role] || e.role) + (e.pos ? " · 深度 " + e.depth : "") + " · " + [...String(e.content || "")].length + " 字"}</small></div><button class="sw${e.on ? " on" : ""}" role="switch" aria-checked="${e.on ? "true" : "false"}" aria-label="启用" data-pr="et" data-i="${i}"><i></i></button></div>`).join("")}</div><div class="r2" style="margin-top:12px"><button class="cb" data-pr="ea">新增提示词</button><button class="cb" data-pr="pp">采样参数</button></div></div>`;
+}
+function prRx() {
+  const l = rxList(), gs = {};
+  l.forEach((r, i) => { const g = r.g || "默认"; (gs[g] = gs[g] || []).push([r, i]); });
+  const ctxL = { all: "线上+线下", on: "仅线上", off: "仅线下", bind: "仅绑定" }, scL = { ai: "AI", user: "我", both: "双方" }, whL = { show: "显示", prompt: "发给模型", both: "两者" };
+  const grp = Object.keys(gs).map((g) => {
+    const cl = PRS.g[g] === 1;
+    return `<div class="shd" data-pr="g" data-g="${esc(g)}" role="button" tabindex="0" style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;cursor:pointer"><span>${esc(g)} · ${gs[g].length}</span><span><button class="cb" data-pr="gsw" data-g="${esc(g)}" style="height:24px;padding:0 10px;font-size:11px">全开 / 全关</button> ${cl ? "展开" : "收起"}</span></div>` + (cl ? "" : `<div class="ls">${gs[g].map(([r, i]) => `<div class="lr btn" role="button" tabindex="0" data-pr="ro" data-i="${i}" style="cursor:pointer"><div><b>${esc(r.name || "未命名")}</b><small>${scL[r.scope] || "AI"} · ${whL[r.where] || "两者"} · ${ctxL[r.ctx || "all"]}${r.hl ? " · 高亮" : ""}${r.html ? " · HTML" : ""}</small></div><button class="sw${r.on ? " on" : ""}" role="switch" aria-checked="${r.on ? "true" : "false"}" aria-label="启用" data-pr="rt" data-i="${i}"><i></i></button></div>`).join("")}</div>`);
+  }).join("");
+  return `<div class="card"><h3>正则脚本</h3><p class="stt">对消息做查找替换。「生效位置」可只改显示（存档原文不变）、只改发给模型的内容或两者都改；「生效域」决定在线上聊天、线下剧情还是仅绑定到某个线下剧情/预设时才生效。设了「高亮色」的脚本不改文字，只给匹配到的内容上色。</p><div class="r2">${prFileBtn("导入酒馆正则")}<button class="cb" data-pr="paste">粘贴 JSON 导入</button></div><div class="r2" style="margin-top:8px"><button class="cb" data-pr="newr">新建正则</button><button class="cb" data-pr="expr">导出全部</button></div>${grp || '<p class="stt" style="margin-top:12px">还没有正则脚本。</p>'}</div><div class="card"><h3>测试</h3><div class="fd"><small>输入一段文字</small><textarea id="pr_t" rows="3" placeholder="例如：&lt;think&gt;想想&lt;/think&gt;你好"></textarea></div><p class="stt" id="pr_o" style="white-space:pre-wrap"></p></div>`;
+}
+function prBind() {
+  const cs = WX.cons.filter((c) => c && !c.sys);
+  return `<div class="card"><h3>线下剧情绑定</h3><p class="stt">给每个角色的线下剧情单独指定预设、世界书条目、正则、思维链与高亮。线下剧情页右上角「更多 → 剧情设置」里也能直接设置。</p><div class="ls">${cs.length ? cs.map((c) => { const p = pstOf(c); return `<div class="lr btn" role="button" tabindex="0" data-pr="bc" data-id="${esc(c.id)}" style="cursor:pointer"><div><b>${esc(nm(c))}</b><small>预设：${esc(p ? p.name : "无")} · 世界书：${c.owb === "none" ? "关" : Array.isArray(c.owb) ? c.owb.length + " 条" : "全部"} · 思维链：${ofCot(c) ? "开" : "关"}</small></div>${prChev()}</div>`; }).join("") : '<p class="stt">还没有角色。</p>'}</div></div>`;
+}
+function prRefresh() { try { rSet(1); } catch (e) {} }
+function prCycle(o, k, arr) { const i = arr.indexOf(o[k]); o[k] = arr[(i + 1) % arr.length]; }
+function prEntry(p, i) {
+  const e = p.items[i];
+  if (!e) return;
+  const sv = () => { savePrefs(); prRefresh(); };
+  const again = () => setTimeout(() => prEntry(p, i), 280);
+  const it = [{ t: "名称：" + (e.name || "未命名"), f: () => setTimeout(() => editSheet("条目名称", e.name || "", (v) => { e.name = v.trim() || "未命名"; sv(); again(); }), 260) }];
+  if (!e.mk) {
+    it.push({ t: "内容（" + [...String(e.content || "")].length + " 字）", f: () => setTimeout(() => editSheet("提示词内容", e.content || "", (v) => { e.content = v; sv(); again(); }), 260) });
+    it.push({ t: "角色：" + (prRoleL[e.role] || e.role) + "（点击切换）", f: () => { prCycle(e, "role", ["system", "user", "assistant"]); sv(); again(); } });
+    it.push({ t: e.pos ? "位置：深度注入（距末尾 " + e.depth + " 条）" : "位置：相对（按列表顺序）", f: () => { e.pos = e.pos ? 0 : 1; sv(); again(); } });
+    if (e.pos) it.push({ t: "注入深度：" + e.depth, f: () => setTimeout(() => editSheet("注入深度（0 = 最末尾）", String(e.depth), (v) => { e.depth = Math.max(0, Math.min(99, parseInt(v) || 0)); sv(); again(); }), 260) });
+  }
+  it.push({ t: "上移", f: () => { if (i > 0) { p.items.splice(i - 1, 0, p.items.splice(i, 1)[0]); sv(); prEntry(p, i - 1); } } });
+  it.push({ t: "下移", f: () => { if (i < p.items.length - 1) { p.items.splice(i + 1, 0, p.items.splice(i, 1)[0]); sv(); prEntry(p, i + 1); } } });
+  it.push({ t: "删除", dg: 1, f: () => { p.items.splice(i, 1); sv(); } });
+  actSheet(e.mk ? "内置位置 · " + (prMK[e.mk] || e.mk) : "提示词条目", it, e.mk ? "这是酒馆的内置位置，决定对应内容插入到哪里" : "");
+}
+function prParams(p) {
+  p.p = p.p || {};
+  const F = [["temp", "温度", "0–2"], ["top_p", "Top P", "0–1"], ["fp", "频率惩罚", "-2–2"], ["pp", "存在惩罚", "-2–2"], ["max", "最大输出 token", "留空=按字数"]];
+  actSheet("采样参数", F.map(([k, l, h]) => ({ t: l + "：" + (p.p[k] == null ? "默认" : p.p[k]), f: () => setTimeout(() => editSheet(l + "（" + h + "，留空恢复默认）", p.p[k] == null ? "" : String(p.p[k]), (v) => { v = String(v).trim(); p.p[k] = v === "" || isNaN(+v) ? null : +v; savePrefs(); prRefresh(); setTimeout(() => prParams(p), 280); }), 260) })), "只在线下剧情绑定该预设时生效；Anthropic 接口只支持温度");
+}
+function prPreMenu(p) {
+  actSheet(p.name, [
+    { t: "编辑提示词", f: () => { PRS.pe = p.id; prRefresh(); } },
+    { t: "采样参数", f: () => setTimeout(() => prParams(p), 260) },
+    { t: "绑定正则（" + (p.rx || []).length + "）", f: () => setTimeout(() => prPickRx(p), 260) },
+    { t: CFG.pstd == p.id ? "取消线下默认" : "设为线下默认", f: () => { CFG.pstd = CFG.pstd == p.id ? 0 : p.id; savePrefs(); prRefresh(); } },
+    { t: "重命名", f: () => setTimeout(() => editSheet("预设名称", p.name, (v) => { p.name = v.trim() || p.name; savePrefs(); prRefresh(); }), 260) },
+    { t: "复制", f: () => { const q = JSON.parse(JSON.stringify(p)); q.id = prUid(); q.name += "（副本）"; q.items.forEach((e) => { e.id = prUid(); }); pstList().push(q); savePrefs(); prRefresh(); } },
+    { t: "导出为酒馆 JSON", f: () => saveFile(p.name + ".json", JSON.stringify(pstToTavern(p), null, 2)) },
+    { t: "删除", dg: 1, f: () => { CFG.pst = pstList().filter((x) => x.id != p.id); if (CFG.pstd == p.id) CFG.pstd = 0; WX.cons.forEach((c) => { if (c.opre == p.id) delete c.opre; }); PRS.pe = null; savePrefs(); try { wsave(); } catch (e) {} prRefresh(); } }
+  ]);
+}
+function prPickRx(p) {
+  p.rx = Array.isArray(p.rx) ? p.rx : [];
+  const src = rxList().filter((r) => r.ctx == "bind");
+  shOpen("预设绑定的正则", "绑定后，使用这个预设的线下剧情会自动启用它们（只列出生效域为「仅绑定」的正则）", `<div class="l" id="pkl">${src.length ? src.map((r) => `<button class="si${p.rx.includes(r.id) ? " on" : ""}" data-prk="${esc(r.id)}"><span>${esc(r.name)}</span>${p.rx.includes(r.id) ? "<i>已选</i>" : ""}</button>`).join("") : '<p class="hint" style="padding:18px 0">没有可绑定的正则</p>'}<button class="si" data-sk="x"><span>完成</span></button></div>`);
+  SHs.items = [];
+  PRS.pr = p;
+}
+function prRegex(i) {
+  const r = rxList()[i];
+  if (!r) return;
+  const sv = () => { savePrefs(); prRefresh(); };
+  const again = () => setTimeout(() => prRegex(i), 280);
+  const ed = (t, k, v, ph) => setTimeout(() => editSheet(t, v == null ? "" : String(v), (x) => { r[k] = x; sv(); again(); }, ph), 260);
+  const L = { scope: { ai: "AI 的消息", user: "我的消息", both: "双方" }, where: { show: "只改显示", prompt: "只改发给模型的", both: "两者都改" }, ctx: { all: "线上 + 线下", on: "仅线上聊天", off: "仅线下剧情", bind: "仅绑定的线下剧情/预设" } };
+  actSheet(r.name || "正则", [
+    { t: "名称：" + (r.name || ""), f: () => ed("脚本名称", "name", r.name) },
+    { t: "查找（正则）：" + String(r.find || "").slice(0, 24), f: () => ed("查找正则（可写成 /pattern/flags）", "find", r.find) },
+    { t: "替换为：" + String(r.rep || "").slice(0, 24), f: () => ed("替换内容（支持 $1、{{match}}、{{char}}、{{user}}，\\n 表示换行）", "rep", r.rep) },
+    { t: "标志位：" + (r.flags || "g"), f: () => ed("标志位（如 gi）", "flags", r.flags || "g") },
+    { t: "作用对象：" + L.scope[r.scope || "ai"], f: () => { prCycle(r, "scope", ["ai", "user", "both"]); r.scope = r.scope || "ai"; sv(); again(); } },
+    { t: "生效位置：" + L.where[r.where || "both"], f: () => { r.where = r.where || "both"; prCycle(r, "where", ["show", "prompt", "both"]); sv(); again(); } },
+    { t: "生效域：" + L.ctx[r.ctx || "all"], f: () => { r.ctx = r.ctx || "all"; prCycle(r, "ctx", ["all", "on", "off", "bind"]); sv(); again(); } },
+    { t: "分组：" + (r.g || "默认"), f: () => ed("分组名称", "g", r.g || "默认") },
+    { t: "高亮色：" + (r.hl || "无（不填则是普通替换）"), f: () => ed("高亮颜色（如 #d9534f，留空=普通替换；高亮只在线下剧情里显示）", "hl", r.hl || "") },
+    { t: "允许 HTML 显示：" + (r.html ? "开" : "关"), f: () => { r.html = r.html ? 0 : 1; sv(); again(); } },
+    { t: "裁剪字符串：" + (r.trim ? "已设" : "无"), f: () => ed("匹配后要额外删掉的字符串（一行一个）", "trim", r.trim || "") },
+    { t: "导出（酒馆格式）", f: () => saveFile((r.name || "regex") + ".json", JSON.stringify(rxToTavern(r), null, 2)) },
+    { t: "复制", f: () => { const q = Object.assign({}, r, { id: prRid(), name: (r.name || "") + "（副本）" }); CFG.rx = rxList().concat([q]); sv(); } },
+    { t: "删除", dg: 1, f: () => { CFG.rx = rxList().filter((_, k) => k != i); sv(); } }
+  ]);
+}
+function prNewP() {
+  const p = { id: prUid(), name: "新预设 " + (pstList().length + 1), items: [
+    { id: prUid(), name: "主提示词", role: "system", content: "你是{{char}}，正在和{{user}}进行线下剧情。用细腻的文字描写你自己的动作、神态与环境，不替{{user}}说话或行动。", on: true, mk: "", pos: 0, depth: 4, idf: "main" },
+    { id: prUid(), name: "角色人设", role: "system", content: "", on: true, mk: "charDescription", pos: 0, depth: 4, idf: "charDescription" },
+    { id: prUid(), name: "世界书（前）", role: "system", content: "", on: true, mk: "worldInfoBefore", pos: 0, depth: 4, idf: "worldInfoBefore" },
+    { id: prUid(), name: "世界书（后）", role: "system", content: "", on: true, mk: "worldInfoAfter", pos: 0, depth: 4, idf: "worldInfoAfter" },
+    { id: prUid(), name: "开场设定", role: "system", content: "", on: true, mk: "scenario", pos: 0, depth: 4, idf: "scenario" },
+    { id: prUid(), name: "聊天记录", role: "system", content: "", on: true, mk: "chatHistory", pos: 0, depth: 4, idf: "chatHistory" }
+  ], p: {}, rx: [], src: "my" };
+  pstList().push(p); PRS.pe = p.id; savePrefs(); prRefresh();
+}
+document.addEventListener("click", (e) => {
+  const b = e.target.closest && e.target.closest("[data-pr],[data-prk]");
+  if (!b) return;
+  if (b.dataset.prk) {
+    e.stopPropagation();
+    const p = PRS.pr, id = b.dataset.prk, k = (p.rx || []).findIndex((x) => String(x) == id);
+    if (k >= 0) p.rx.splice(k, 1); else p.rx.push((rxList().find((x) => String(x.id) == id) || {}).id);
+    savePrefs();
+    const l = document.getElementById("pkl"), y = l ? l.scrollTop : 0;
+    prPickRx(p);
+    const l2 = document.getElementById("pkl"); if (l2) l2.scrollTop = y;
+    return;
+  }
+  e.stopPropagation();
+  const a = b.dataset.pr, d = b.dataset, L = pstList(), i = +d.i;
+  if (a == "goto") { ST.tab = 6; PRS.v = "rx"; return rSet(); }
+  if (a == "v") { PRS.v = d.v; PRS.pe = null; return prRefresh(); }
+  if (a == "newp") return prNewP();
+  if (a == "pback") { PRS.pe = null; return prRefresh(); }
+  if (a == "po") { const p = pstGet(d.id); return p && prPreMenu(p); }
+  if (a == "defp") return actSheet("线下默认预设", [{ t: "不使用预设", f: () => { CFG.pstd = 0; savePrefs(); prRefresh(); } }].concat(L.map((p) => ({ t: p.name + (CFG.pstd == p.id ? "（当前）" : ""), f: () => { CFG.pstd = p.id; savePrefs(); prRefresh(); } }))), "没有单独绑定预设的角色，线下剧情会使用它");
+  if (a == "paste") return editSheet("粘贴酒馆预设 / 正则 JSON", "", (v) => { if (String(v).trim() && prImport(v, "粘贴")) prRefresh(); }, "把酒馆导出的 JSON 粘贴到这里");
+  if (a == "pp") { const p = pstGet(PRS.pe); return p && prParams(p); }
+  if (a == "ea") { const p = pstGet(PRS.pe); if (!p) return; p.items.push({ id: prUid(), name: "新提示词", role: "system", content: "", on: true, mk: "", pos: 0, depth: 4, idf: prUid() }); savePrefs(); prRefresh(); return prEntry(p, p.items.length - 1); }
+  if (a == "eo") { const p = pstGet(PRS.pe); return p && prEntry(p, i); }
+  if (a == "et") { const p = pstGet(PRS.pe), en = p && p.items[i]; if (en) { en.on = !en.on; savePrefs(); b.classList.toggle("on", en.on); b.setAttribute("aria-checked", en.on ? "true" : "false"); } return; }
+  if (a == "g") { PRS.g[d.g] = PRS.g[d.g] === 1 ? 0 : 1; return prRefresh(); }
+  if (a == "gsw") { const l = rxList().filter((r) => (r.g || "默认") == d.g), on = l.some((r) => r.on); l.forEach((r) => { r.on = on ? 0 : 1; }); savePrefs(); return prRefresh(); }
+  if (a == "newr") { CFG.rx = rxList().concat([{ id: prRid(), name: "新脚本", find: "", flags: "g", rep: "", scope: "ai", where: "show", on: 1, ctx: "all", g: "默认" }]); savePrefs(); prRefresh(); return prRegex(rxList().length - 1); }
+  if (a == "ro") return prRegex(i);
+  if (a == "rt") { const r = rxList()[i]; if (r) { r.on = r.on ? 0 : 1; savePrefs(); b.classList.toggle("on", !!r.on); b.setAttribute("aria-checked", r.on ? "true" : "false"); prT(); } return; }
+  if (a == "expr") { const l = rxList(); if (!l.length) return gtoast("没有可导出的正则"); return saveFile("正则脚本.json", JSON.stringify(l.map(rxToTavern), null, 2)); }
+  if (a == "bc") { const c = WX.cons.find((x) => String(x.id) == d.id); if (c) { PRS.bc = c.id; prBindSheet(c); } return; }
+}, true);
+document.addEventListener("change", (e) => {
+  const t = e.target;
+  if (!t || t.id != "pr_f" || !t.files) return;
+  const fs = [...t.files];
+  t.value = "";
+  if (!fs.length) return;
+  let ok = 0, n = 0;
+  fs.forEach((f) => { const r = new FileReader(); r.onload = () => { if (prImport(String(r.result || ""), f.name)) ok++; if (++n == fs.length && ok) prRefresh(); }; r.onerror = () => { if (++n == fs.length && ok) prRefresh(); }; r.readAsText(f); });
+}, true);
+function prT() {
+  const t = document.getElementById("pr_t"), o = document.getElementById("pr_o");
+  if (!t || !o) return;
+  if (!t.value) { o.textContent = ""; return; }
+  const s = OFX.on; OFX.on = 0;
+  try { o.textContent = "线上显示：" + (rxRun(t.value, "ai", "show") || "（空）") + "\n线上发给模型：" + (rxRun(t.value, "ai", "prompt") || "（空）"); } finally { OFX.on = s; }
+}
+document.addEventListener("input", (e) => { if (e.target && e.target.id == "pr_t") prT(); }, true);
+
+/* ---------- 样式 ---------- */
+{
+  const s = document.createElement("style");
+  s.id = "prcss";
+  s.textContent = `
+.seg button{font-size:12.5px;padding:0 2px}
+.xo-ai .od,.xo-me .od,.offb .od{color:#b4532a;font-weight:500}
+.xo-ai .ot2,.xo-me .ot2,.offb .ot2{color:var(--t4);font-style:italic}
+.xo-ai .osy,.xo-me .osy,.offb .osy{font-family:-apple-system,system-ui,sans-serif;font-size:.84em;padding:1px 7px;border-radius:8px;background:var(--soft);color:var(--t3)}
+.xo-ai mark.ow,.xo-me mark.ow,.offb mark.ow{background:none;color:inherit;border-bottom:1.5px dotted var(--t4);padding:0}
+.xo-ai .ohl,.xo-me .ohl,.offb .ohl{font-weight:500}
+:root[data-theme="dark"] .od{color:#f0a97f}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .od{color:#f0a97f}}
+.ocot{margin:10px 0 0;padding:8px 12px;border-radius:12px;background:var(--soft);color:var(--t3);font:12px/1.7 -apple-system,system-ui,sans-serif;cursor:pointer;white-space:pre-wrap;overflow-wrap:anywhere}
+.ocot b{font-weight:500;letter-spacing:.08em;margin-right:8px;color:var(--t4)}.ocot span{color:var(--t5)}.ocot.on b{display:block;margin:0 0 4px}
+.ocot.on{max-height:300px;overflow-y:auto}
+#st .sgc button[data-pr]{font-size:13px}`;
+  document.head.appendChild(s);
+}
+//XEND
+</script>
+<script type="text/plain" class="mp">
+/* ---- 查岗页样式补全 / 列表滑动兜底 ---- */
+{
+  const s = document.createElement("style");
+  s.id = "pxfix";
+  s.textContent = `
+#pxm .pxh{justify-content:space-between;min-height:40px}#pxm .pxh b{margin:0 auto 0 0}#pxm .pxh button+b{margin:0 auto}#pxm .pxh button .ico{width:16px;height:16px}
+#pxm .pxw{display:flex;align-items:center;gap:12px;padding:11px 0;cursor:pointer}
+#pxm .pxw>div{flex:1;min-width:0}
+#pxm .pxw b{display:flex;justify-content:space-between;font-size:15px;font-weight:500}
+#pxm .pxw b em{font-style:normal;font-size:11.5px;color:var(--t4);font-weight:400}
+#pxm .pxw s{display:block;text-decoration:none;font-size:13px;color:var(--t4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px}
+#pxm .pxa{flex:none;width:40px;height:40px;border-radius:12px;background:var(--soft);display:grid;place-items:center;font-style:normal;font-size:16px}
+#pxm .pxa.b{width:44px;height:44px}
+#pxm .pxg{display:block;font-size:12px;color:var(--t4);margin:16px 0 2px}
+#pxm .pxe{text-align:center;color:var(--t4);margin-top:40px}
+#sh .l{touch-action:none!important}`;
+  document.head.appendChild(s);
+  const st = (document.getElementById("pxv") || {});
+}
+{
+  let d = null, raf = 0, jm = 0;
+  const sc = (e) => e.target && e.target.closest && e.target.closest("#sh .l");
+  document.addEventListener("pointerdown", (e) => {
+    if (e.pointerType == "mouse") return;
+    const l = sc(e);
+    if (!l) return;
+    cancelAnimationFrame(raf);
+    const r = l.getBoundingClientRect(), k = l.offsetHeight ? r.height / l.offsetHeight : 1;
+    d = { l, id: e.pointerId, y: e.clientY, k: k || 1, mv: 0, v: 0, t: Date.now() };
+  }, true);
+  document.addEventListener("pointermove", (e) => {
+    if (!d || e.pointerId != d.id) return;
+    const dy = e.clientY - d.y;
+    if (!d.mv && Math.abs(dy) < 6) return;
+    d.mv = 1;
+    const now = Date.now(), dt = Math.max(1, now - d.t);
+    d.l.scrollTop -= dy / d.k;
+    d.v = 0.8 * d.v + 0.2 * (-dy / d.k / dt);
+    d.y = e.clientY; d.t = now;
+  }, true);
+  const end = (e) => {
+    if (!d || (e && e.pointerId != d.id)) return;
+    const o = d; d = null;
+    if (!o.mv) return;
+    jm = Date.now();
+    let v = o.v * 16;
+    if (Date.now() - o.t > 120) v = 0;
+    const step = () => { if (Math.abs(v) < 0.4) return; o.l.scrollTop += v; v *= 0.95; raf = requestAnimationFrame(step); };
+    raf = requestAnimationFrame(step);
+  };
+  document.addEventListener("pointerup", end, true);
+  document.addEventListener("pointercancel", end, true);
+  document.addEventListener("click", (e) => { if (Date.now() - jm < 350 && sc(e)) { e.stopPropagation(); e.preventDefault(); } }, true);
+}
+//XEND
+</script>
+<script type="text/plain" class="mp">
+/* ---- 关联账号：通知内容也能被 TA 正常回应；好友来消息后更及时地自己回复 ---- */
+{
+  const ld0 = lkDeliver;
+  lkDeliver = function (c, f) {
+    const r = ld0.apply(this, arguments);
+    try {
+      const L = c.ls = c.ls || {};
+      if (L.ar !== 0 && f) setTimeout(() => { try { lkAutoReply(c, f.id); } catch (e) {} }, 40000 + Math.random() * 80000);
+    } catch (e) {}
+    return r;
+  };
+  const a2 = acctTxt;
+  acctTxt = function (c) {
+    let t = a2(c);
+    try {
+      if (c && (c.link || c.kick)) {
+        const ns = (typeof N != "undefined" ? N : []).filter((x) => x && (x.k == "sms" || x.k == "chat")).slice(0, 5).map((x) => "「" + x.t + "」" + String(x.b || "").slice(0, 60)).join("；");
+        if (ns) t += "\n\n【对方手机上最近弹出的通知】" + ns + "。这些通知对方都看得到，如果对方问起、转述或评论，你正常回应、自然接话（比如验证码、登录提醒、运营商短信、好友来信），不要沉默、不要回避，也不要说自己看不到。";
+      }
+    } catch (e) {}
+    return t;
+  };
 }
 //XEND
 </script>
