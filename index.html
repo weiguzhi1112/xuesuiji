@@ -3352,10 +3352,10 @@ $("#wx").addEventListener("change", async (e) => {
   v.textContent = "";
   l.querySelector("span").textContent = "更换头像";
 });
-const PREF_KEYS = ["cst", "pst", "pstd", "hdr", "ccss", "pam", "wzs", "uim", "pcap", "nolock", "lkbg", "lkc", "lkts", "lkdim", "nln", "fold", "lb", "rs", "ico", "icn", "ist", "isz", "wz", "wzd", "shell", "sbar", "isl", "hbar", "tb", "momAuto", "amapKey", "ka", "persona", "rx", "ui", "rad", "hap", "pace", "snd", "theme", "af", "bc", "gl", "sp", "sm", "sn", "sv", "sti", "sys", "qh", "dy", "kg", "kbf"];
+const PREF_KEYS = ["todo", "trw", "cst", "pst", "pstd", "hdr", "ccss", "pam", "wzs", "uim", "pcap", "nolock", "lkbg", "lkc", "lkts", "lkdim", "nln", "fold", "lb", "rs", "ico", "icn", "ist", "isz", "wz", "wzd", "shell", "sbar", "isl", "hbar", "tb", "momAuto", "amapKey", "ka", "persona", "rx", "ui", "rad", "hap", "pace", "snd", "theme", "af", "bc", "gl", "sp", "sm", "sn", "sv", "sti", "sys", "qh", "dy", "kg", "kbf"];
 const nx = () => ({ type: "openai", url: "", key: "", model: "" });
 const apiDef = () => ({ a: nx(), b: nx(), presets: [], pi: -1, stream: "auto", temp: 0.8, reason: "off", bare: 0, fb: 1, black: [], tok: 0, vis: { on: 1, detail: "high", n: 3, re: "high", desc: 1, px: 1280 }, tts: {}, net: { direct: 1, proxy: "" }, ml: { a: { sig: "", list: [] }, b: { sig: "", list: [] } } });
-const prefDef = () => ({ cst: {}, pst: [], pstd: 0, hdr: 0, ccss: "", pam: {}, tb: {}, momAuto: 0, amapKey: "", ka: 0, wzs: {}, uim: 0, pcap: 0, nolock: 0, lkbg: "", lkc: "", lkts: 0, lkdim: 12, nln: 0, fold: {}, lb: {}, rs: {}, ico: {}, icn: {}, ist: "", isz: 0, wz: { l: "one", a: "date", b: "clock" }, wzd: {}, shell: 1, sbar: 1, isl: 1, hbar: 1, persona: "", rx: [{ id: 1, name: "隐藏思考内容", find: "<think>[\\s\\S]*?</think>", flags: "gi", rep: "", scope: "ai", where: "both", on: 1 }], ui: 100, dy: 0, kg: 8, kbf: 1, rad: 19, hap: 1, pace: 1, snd: 1, theme: "auto", af: {}, bc: {}, gl: 0, sp: 1, sm: "both", sn: {}, sv: 70, sti: 0, sys: 0, qh: { on: 0, s: 23, e: 7 } });
+const prefDef = () => ({ todo: [], trw: [], cst: {}, pst: [], pstd: 0, hdr: 0, ccss: "", pam: {}, tb: {}, momAuto: 0, amapKey: "", ka: 0, wzs: {}, uim: 0, pcap: 0, nolock: 0, lkbg: "", lkc: "", lkts: 0, lkdim: 12, nln: 0, fold: {}, lb: {}, rs: {}, ico: {}, icn: {}, ist: "", isz: 0, wz: { l: "one", a: "date", b: "clock" }, wzd: {}, shell: 1, sbar: 1, isl: 1, hbar: 1, persona: "", rx: [{ id: 1, name: "隐藏思考内容", find: "<think>[\\s\\S]*?</think>", flags: "gi", rep: "", scope: "ai", where: "both", on: 1 }], ui: 100, dy: 0, kg: 8, kbf: 1, rad: 19, hap: 1, pace: 1, snd: 1, theme: "auto", af: {}, bc: {}, gl: 0, sp: 1, sm: "both", sn: {}, sv: 70, sti: 0, sys: 0, qh: { on: 0, s: 23, e: 7 } });
 let CFG = Object.assign(apiDef(), prefDef());
 function fixCfg() {
   for (const x of ["a", "b"]) CFG[x] = Object.assign(nx(), isObj(CFG[x]) ? CFG[x] : {});
@@ -19212,6 +19212,512 @@ function ohxNode(n, top, st, c, ctx) {
   document.head.appendChild(st);
   document.addEventListener("click", (e) => { const t = e.target; if (t && t.closest && t.closest(".ohx summary,.ohx a,.ohx details")) e.stopPropagation(); }, true);
 }
+
+//XEND
+</script>
+<script type="text/plain" class="mp">
+// ===== 新应用框架 + 待办 + 翻译 =====
+const XA_LIST = [];
+function xaFree(occ) { for (let s = 0; s < 36; s++) if (!occ.has(s)) return s; return 35; }
+function xaAdd(k, name, icon, reg, group, desc) {
+  APPS[k] = [name, k]; I[k] = icon; REG[k] = reg;
+  try { STXI[k] = [group || "工具", desc || ""]; } catch (e) {}
+  if (!P2.includes(k)) P2.push(k);
+  if (!XA_LIST.includes(k)) XA_LIST.push(k);
+  if (!pos[k]) {
+    const occ = new Set(Object.keys(pos).filter((j) => pos[j].p === 1 && !pos[j].d).map((j) => pos[j].s));
+    pos[k] = { p: 1, s: xaFree(occ) };
+    pgs[1].appendChild(mk(k)); put(k);
+  }
+}
+{
+  const ll0 = loadLay;
+  loadLay = function (L) {
+    if (isObj(L)) {
+      const occ = new Set(Object.keys(L).filter((j) => isObj(L[j]) && L[j].p === 1 && !L[j].d).map((j) => L[j].s));
+      XA_LIST.forEach((k) => { if (!isObj(L[k])) { const s = xaFree(occ); occ.add(s); L[k] = { p: 1, s }; } });
+    }
+    return ll0.call(this, L);
+  };
+}
+const xaCss = document.createElement("style");
+xaCss.id = "xacss";
+xaCss.textContent = `.xa-tabs{display:flex;gap:8px;padding:0 22px 8px;overflow-x:auto;scrollbar-width:none;flex:none}.xa-tabs::-webkit-scrollbar{display:none}.xa-tabs .cb{margin:0;flex:none}.xa-tabs .cb.on{background:var(--ink);color:var(--app);border-color:var(--ink)}
+.xa-row{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line)}.xa-row>div{flex:1;min-width:0}.xa-row b{display:block;font-size:15px;font-weight:500;line-height:1.5;word-break:break-word}.xa-row s{display:block;text-decoration:none;font-size:12px;color:var(--t5);margin-top:2px}
+.td-ck{flex:none;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--t4);background:none;margin-top:1px;display:grid;place-items:center;color:var(--app);cursor:pointer;padding:0}.td-ck .ico{width:14px;height:14px;stroke-width:3;opacity:0}.td-ck.on{background:var(--ink);border-color:var(--ink)}.td-ck.on .ico{opacity:1}
+.td-done b{text-decoration:line-through;color:var(--t5)}.td-over s{color:#ff3b30}.td-tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:9px;background:rgba(128,128,128,.14);margin-right:5px;color:var(--t4)}
+.xa-box{border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;white-space:pre-wrap;word-break:break-word;margin:10px 0}.xa-ta{width:100%;min-height:110px;border:1px solid var(--line);border-radius:14px;padding:12px 14px;font:inherit;font-size:15px;line-height:1.6;background:none;color:var(--ink);resize:none;box-sizing:border-box;outline:none}
+.xa-sec{font-size:12px;color:var(--t5);margin:16px 0 6px;letter-spacing:.05em}.xa-btns{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.xa-btns .cb{margin:0}.xa-btns .cb.pr{background:var(--ink);color:var(--app);border-color:var(--ink)}`;
+document.head.appendChild(xaCss);
+const xaPick = (title, f, filt) => {
+  const L = WX.cons.filter((c) => !c.fid && (!filt || filt(c)));
+  if (!L.length) return gtoast("通讯录里还没有可以选的角色");
+  actSheet(title, L.map((c) => ({ t: nm(c), f: () => f(c) })));
+};
+const xaMsg = (c, t) => {
+  const L = WX.msgs[c.id] || (WX.msgs[c.id] = []), n = Date.now();
+  L.push({ me: 0, t, ts: n, h: new Date(n).toTimeString().slice(0, 5) });
+  if (WX.cur != c.id) c.unread = (c.unread || 0) + 1;
+  try { wsave(); wxTouch(); if (WX.cur == c.id) { ml(); const e = $("#ml"); if (e) e.scrollTop = 1e9; } } catch (e) {}
+  try { notify("chat", nm(c), t.length > 40 ? t.slice(0, 40) + "…" : t); } catch (e) {}
+};
+const xaOK = () => { if (!CFG.a.url || !CFG.a.model) { gtoast("请先在「设置」中配置接口与模型"); return false; } return true; };
+const xaCsys = (c, extra) => `你是「${c.name}」，人设：${c.persona || "普通朋友"}。现在是${nowStr()}。${extra || ""}`;
+
+// ---------- 待办 ----------
+const TD = { f: 0, busy: 0 };
+const tdList = () => CFG.todo || (CFG.todo = []);
+const tdDue = (ts) => {
+  if (!ts) return "";
+  const d = new Date(ts), n = new Date(), p = (x) => String(x).padStart(2, "0"), hm = p(d.getHours()) + ":" + p(d.getMinutes());
+  const dd = Math.round((new Date(d.getFullYear(), d.getMonth(), d.getDate()) - new Date(n.getFullYear(), n.getMonth(), n.getDate())) / 864e5);
+  return (dd == 0 ? "今天" : dd == 1 ? "明天" : dd == -1 ? "昨天" : (d.getMonth() + 1) + "月" + d.getDate() + "日") + " " + hm;
+};
+function tdR() {
+  const L = tdList(), now = Date.now(), un = L.filter((x) => !x.done).length, dn = L.length - un;
+  const V = L.filter((x) => TD.f == 0 ? !x.done : TD.f == 1 ? x.done : 1).sort((a, b) => (a.done - b.done) || ((a.due || 9e15) - (b.due || 9e15)) || b.ts - a.ts);
+  const row = (x) => {
+    const c = x.cid && WX.cons.find((z) => z.id == x.cid), over = !x.done && x.due && x.due < now;
+    return `<div class="xa-row${x.done ? " td-done" : ""}${over ? " td-over" : ""}"><button class="td-ck${x.done ? " on" : ""}" data-td="tg" data-id="${x.id}" aria-label="完成">${ic("chk")}</button><div data-td="mo" data-id="${x.id}" role="button" tabindex="0"><b>${esc(x.t)}</b><s>${c ? `<span class="td-tag">${x.by == x.cid ? esc(nm(c)) + " 派的" : esc(nm(c)) + " 监督"}</span>` : ""}${x.done ? "已完成 " + tdDue(x.dts) : x.due ? (over ? "已过期 · " : "截止 ") + tdDue(x.due) : "无截止时间"}</s></div></div>`;
+  };
+  $("#app").innerHTML = xkHead("待办", `<div class="tbr"><button class="tbn" data-td="as" aria-label="让角色派任务">${ic("bolt")}</button><button class="tbn" data-td="add" aria-label="添加待办">${ic("plus")}</button></div>`) +
+    `<div class="xa-tabs">${[["待办 " + un, 0], ["已完成 " + dn, 1], ["全部", 2]].map((x) => `<button class="cb${TD.f == x[1] ? " on" : ""}" data-td="f" data-v="${x[1]}">${x[0]}</button>`).join("")}</div><div class="sc">${V.length ? V.map(row).join("") : '<p class="em" style="margin-top:80px">' + (TD.f == 1 ? "还没有完成的待办" : "没有待办<br>点右上角添加，或让角色给你派任务") + "</p>"}${TD.busy ? '<p class="em" style="margin-top:20px">TA 正在想给你派什么任务…</p>' : ""}</div>`;
+}
+function tdAdd(t, due, cid, by) {
+  tdList().unshift({ id: "t" + Date.now() + Math.floor(Math.random() * 1e3), t, done: 0, due: due || 0, cid: cid || 0, by: by || 0, ts: Date.now() });
+  savePrefs();
+}
+function tdDone(x) {
+  x.done = 1; x.dts = Date.now(); savePrefs();
+  const c = x.cid && WX.cons.find((z) => z.id == x.cid);
+  if (c && !x.pr) {
+    x.pr = 1; savePrefs();
+    const late = x.due && x.dts > x.due;
+    if (CFG.a.url && CFG.a.model) {
+      gtoast("已完成，" + nm(c) + " 会来夸你");
+      setTimeout(() => wxReply(c.id, "（我刚刚完成了待办「" + x.t + "」" + (x.by == c.id ? "，这是你派给我的任务" : "，你一直在监督我") + (late ? "，不过比截止时间晚了一些" : x.due ? "，而且是按时完成的" : "") + "。请按你的性格表扬我一下，具体、自然，别太长；如果我拖了就带点嗔怪。）"), 600);
+    } else gtoast("已完成 ✓");
+  } else gtoast("已完成 ✓");
+}
+function tdMore(x) {
+  const c = x.cid && WX.cons.find((z) => z.id == x.cid);
+  const it = [{ t: "编辑内容", f: () => editSheet("编辑待办", x.t, (v) => { v = v.trim(); if (v) { x.t = v; savePrefs(); tdR(); } }) }];
+  it.push({ t: "修改截止时间", f: () => tdDuePick((d) => { x.due = d; x.n = 0; x.pre = 0; savePrefs(); tdR(); }) });
+  if (!x.done && c) it.push({ t: "让 " + nm(c) + " 催我一下", f: () => { if (xaOK()) { wxReply(c.id, "（我的待办「" + x.t + "」还没完成" + (x.due ? "，截止 " + tdDue(x.due) : "") + "。请按你的性格催我一下，别太长。）"); gtoast("已提醒 TA"); } } });
+  if (x.done) it.push({ t: "改回未完成", f: () => { x.done = 0; x.pr = 0; savePrefs(); tdR(); } });
+  it.push({ t: "删除", dg: 1, f: () => { CFG.todo = tdList().filter((z) => z !== x); savePrefs(); tdR(); } });
+  actSheet(x.t.slice(0, 20), it);
+}
+function tdDuePick(cb) {
+  const n = new Date(), at = (d, h) => { const z = new Date(n); z.setDate(z.getDate() + d); z.setHours(h, 0, 0, 0); return z.getTime(); };
+  actSheet("截止时间", [{ t: "无截止时间", f: () => cb(0) }, { t: "1 小时后", f: () => cb(Date.now() + 36e5) }, { t: "今晚 21:00", f: () => cb(at(0, 21) > Date.now() ? at(0, 21) : Date.now() + 36e5) }, { t: "明天 9:00", f: () => cb(at(1, 9)) }, { t: "明天 21:00", f: () => cb(at(1, 21)) }, { t: "3 天后", f: () => cb(at(3, 18)) }]);
+}
+function tdNew() {
+  editSheet("新待办", "", (v) => {
+    v = v.trim(); if (!v) return;
+    setTimeout(() => tdDuePick((d) => {
+      const fin = (cid) => { tdAdd(v, d, cid, 0); tdR(); };
+      setTimeout(() => {
+        if (!WX.cons.some((c) => !c.fid)) return fin(0);
+        actSheet("让谁监督你？", [{ t: "不需要", f: () => fin(0) }].concat(WX.cons.filter((c) => !c.fid).map((c) => ({ t: nm(c) + "（完成后会表扬、拖延会催）", f: () => fin(c.id) }))));
+      }, 280);
+    }), 280);
+  }, "例如：22 点前洗完衣服");
+}
+async function tdAssign(c) {
+  if (TD.busy || !xaOK()) return;
+  TD.busy = 1; if (cur == "todo") tdR();
+  try {
+    const pend = tdList().filter((x) => !x.done && x.cid == c.id).map((x) => "· " + x.t);
+    const sys = xaCsys(c, "你要给对方（我）派几个待办任务，像现实里关系亲近的人会做的那样：符合你的性格、你们的关系和此刻的状态（可以是生活小事：喝水、早睡、交作业、吃饭、整理房间、回消息、运动，也可以带点你的个人风格）。")
+      + "\n严格按以下格式输出，不要别的内容：\n消息：<你发给我的一条微信，口语化，交代这些任务，可带点语气>\n任务：<任务内容，15字内>｜<多少小时内要完成，数字，可省略>\n（任务 1-3 行）" + (pend.length ? "\n我已有你派的未完成任务，不要重复：\n" + pend.join("\n") : "");
+    const out = await chat([{ role: "user", content: "请给我派任务。" }], sys, null, 1);
+    const lines = String(out).split(/\n+/).map((s) => s.trim());
+    const msg = (lines.find((s) => /^消息[：:]/.test(s)) || "").replace(/^消息[：:]\s*/, "");
+    let n = 0;
+    lines.forEach((s) => {
+      const m = s.match(/^任务[：:]\s*(.+?)(?:\s*[｜|]\s*(\d+(?:\.\d+)?))?\s*$/);
+      if (m && n < 3) { tdAdd(m[1].slice(0, 40), m[2] ? Date.now() + Math.min(72, +m[2]) * 36e5 : 0, c.id, c.id); n++; }
+    });
+    if (!n) throw new Error("没有生成任务，请重试");
+    xaMsg(c, msg || "给你布置了几个任务，记得完成哦。");
+    gtoast(nm(c) + " 给你派了 " + n + " 个任务");
+  } catch (e) { gtoast("派任务失败：" + em(e)); }
+  TD.busy = 0; if (cur == "todo") tdR();
+}
+function tdTick() {
+  if (!CFG.a.url || !CFG.a.model) return;
+  const now = Date.now();
+  for (const x of tdList()) {
+    if (x.done || !x.cid || !x.due) continue;
+    const c = WX.cons.find((z) => z.id == x.cid);
+    if (!c) continue;
+    if (now > x.due && (x.n || 0) < 3 && now - (x.nts || x.due - 1) > 40 * 6e4) {
+      x.n = (x.n || 0) + 1; x.nts = now; savePrefs();
+      wxReply(c.id, "（我的待办「" + x.t + "」已经过了截止时间" + (x.n > 1 ? "，你已经催过我 " + (x.n - 1) + " 次了" : "") + "还没完成。请按你的性格催我，第 " + x.n + " 次催，语气可以逐渐加重，别太长。）");
+      return;
+    }
+    if (!x.pre && x.due - now < 30 * 6e4 && x.due > now) {
+      x.pre = 1; savePrefs();
+      wxReply(c.id, "（我的待办「" + x.t + "」快到截止时间了（" + tdDue(x.due) + "），还没完成。请按你的性格轻轻提醒我一下，别太长。）");
+      return;
+    }
+  }
+}
+setInterval(tdTick, 6e4); setTimeout(tdTick, 9e3);
+$("#app").addEventListener("click", (e) => {
+  if (cur != "todo") return;
+  const t = e.target.closest("[data-td]");
+  if (!t) return;
+  e.stopPropagation();
+  const a = t.dataset.td, x = tdList().find((z) => z.id == t.dataset.id);
+  if (a == "f") { TD.f = +t.dataset.v; tdR(); }
+  else if (a == "add") tdNew();
+  else if (a == "as") xaPick("让谁给你派任务？", tdAssign);
+  else if (a == "tg" && x) { if (x.done) { x.done = 0; x.pr = 0; savePrefs(); } else tdDone(x); tdR(); }
+  else if (a == "mo" && x) tdMore(x);
+});
+{
+  const cc0 = cstCross;
+  cstCross = function (c) {
+    let s = cc0(c);
+    try {
+      const L = tdList().filter((x) => x.cid == c.id && (!x.done || Date.now() - (x.dts || 0) < 864e5)).slice(0, 5);
+      if (L.length) {
+        const t = "待办：" + L.map((x) => "「" + x.t + "」" + (x.done ? "（我已完成）" : x.due && x.due < Date.now() ? "（我还没完成，已过期）" : "（我还没完成）") + (x.by == c.id ? "是你派的" : "你在监督")).join("；");
+        s = s ? s + "\n- " + t : "【跨 App 近况】（这些都是你真实经历过的，在不同 App 里保持一致；合适时可以自然提起或接着聊，不要生硬复述）\n- " + t;
+      }
+    } catch (e) {}
+    return s;
+  };
+}
+xaAdd("todo", "待办", "M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2", { el: "#app", open: () => { TD.f = 0; tdR(); } }, "效率", "待办清单，角色派任务、催办与表扬");
+
+// ---------- 翻译 ----------
+const TRL = ["中文", "English", "日本語", "한국어", "Français", "Español", "Deutsch", "Русский"];
+const TR = { tab: 0, to: "English", src: "", out: "", busy: 0, lang: "English", lv: "入门", cache: {} };
+const trList = () => CFG.trw || (CFG.trw = []);
+const trForeign = (s) => {
+  s = String(s || "");
+  if (/[぀-ヿ가-힯]/.test(s)) return true;
+  const la = (s.match(/[A-Za-zÀ-ÿА-я]/g) || []).length, cj = (s.match(/[一-龥]/g) || []).length;
+  return la >= 8 && la > cj * 2;
+};
+async function trDo(txt, to) {
+  const short = txt.length <= 24;
+  const sys = "你是专业翻译。把用户给的文本翻译成" + to + "；如果原文已经是" + to + "，就翻译成简体中文。" + (short ? "因为文本很短，请按格式输出：\n译文\n读音/注音（如有）\n例句：一个简短例句及其中文意思" : "只输出译文本身，保持语气和换行，不要解释。");
+  return String(await chat([{ role: "user", content: txt }], sys, null, 1)).trim();
+}
+function trR() {
+  const tabs = ["翻译", "外语消息", "学外语", "生词本"];
+  let h = xkHead("翻译", "") + `<div class="xa-tabs">${tabs.map((x, i) => `<button class="cb${TR.tab == i ? " on" : ""}" data-tr="tab" data-v="${i}">${x}</button>`).join("")}</div><div class="sc">`;
+  const chips = (k, cur2) => `<div class="xa-btns">${TRL.map((l) => `<button class="cb${cur2 == l ? " on" : ""}" data-tr="${k}" data-v="${l}"${cur2 == l ? ' style="background:var(--ink);color:var(--app);border-color:var(--ink)"' : ""}>${l}</button>`).join("")}</div>`;
+  if (TR.tab == 0) {
+    h += `<textarea class="xa-ta" id="tr_in" placeholder="输入或粘贴要翻译的文字">${esc(TR.src)}</textarea><div class="xa-sec">翻译成</div>${chips("to", TR.to)}<div class="xa-btns"><button class="cb pr" data-tr="go"${TR.busy ? " disabled" : ""}>${TR.busy ? "翻译中…" : "翻译"}</button><button class="cb" data-tr="clr">清空</button></div>`;
+    if (TR.out) h += `<div class="xa-box" id="tr_out">${esc(TR.out)}</div><div class="xa-btns"><button class="cb" data-tr="cp">复制</button><button class="cb" data-tr="sv">存入生词本</button><button class="cb" data-tr="snd">发给角色</button></div>`;
+  } else if (TR.tab == 1) {
+    h += `<div class="xa-btns"><button class="cb pr" data-tr="spk">让 TA 用外语跟我说话</button></div><p class="stt" style="margin:0 0 6px">下面是角色发给你的外语消息，点「翻译」查看意思。</p>`;
+    const L = [];
+    WX.cons.forEach((c) => (WX.msgs[c.id] || []).forEach((m) => { if (!m.me && !m.s && !m.p && typeof m.t == "string" && trForeign(m.t)) L.push({ c, m, k: c.id + ":" + (m.ts || m.t.slice(0, 12)) }); }));
+    L.sort((a, b) => (b.m.ts || 0) - (a.m.ts || 0));
+    h += L.length ? L.slice(0, 30).map((x) => `<div class="xa-row"><div><b style="font-size:14px">${esc(x.m.t.slice(0, 300))}</b><s>${esc(nm(x.c))}${x.m.ts ? " · " + tdDue(x.m.ts) : ""}</s>${TR.cache[x.k] ? `<div class="xa-box" style="margin:6px 0 0;font-size:14px">${esc(TR.cache[x.k])}</div>` : `<div class="xa-btns" style="margin:6px 0 0"><button class="cb" data-tr="tm" data-k="${esc(x.k)}">${TR.busy == x.k ? "翻译中…" : "翻译"}</button></div>`}</div></div>`).join("") : '<p class="em" style="margin-top:60px">还没有外语消息<br>点上面的按钮，让 TA 用外语跟你聊</p>';
+  } else if (TR.tab == 2) {
+    h += `<div class="xa-sec">想学的语言</div>${chips("lang", TR.lang)}<div class="xa-sec">我的水平</div><div class="xa-btns">${["零基础", "入门", "中级", "高级"].map((l) => `<button class="cb${TR.lv == l ? " on" : ""}" data-tr="lv" data-v="${l}"${TR.lv == l ? ' style="background:var(--ink);color:var(--app);border-color:var(--ink)"' : ""}>${l}</button>`).join("")}</div><div class="xa-sec">选一位角色当老师</div><div class="xa-btns"><button class="cb pr" data-tr="les">开始上课</button><button class="cb" data-tr="quiz">考考我</button><button class="cb" data-tr="fix">纠正我的句子</button></div><p class="stt">课程在微信里进行：老师会按 TA 的性格教你短句、读音和用法，你直接在聊天里回答，TA 会纠正。</p>`;
+  } else {
+    const W = trList();
+    h += W.length ? W.map((w, i) => `<div class="xa-row" data-tr="wd" data-i="${i}" role="button" tabindex="0"><div><b style="font-size:14px">${esc(w.w.slice(0, 120))}</b><div class="xa-box" style="margin:6px 0 0;font-size:14px">${esc(w.t)}</div><s>${esc(w.l)}</s></div></div>`).join("") : '<p class="em" style="margin-top:80px">生词本是空的<br>翻译后点「存入生词本」</p>';
+  }
+  $("#app").innerHTML = h + "</div>";
+}
+$("#app").addEventListener("input", (e) => { if (cur == "tr" && e.target.id == "tr_in") TR.src = e.target.value; });
+$("#app").addEventListener("click", async (e) => {
+  if (cur != "tr") return;
+  const t = e.target.closest("[data-tr]");
+  if (!t) return;
+  e.stopPropagation();
+  const a = t.dataset.tr, v = t.dataset.v;
+  if (a == "tab") { TR.tab = +v; trR(); }
+  else if (a == "to") { TR.to = v; trR(); }
+  else if (a == "lang") { TR.lang = v; trR(); }
+  else if (a == "lv") { TR.lv = v; trR(); }
+  else if (a == "clr") { TR.src = ""; TR.out = ""; trR(); }
+  else if (a == "go") {
+    const ta = $("#tr_in"); if (ta) TR.src = ta.value;
+    if (!TR.src.trim() || !xaOK()) return;
+    TR.busy = 1; trR();
+    try { TR.out = await trDo(TR.src.trim(), TR.to); } catch (x) { TR.out = "翻译失败：" + em(x); }
+    TR.busy = 0; if (cur == "tr" && TR.tab == 0) trR();
+  }
+  else if (a == "cp") { try { await navigator.clipboard.writeText(TR.out); gtoast("已复制"); } catch (x) { gtoast("复制失败，请长按文字手动复制"); } }
+  else if (a == "sv") { trList().unshift({ w: TR.src.trim(), t: TR.out, l: TR.to, ts: Date.now() }); savePrefs(); gtoast("已存入生词本"); }
+  else if (a == "snd") xaPick("发给谁？", (c) => { const L = WX.msgs[c.id] || (WX.msgs[c.id] = []); L.push({ me: 1, t: TR.out, ts: Date.now() }); wsave(); gtoast("已发送"); try { wxReply(c.id); } catch (x) {} });
+  else if (a == "tm") {
+    const k = t.dataset.k, m = [].concat(...WX.cons.map((c) => (WX.msgs[c.id] || []).map((m2) => ({ c, m2 })))).find((x) => x.c.id + ":" + (x.m2.ts || x.m2.t.slice(0, 12)) == k);
+    if (!m || TR.busy || !xaOK()) return;
+    TR.busy = k; trR();
+    try { TR.cache[k] = await trDo(m.m2.t, "简体中文"); } catch (x) { TR.cache[k] = "翻译失败：" + em(x); }
+    TR.busy = 0; if (cur == "tr") trR();
+  }
+  else if (a == "spk") xaPick("让谁来说？", (c) => actSheet("用哪种语言？", TRL.filter((l) => l != "中文").map((l) => ({ t: l, f: () => { if (!xaOK()) return; wxReply(c.id, "（这一次请你完全用" + l + "给我发消息，按你的性格和此刻状态说话，2-3 句即可，不要附带中文翻译；我会自己去翻译。）"); gtoast("TA 会用 " + l + " 回复你"); } }))));
+  else if (a == "les") xaPick("请哪位当老师？", (c) => { if (!xaOK()) return; wxReply(c.id, "（我想跟你学" + TR.lang + "，我的水平是「" + TR.lv + "」。请你当我的" + TR.lang + "老师，用你自己的性格来教：先教一个实用的短句，给出读音、中文意思和一个使用场景，然后让我跟读或造句；之后我回答，你来纠正。每次只教一点点，别太长。）"); gtoast("上课啦，去微信里和 TA 聊"); });
+  else if (a == "quiz") xaPick("请哪位出题？", (c) => { if (!xaOK()) return; wxReply(c.id, "（请你用" + TR.lang + "考考我，水平「" + TR.lv + "」：出一道小题（翻译、填空或造句），等我回答后再批改，别一次出多道。）"); gtoast("题目会发到微信"); });
+  else if (a == "fix") xaPick("请哪位纠正？", (c) => editSheet("写一句" + TR.lang, "", (s) => {
+    s = s.trim(); if (!s) return;
+    const L = WX.msgs[c.id] || (WX.msgs[c.id] = []); L.push({ me: 1, t: "（请纠正我这句" + TR.lang + "，并解释错在哪）\n" + s, ts: Date.now() }); wsave(); gtoast("已发送"); try { wxReply(c.id); } catch (x) {}
+  }, "用" + TR.lang + "写一句话"));
+  else if (a == "wd") { const i = +t.dataset.i, w = trList()[i]; if (w) actSheet(w.w.slice(0, 16), [{ t: "复制译文", f: () => { try { navigator.clipboard.writeText(w.t); gtoast("已复制"); } catch (x) {} } }, { t: "删除", dg: 1, f: () => { trList().splice(i, 1); savePrefs(); trR(); } }]); }
+});
+xaAdd("tr", "翻译", "M4 5h9M8.5 3v2M6 5c0 4 3 7 6 8M12 5c0 3-3 7-7 9M13 21l4-10 4 10M14.5 17.5h5", { el: "#app", open: () => { TR.tab = 0; trR(); } }, "工具", "翻译、外语消息、角色教外语与生词本");
+
+//XEND
+</script>
+<script type="text/plain" class="mp">
+// ===== 扫描仪 / OCR + 录音机 =====
+const xaFile = (cap) => new Promise((res) => {
+  const i = document.createElement("input");
+  i.type = "file"; i.accept = "image/*"; if (cap) i.setAttribute("capture", "environment");
+  i.style.cssText = "position:fixed;left:-999px;opacity:0";
+  i.onchange = () => { const f = i.files && i.files[0]; i.remove(); res(f || null); };
+  i.addEventListener("cancel", () => { i.remove(); res(null); });
+  document.body.appendChild(i); i.click();
+});
+const xaRead = (f) => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = () => rej(new Error("读取失败")); r.readAsDataURL(f); });
+const xaImg = (url, max, q) => new Promise((res) => {
+  const im = new Image();
+  im.onload = () => {
+    try {
+      const k = Math.min(1, max / Math.max(im.naturalWidth, im.naturalHeight)), w = Math.max(1, Math.round(im.naturalWidth * k)), h = Math.max(1, Math.round(im.naturalHeight * k)), c = document.createElement("canvas");
+      c.width = w; c.height = h;
+      const x = c.getContext("2d"); x.fillStyle = "#fff"; x.fillRect(0, 0, w, h); x.drawImage(im, 0, 0, w, h);
+      res(c.toDataURL("image/jpeg", q));
+    } catch (e) { res(url); }
+  };
+  im.onerror = () => res(url);
+  im.src = url;
+});
+const xaDate = (ts) => { const d = new Date(ts), p = (x) => String(x).padStart(2, "0"); return (d.getMonth() + 1) + "月" + d.getDate() + "日 " + p(d.getHours()) + ":" + p(d.getMinutes()); };
+const xaDl = (url, name) => { const a = document.createElement("a"); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove(); };
+const xaCss2 = document.createElement("style");
+xaCss2.id = "xacss2";
+xaCss2.textContent = `.sc-th{flex:none;width:58px;height:74px;border-radius:8px;object-fit:cover;background:rgba(128,128,128,.12)}.sc-pv{width:100%;border-radius:12px;display:block;margin:4px 0 10px;background:rgba(128,128,128,.1)}
+.rc-big{width:92px;height:92px;border-radius:50%;border:0;background:#ff3b30;color:#fff;margin:26px auto 6px;display:grid;place-items:center;cursor:pointer;box-shadow:0 6px 22px rgba(255,59,48,.35);transition:.2s}.rc-big .ico{width:34px;height:34px}.rc-big.on{border-radius:22px;animation:rcp 1.2s infinite}@keyframes rcp{50%{box-shadow:0 0 0 14px rgba(255,59,48,.12)}}
+.rc-tm{text-align:center;font-size:30px;font-weight:200;font-variant-numeric:tabular-nums;letter-spacing:1px}.rc-lv{text-align:center;color:var(--t5);font-size:13px;line-height:1.7;min-height:44px;margin:6px 10px 0}.rc-pl{flex:none;width:36px;height:36px;border-radius:50%;border:1.5px solid var(--ink);background:none;color:var(--ink);display:grid;place-items:center;cursor:pointer;padding:0}.rc-pl.on{background:var(--ink);color:var(--app)}.rc-pl .ico{width:16px;height:16px}`;
+document.head.appendChild(xaCss2);
+Object.assign(I, { xmore: "M5 12h.01M12 12h.01M19 12h.01", xplay: "M7 4l13 8-13 8z", xstop: "M6 6h12v12H6z", xcam: "M4 8h3l2-3h6l2 3h3v11H4zM12 17a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z", xmic: "M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zM6 11a6 6 0 0 0 12 0M12 17v4M9 21h6" });
+
+// ---------- 扫描仪 ----------
+const SCN = { v: "l", i: -1, busy: "", L: null, tr: {} };
+const scnL = () => SCN.L || (SCN.L = Array.isArray(rd("scans")) ? rd("scans") : []);
+const scnSave = () => store("scans", scnL());
+function scnR() {
+  const L = scnL();
+  if (SCN.v == "d" && L[SCN.i]) return scnD(L[SCN.i]);
+  SCN.v = "l";
+  $("#app").innerHTML = xkHead("扫描仪", `<div class="tbr"><button class="tbn" data-sc="pic" aria-label="从相册选择">${ic("photo")}</button><button class="tbn" data-sc="cam" aria-label="拍照扫描">${ic("xcam")}</button></div>`) +
+    `<div class="sc">${SCN.busy ? '<p class="em" style="margin:30px 0 10px">正在识别文字…</p>' : ""}${L.length ? L.map((x, i) => `<div class="xa-row" data-sc="op" data-i="${i}" role="button" tabindex="0" style="align-items:center"><img class="sc-th" src="${x.th}" alt=""><div><b>${esc(x.title)}</b><s>${xaDate(x.ts)} · ${x.text ? x.text.length + " 字" : "未识别到文字"}</s><s style="margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc((x.text || "").replace(/\s+/g, " ").slice(0, 40))}</s></div></div>`).join("") : '<p class="em" style="margin-top:90px">还没有扫描件<br>点右上角拍照或选图，自动识别图中的文字</p>'}</div>`;
+}
+async function scnOcr(img) {
+  if (!xaOK()) throw new Error("未配置接口");
+  const r = await chat([{ role: "user", content: "请逐字转写图中所有可见文字，尽量保留原有的段落、换行、列表和表格结构（表格用「|」分隔列）。只输出转写内容，不要解释、不要加前后缀。如果图中没有文字，只输出「（图中没有文字）」并用一句话说明图里是什么。", imgs: [img] }], "你是一个准确的 OCR 文字识别工具。", null, 1);
+  return String(r || "").trim();
+}
+async function scnNew(cap) {
+  if (SCN.busy) return;
+  const f = await xaFile(cap);
+  if (!f) return;
+  SCN.busy = 1; scnR();
+  try {
+    const raw = await xaRead(f), full = await xaImg(raw, 1400, 0.72), th = await xaImg(raw, 220, 0.6);
+    let text = "";
+    try { text = await scnOcr(full); } catch (e) { gtoast("识别失败：" + em(e) + "，可在详情里重新识别", 3200); }
+    if (/^（图中没有文字）/.test(text)) text = text.replace(/^（图中没有文字）\s*/, "");
+    const L = scnL();
+    L.unshift({ id: "s" + Date.now(), ts: Date.now(), title: (text.split(/\n/)[0] || "扫描件").replace(/[|#*]/g, "").trim().slice(0, 18) || "扫描件 " + xaDate(Date.now()), text, img: full, th });
+    if (L.length > 30) L.length = 30;
+    scnSave(); SCN.v = "d"; SCN.i = 0;
+  } catch (e) { gtoast("处理失败：" + em(e)); }
+  SCN.busy = ""; if (cur == "scn") scnR();
+}
+function scnD(x) {
+  $("#app").innerHTML = xkHead("扫描件", `<div class="tbr"><button class="tbn" data-sc="bk" aria-label="返回">${ic("back")}</button><button class="tbn" data-sc="mo" aria-label="更多">${ic("xmore")}</button></div>`) +
+    `<div class="sc"><img class="sc-pv" src="${x.img}" alt="">${SCN.busy ? '<p class="em" style="margin:10px 0">识别中…</p>' : ""}<div class="xa-sec">识别出的文字（可直接修改）</div><textarea class="xa-ta" id="sc_tx" style="min-height:160px" placeholder="没有识别到文字">${esc(x.text)}</textarea><div class="xa-btns"><button class="cb pr" data-sc="cp">复制文字</button><button class="cb" data-sc="snd">发给角色</button><button class="cb" data-sc="trn">翻译</button><button class="cb" data-sc="re">重新识别</button></div>${SCN.tr[x.id] ? `<div class="xa-sec">译文</div><div class="xa-box">${esc(SCN.tr[x.id])}</div>` : ""}<div class="xa-sec">标题</div><div class="xa-box" data-sc="rn" role="button" tabindex="0" style="margin:0">${esc(x.title)}</div></div>`;
+}
+function scnSend(x) {
+  xaPick("让谁看这份文件？", (c) => actSheet("怎么发给 " + nm(c) + "？", [
+    { t: "发图片（TA 能直接看到原图）", f: () => {
+      const L = WX.msgs[c.id] || (WX.msgs[c.id] = []);
+      L.push({ me: 1, img: x.img, alt: (x.text || "").replace(/\s+/g, " ").slice(0, 600), h: new Date().toTimeString().slice(0, 5), ts: Date.now() });
+      wsave(); gtoast("已发送，TA 看到了");
+      if (xaOK()) wxReply(c.id, "（我把一份扫描的文件拍给你看了" + (x.text ? "，上面写着：" + x.text.replace(/\s+/g, " ").slice(0, 400) : "") + "。请认真看图，说说你看到的内容和你的想法，按你的性格回应。）");
+    } },
+    { t: "只发识别出的文字", f: () => {
+      if (!x.text) return gtoast("还没有识别出文字");
+      const L = WX.msgs[c.id] || (WX.msgs[c.id] = []);
+      L.push({ me: 1, t: "（我扫描了一份文件，内容如下）\n" + x.text.slice(0, 1500), ts: Date.now() });
+      wsave(); gtoast("已发送"); try { wxReply(c.id); } catch (e) {}
+    } },
+    { t: "让 TA 帮我总结 / 整理", f: () => {
+      if (!x.text) return gtoast("还没有识别出文字");
+      if (xaOK()) { wxReply(c.id, "（我扫描了一份文件，请你帮我用几句话总结要点，必要时指出需要我注意的地方。文件内容：\n" + x.text.slice(0, 1800) + "）"); gtoast("TA 会在微信里回复你"); }
+    } }]));
+}
+$("#app").addEventListener("click", async (e) => {
+  if (cur != "scn") return;
+  const t = e.target.closest("[data-sc]");
+  if (!t) return;
+  e.stopPropagation();
+  const a = t.dataset.sc, L = scnL(), x = L[SCN.i];
+  if (a == "cam") scnNew(1);
+  else if (a == "pic") scnNew(0);
+  else if (a == "op") { SCN.i = +t.dataset.i; SCN.v = "d"; scnR(); }
+  else if (a == "bk") { SCN.v = "l"; scnR(); }
+  else if (!x) return;
+  else if (a == "cp") { const v = ($("#sc_tx") || {}).value || x.text; try { await navigator.clipboard.writeText(v); gtoast("已复制"); } catch (er) { gtoast("复制失败，请长按文字手动复制"); } }
+  else if (a == "snd") { x.text = ($("#sc_tx") || {}).value || x.text; scnSave(); scnSend(x); }
+  else if (a == "trn") {
+    x.text = ($("#sc_tx") || {}).value || x.text; scnSave();
+    if (!x.text.trim()) return gtoast("还没有文字可翻译");
+    actSheet("翻译成", TRL.map((l) => ({ t: l, f: async () => { if (!xaOK()) return; SCN.busy = 1; scnR(); try { SCN.tr[x.id] = await trDo(x.text.slice(0, 3000), l); } catch (er) { SCN.tr[x.id] = "翻译失败：" + em(er); } SCN.busy = ""; if (cur == "scn") scnR(); } })));
+  }
+  else if (a == "re") { SCN.busy = 1; scnR(); try { x.text = await scnOcr(x.img); scnSave(); } catch (er) { gtoast("识别失败：" + em(er)); } SCN.busy = ""; if (cur == "scn") scnR(); }
+  else if (a == "rn") editSheet("标题", x.title, (v) => { if (v.trim()) { x.title = v.trim().slice(0, 40); scnSave(); scnR(); } });
+  else if (a == "mo") actSheet(x.title, [{ t: "保存图片到本机", f: () => xaDl(x.img, x.title + ".jpg") }, { t: "导出文字 .txt", f: () => xaDl("data:text/plain;charset=utf-8," + encodeURIComponent(x.text || ""), x.title + ".txt") }, { t: "删除", dg: 1, f: () => { L.splice(SCN.i, 1); scnSave(); SCN.v = "l"; scnR(); } }]);
+});
+$("#app").addEventListener("change", (e) => { if (cur == "scn" && e.target.id == "sc_tx") { const x = scnL()[SCN.i]; if (x) { x.text = e.target.value; scnSave(); } } });
+xaAdd("scn", "扫描仪", "M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M4 12h16", { el: "#app", open: () => { SCN.v = "l"; SCN.busy = ""; scnR(); } }, "工具", "拍照识别文字，角色能看到你扫描的文件");
+
+// ---------- 录音机 ----------
+const REC = { tab: 0, L: null, on: 0, t0: 0, txt: "", fin: "", mr: null, sr: null, st: null, ch: [], tm: 0, pl: null, plid: "", busy: "" };
+const recL = () => REC.L || (REC.L = Array.isArray(rd("recs")) ? rd("recs") : []);
+const recSave = () => store("recs", recL());
+const mmss2 = (n) => String(Math.floor(n / 60)).padStart(2, "0") + ":" + String(Math.round(n % 60)).padStart(2, "0");
+function recR() {
+  const L = recL(), tabs = ["录音", "角色语音"], V = L.filter((x) => REC.tab == 0 ? x.k != "ta" : x.k == "ta");
+  let h = xkHead("录音机", "") + `<div class="xa-tabs">${tabs.map((x, i) => `<button class="cb${REC.tab == i ? " on" : ""}" data-rc="tab" data-v="${i}">${x}</button>`).join("")}</div><div class="sc">`;
+  if (REC.tab == 0) h += `<div class="rc-tm" id="rc_tm">${mmss2(REC.on ? (Date.now() - REC.t0) / 1e3 : 0)}</div><button class="rc-big${REC.on ? " on" : ""}" data-rc="rec" aria-label="${REC.on ? "停止" : "开始录音"}">${ic(REC.on ? "xstop" : "xmic")}</button><div class="rc-lv" id="rc_lv">${REC.on ? esc((REC.fin + REC.txt) || "正在录音…") : "点按开始录音；录完可转成文字发给角色"}</div>`;
+  else h += `<div class="xa-btns" style="justify-content:center;margin:18px 0"><button class="cb pr" data-rc="ta">让角色说一句并保存</button></div><p class="stt" style="text-align:center;margin:0 0 6px">需要在「设置 → 语音」里使用 MiniMax 或 OpenAI 兼容语音接口才能导出音频；浏览器朗读无法保存。</p>`;
+  h += V.length ? V.map((x) => { const i = L.indexOf(x), on = REC.plid == x.id; return `<div class="xa-row" style="align-items:center"><button class="rc-pl${on ? " on" : ""}" data-rc="pl" data-i="${i}" aria-label="播放">${ic(on ? "xstop" : "xplay")}</button><div data-rc="mo" data-i="${i}" role="button" tabindex="0"><b style="font-size:14px">${esc(x.title)}</b><s>${xaDate(x.ts)} · ${mmss2(x.dur || 0)}${x.cid ? " · " + esc((WX.cons.find((c) => c.id == x.cid) || {}).name || "") : ""}</s>${x.text ? `<s style="margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(x.text.replace(/\s+/g, " ").slice(0, 40))}</s>` : ""}</div></div>`; }).join("") : '<p class="em" style="margin-top:30px">' + (REC.tab == 0 ? "还没有录音" : "还没有保存的角色语音") + "</p>";
+  $("#app").innerHTML = h + "</div>";
+}
+async function recStart() {
+  if (REC.on) return;
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || typeof MediaRecorder == "undefined") return gtoast("当前浏览器不支持录音");
+  try { REC.st = await navigator.mediaDevices.getUserMedia({ audio: true }); } catch (e) { return gtoast("无法使用麦克风：请在浏览器里允许麦克风权限"); }
+  recStop2();
+  const mime = ["audio/webm;codecs=opus", "audio/mp4", "audio/webm"].find((m) => MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(m)) || "";
+  REC.ch = []; REC.txt = ""; REC.fin = "";
+  try { REC.mr = new MediaRecorder(REC.st, mime ? { mimeType: mime } : {}); } catch (e) { REC.st.getTracks().forEach((t) => t.stop()); return gtoast("录音启动失败"); }
+  REC.mr.ondataavailable = (e) => { if (e.data && e.data.size) REC.ch.push(e.data); };
+  REC.mr.onstop = recDone;
+  REC.mr.start(1000);
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (SR) {
+    try {
+      const s = new SR(); s.lang = "zh-CN"; s.continuous = true; s.interimResults = true;
+      s.onresult = (ev) => { let it = ""; for (let i = ev.resultIndex; i < ev.results.length; i++) { const r = ev.results[i]; if (r.isFinal) REC.fin += r[0].transcript; else it += r[0].transcript; } REC.txt = it; const l = $("#rc_lv"); if (l) l.textContent = (REC.fin + REC.txt) || "正在录音…"; };
+      s.onend = () => { if (REC.on && REC.sr === s) { try { s.start(); } catch (e) {} } };
+      s.onerror = () => {};
+      s.start(); REC.sr = s;
+    } catch (e) { REC.sr = null; }
+  }
+  REC.on = 1; REC.t0 = Date.now();
+  REC.tm = setInterval(() => { const el = $("#rc_tm"); if (el) el.textContent = mmss2((Date.now() - REC.t0) / 1e3); if (Date.now() - REC.t0 > 18e4) recStop(); }, 300);
+  recR();
+}
+function recStop2() { try { REC.sr && (REC.sr.onend = null, REC.sr.stop()); } catch (e) {} REC.sr = null; }
+function recStop() {
+  if (!REC.on) return;
+  REC.on = 0; clearInterval(REC.tm); recStop2();
+  try { REC.mr.stop(); } catch (e) {}
+  try { REC.st.getTracks().forEach((t) => t.stop()); } catch (e) {}
+}
+async function recDone() {
+  const dur = (Date.now() - REC.t0) / 1e3, blob = new Blob(REC.ch, { type: (REC.mr && REC.mr.mimeType) || "audio/webm" });
+  if (dur < 0.8 || !blob.size) { if (cur == "rec") recR(); return; }
+  if (blob.size > 2.5e6) { gtoast("录音太大，未保存"); if (cur == "rec") recR(); return; }
+  const au = await xaRead(blob), L = recL();
+  L.unshift({ id: "r" + Date.now(), ts: Date.now(), k: "me", title: "录音 " + xaDate(Date.now()), dur, audio: au, text: (REC.fin + REC.txt).trim() });
+  if (L.length > 40) L.length = 40;
+  recSave(); REC.tab = 0;
+  if (cur == "rec") recR();
+  gtoast(L[0].text ? "已保存，并转成了文字" : "已保存，可点它转文字");
+}
+function recPlay(i) {
+  const x = recL()[i];
+  if (REC.pl) { try { REC.pl.pause(); } catch (e) {} REC.pl = null; }
+  if (!x) return;
+  if (REC.plid == x.id) { REC.plid = ""; recR(); return; }
+  REC.plid = x.id;
+  const a = new Audio(x.audio); REC.pl = a;
+  a.onended = a.onerror = () => { if (REC.pl === a) { REC.pl = null; REC.plid = ""; if (cur == "rec") recR(); } };
+  a.play().catch(() => { REC.plid = ""; gtoast("无法播放"); });
+  recR();
+}
+async function recApi(x) {
+  if (!CFG.a.url || CFG.a.type == "anthropic") return gtoast("需要使用 OpenAI 兼容接口才能用接口转写");
+  const m = await new Promise((r) => editSheet("转写模型", CFG.asr || "whisper-1", (v) => r(v.trim() || "whisper-1"), "接口支持的语音转文字模型名"));
+  CFG.asr = m; savePrefs();
+  REC.busy = x.id; gtoast("转写中…", 2000);
+  try {
+    const b = await (await fetch(x.audio)).blob(), fd = new FormData();
+    fd.append("file", b, "rec." + (/mp4/.test(b.type) ? "m4a" : "webm")); fd.append("model", m);
+    const r = await fetch(eurl(CFG.a, "audio/transcriptions"), { method: "POST", headers: hdrs(CFG.a), body: fd });
+    if (!r.ok) throw new Error("HTTP " + r.status + " " + (await r.text()).slice(0, 80));
+    const j = await r.json();
+    if (!j.text) throw new Error("接口没有返回文字");
+    x.text = j.text; recSave(); gtoast("已转成文字");
+  } catch (e) { gtoast("转写失败：" + em(e) + "。可手动输入文字", 3600); }
+  REC.busy = ""; if (cur == "rec") recR();
+}
+async function recTa(c, text) {
+  try {
+    gtoast("正在生成语音…", 2000);
+    const url = await ttsBlob(text, c, 0);
+    const b = await (await fetch(url)).blob(), au = await xaRead(b), dur = await new Promise((r) => { const a = new Audio(url); a.onloadedmetadata = () => r(isFinite(a.duration) ? a.duration : 0); a.onerror = () => r(0); });
+    recL().unshift({ id: "r" + Date.now(), ts: Date.now(), k: "ta", cid: c.id, title: nm(c) + "：" + text.slice(0, 12), dur, audio: au, text });
+    if (recL().length > 40) recL().length = 40;
+    recSave(); REC.tab = 1; if (cur == "rec") recR(); gtoast("已保存");
+  } catch (e) { gtoast("导出失败：" + em(e), 3600); }
+}
+function recMore(x, i) {
+  const it = [{ t: x.text ? "查看 / 修改文字" : "手动输入文字", f: () => editSheet("录音文字", x.text || "", (v) => { x.text = v.trim(); recSave(); recR(); }, "语音的文字内容") }];
+  if (x.k != "ta") it.push({ t: "用接口转写成文字", f: () => recApi(x) });
+  it.push({ t: "发给角色（语音消息）", f: () => {
+    if (!x.text) return gtoast("先转成文字，角色才能听懂");
+    xaPick("发给谁？", (c) => { const L = WX.msgs[c.id] || (WX.msgs[c.id] = []); L.push({ me: 1, t: x.text, v: Math.max(1, Math.round(x.dur || 3)), ts: Date.now() }); wsave(); gtoast("已发送"); try { wxReply(c.id); } catch (e) {} });
+  } });
+  it.push({ t: "导出音频文件", f: () => xaDl(x.audio, x.title.replace(/[\\/:*?"<>|]/g, "_") + (/mp4/.test(x.audio.slice(0, 30)) ? ".m4a" : /mpeg/.test(x.audio.slice(0, 30)) ? ".mp3" : ".webm")) });
+  it.push({ t: "重命名", f: () => editSheet("名称", x.title, (v) => { if (v.trim()) { x.title = v.trim().slice(0, 40); recSave(); recR(); } }) });
+  it.push({ t: "删除", dg: 1, f: () => { if (REC.plid == x.id && REC.pl) { REC.pl.pause(); REC.pl = null; REC.plid = ""; } recL().splice(i, 1); recSave(); recR(); } });
+  actSheet(x.title, it);
+}
+$("#app").addEventListener("click", (e) => {
+  if (cur != "rec") return;
+  const t = e.target.closest("[data-rc]");
+  if (!t) return;
+  e.stopPropagation();
+  const a = t.dataset.rc, i = +t.dataset.i, x = recL()[i];
+  if (a == "tab") { REC.tab = +t.dataset.v; recR(); }
+  else if (a == "rec") REC.on ? recStop() : recStart();
+  else if (a == "pl") recPlay(i);
+  else if (a == "mo" && x) recMore(x, i);
+  else if (a == "ta") xaPick("让谁说？", (c) => actSheet("说什么？", [
+    { t: "我自己输入文字", f: () => editSheet("让 " + nm(c) + " 说", "", (v) => { if (v.trim()) recTa(c, v.trim().slice(0, 300)); }, "输入 TA 要说的话") },
+    { t: "让 TA 自己说一句", f: async () => { if (!xaOK()) return; try { gtoast("TA 正在想…", 1800); const out = await chat([{ role: "user", content: "请对我说一句话（1-2 句，口语化，不超过 50 字），只输出要说的话本身。" }], xaCsys(c), null, 1); const s = String(out).replace(/^[「“"]|[」”"]$/g, "").trim(); if (s) recTa(c, s); } catch (er) { gtoast("失败：" + em(er)); } } },
+    { t: "选一条 TA 说过的话", f: () => {
+      const M = (WX.msgs[c.id] || []).filter((m) => !m.me && !m.s && !m.p && typeof m.t == "string" && m.t.length >= 2 && m.t.length <= 200 && !m.img && !m.stk).slice(-8).reverse();
+      if (!M.length) return gtoast("还没有可选的消息");
+      actSheet("选一条", M.map((m) => ({ t: m.t.slice(0, 28), f: () => recTa(c, m.t) })));
+    } }]));
+});
+REG.rec = { el: "#app", open: () => { REC.tab = 0; recR(); }, close: () => { if (REC.on) recStop(); if (REC.pl) { try { REC.pl.pause(); } catch (e) {} REC.pl = null; REC.plid = ""; } } };
+xaAdd("rec", "录音机", "M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zM6 11a6 6 0 0 0 12 0M12 17v4M9 21h6", REG.rec, "工具", "录音转文字发给角色，导出角色的语音");
+regData({
+  id: "scanrec", name: "扫描件与录音", keys: () => ["scans", "recs"], affects: "扫描仪里的扫描件与识别文字、录音机里的录音和角色语音",
+  info: (m) => [["扫描件", (Array.isArray(m.scans) ? m.scans.length : 0) + " 份"], ["录音", (Array.isArray(m.recs) ? m.recs.length : 0) + " 条"]],
+  check: (m) => (m.scans === void 0 || Array.isArray(m.scans)) && (m.recs === void 0 || Array.isArray(m.recs)) ? "" : "扫描件或录音的数据格式不正确",
+  hydrate() { SCN.L = null; REC.L = null; }
+});
 
 //XEND
 </script>
