@@ -3352,10 +3352,10 @@ $("#wx").addEventListener("change", async (e) => {
   v.textContent = "";
   l.querySelector("span").textContent = "更换头像";
 });
-const PREF_KEYS = ["todo", "trw", "cst", "pst", "pstd", "hdr", "ccss", "pam", "wzs", "uim", "pcap", "nolock", "lkbg", "lkc", "lkts", "lkdim", "nln", "fold", "lb", "rs", "ico", "icn", "ist", "isz", "wz", "wzd", "shell", "sbar", "isl", "hbar", "tb", "momAuto", "amapKey", "ka", "persona", "rx", "ui", "rad", "hap", "pace", "snd", "theme", "af", "bc", "gl", "sp", "sm", "sn", "sv", "sti", "sys", "qh", "dy", "kg", "kbf"];
+const PREF_KEYS = ["ann", "kawl", "todo", "trw", "cst", "pst", "pstd", "hdr", "ccss", "pam", "wzs", "uim", "pcap", "nolock", "lkbg", "lkc", "lkts", "lkdim", "nln", "fold", "lb", "rs", "ico", "icn", "ist", "isz", "wz", "wzd", "shell", "sbar", "isl", "hbar", "tb", "momAuto", "amapKey", "ka", "persona", "rx", "ui", "rad", "hap", "pace", "snd", "theme", "af", "bc", "gl", "sp", "sm", "sn", "sv", "sti", "sys", "qh", "dy", "kg", "kbf"];
 const nx = () => ({ type: "openai", url: "", key: "", model: "" });
 const apiDef = () => ({ a: nx(), b: nx(), presets: [], pi: -1, stream: "auto", temp: 0.8, reason: "off", bare: 0, fb: 1, black: [], tok: 0, vis: { on: 1, detail: "high", n: 3, re: "high", desc: 1, px: 1280 }, tts: {}, net: { direct: 1, proxy: "" }, ml: { a: { sig: "", list: [] }, b: { sig: "", list: [] } } });
-const prefDef = () => ({ todo: [], trw: [], cst: {}, pst: [], pstd: 0, hdr: 0, ccss: "", pam: {}, tb: {}, momAuto: 0, amapKey: "", ka: 0, wzs: {}, uim: 0, pcap: 0, nolock: 0, lkbg: "", lkc: "", lkts: 0, lkdim: 12, nln: 0, fold: {}, lb: {}, rs: {}, ico: {}, icn: {}, ist: "", isz: 0, wz: { l: "one", a: "date", b: "clock" }, wzd: {}, shell: 1, sbar: 1, isl: 1, hbar: 1, persona: "", rx: [{ id: 1, name: "隐藏思考内容", find: "<think>[\\s\\S]*?</think>", flags: "gi", rep: "", scope: "ai", where: "both", on: 1 }], ui: 100, dy: 0, kg: 8, kbf: 1, rad: 19, hap: 1, pace: 1, snd: 1, theme: "auto", af: {}, bc: {}, gl: 0, sp: 1, sm: "both", sn: {}, sv: 70, sti: 0, sys: 0, qh: { on: 0, s: 23, e: 7 } });
+const prefDef = () => ({ ann: { items: [], log: {}, opt: {} }, kawl: 0, todo: [], trw: [], cst: {}, pst: [], pstd: 0, hdr: 0, ccss: "", pam: {}, tb: {}, momAuto: 0, amapKey: "", ka: 0, wzs: {}, uim: 0, pcap: 0, nolock: 0, lkbg: "", lkc: "", lkts: 0, lkdim: 12, nln: 0, fold: {}, lb: {}, rs: {}, ico: {}, icn: {}, ist: "", isz: 0, wz: { l: "one", a: "date", b: "clock" }, wzd: {}, shell: 1, sbar: 1, isl: 1, hbar: 1, persona: "", rx: [{ id: 1, name: "隐藏思考内容", find: "<think>[\\s\\S]*?</think>", flags: "gi", rep: "", scope: "ai", where: "both", on: 1 }], ui: 100, dy: 0, kg: 8, kbf: 1, rad: 19, hap: 1, pace: 1, snd: 1, theme: "auto", af: {}, bc: {}, gl: 0, sp: 1, sm: "both", sn: {}, sv: 70, sti: 0, sys: 0, qh: { on: 0, s: 23, e: 7 } });
 let CFG = Object.assign(apiDef(), prefDef());
 function fixCfg() {
   for (const x of ["a", "b"]) CFG[x] = Object.assign(nx(), isObj(CFG[x]) ? CFG[x] : {});
@@ -3434,7 +3434,7 @@ async function call(x, msgs, sys, onD, retry, nb, tl) {
     if (bud) body.thinking = { type: "enabled", budget_tokens: bud };
     else body.temperature = CFG.temp;
   } else {
-    body = { model: x.model, messages: [{ role: "system", content: sys }, ...msgs], temperature: CFG.temp, stream: st };
+    body = { model: x.model, messages: [{ role: "system", content: sys }, ...msgs], temperature: x.temp != null && isFinite(x.temp) ? +x.temp : CFG.temp, stream: st };
     if (eff) body.reasoning_effort = eff;
   }
   const TCM = {}, TC = {};
@@ -11744,7 +11744,7 @@ function memSync() {
   }
   return add;
 }
-const memSave = () => lazySave("mem", () => store("mem", { on: MEM.on, k: MEM.k, auto: MEM.auto, emb: MEM.emb, model: MEM.model, items: MEM.items, pos: MEM.pos, cs: MEM.cs, rep: MEM.rep, la: MEM.la }), 700);
+const memSave = () => lazySave("mem", () => store("mem", { on: MEM.on, k: MEM.k, auto: MEM.auto, emb: MEM.emb, model: MEM.model, items: MEM.items, pos: MEM.pos, api: MEM.api || null, cs: MEM.cs, rep: MEM.rep, la: MEM.la }), 700);
 function memRecall(cid, text, meta, k) {
   const q = memVec(text), q2 = MEM.emb ? MEMQ[memQTextKey] : null;
   if (!q.length) return [];
@@ -11782,7 +11782,7 @@ function memCos2(a, b) {
   return s / 16129;
 }
 async function memEmbed(texts) {
-  const x = CFG.a;
+  const x = MEM.api && MEM.api.url ? MEM.api : CFG.a;
   if (!x.url || x.type == "anthropic") throw new Error("当前接口不支持向量化");
   const ac = new AbortController(), tm = setTimeout(() => ac.abort(), 9e3);
   try {
@@ -12136,6 +12136,7 @@ regData({
     MEM.model = isObj(o) && typeof o.model == "string" && o.model ? o.model.slice(0, 60) : "text-embedding-3-small";
     MEM.items = isObj(o) && Array.isArray(o.items) ? o.items.filter((x) => isObj(x) && typeof x.t == "string" && Array.isArray(x.v)) : [];
     MEM.pos = isObj(o) && isObj(o.pos) ? o.pos : {};
+    MEM.api = isObj(o) && isObj(o.api) && o.api.url ? o.api : null;
     MEM.cs = isObj(o) && isObj(o.cs) ? o.cs : {};
     MEM.rep = isObj(o) && isObj(o.rep) ? o.rep : {};
     MEM.la = isObj(o) && isObj(o.la) ? o.la : {};
@@ -20318,6 +20319,407 @@ function m2Go(cid) { openApp("mem"); M2.cid = cid; M2.tab = 0; M2.q = ""; M2.lim
   };
   const cd2 = csDo;
   csDo = function (a, el) { if (a == "cmem2") { const c = WX.cons.find((x) => x.id == WX.cur); if (c) m2Go(c.id); return; } return cd2.apply(this, arguments); };
+}
+
+//XEND
+</script>
+<script type="text/plain" class="mp">
+// ===== 纪念日 / 生日系统 + 强力后台保活 + 通用 API 编辑器 =====
+// ---------- 纪念日 ----------
+const ANNO = () => { const a = CFG.ann || (CFG.ann = { items: [], log: {}, opt: {} }); if (!Array.isArray(a.items)) a.items = []; if (!isObj(a.log)) a.log = {}; if (!isObj(a.opt)) a.opt = {}; return a; };
+const annOpt = (k, d) => { const v = ANNO().opt[k]; return v === void 0 ? d : v; };
+const AN = { busy: 0 };
+const annSod = (d) => { const x = new Date(d); x.setHours(0, 0, 0, 0); return x; };
+function annParse(s) { const m = String(s || "").match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/); return m ? { y: +m[1], m: +m[2], d: +m[3] } : null; }
+function annOccs(it, now) {
+  const p = annParse(it.date); if (!p) return [];
+  const Y = new Date(now).getFullYear(), out = [];
+  if (!it.yearly) return [new Date(p.y, p.m - 1, p.d)];
+  for (let y = Y - 1; y <= Y + 1; y++) out.push(new Date(y, p.m - 1, p.d));
+  return out;
+}
+function annNext(it, now) {
+  const t0 = annSod(now).getTime(), O = annOccs(it, now);
+  if (!it.yearly) return O[0] || null;
+  return O.find((o) => o.getTime() >= t0) || O[O.length - 1];
+}
+const annDays = (occ, now) => Math.round((annSod(occ).getTime() - annSod(now).getTime()) / 864e5);
+function annFirstTs(c) {
+  const L = (WX.msgs[c.id] || []).filter((m) => !m.s && !m.p && m.ts);
+  return L.length ? Math.min(...L.map((m) => m.ts)) : 0;
+}
+function annAll(now) {
+  const A = ANNO().items.slice();
+  if (annOpt("auto", 1)) {
+    WX.cons.filter((c) => !c.fid).forEach((c) => {
+      const t0 = annFirstTs(c); if (!t0) return;
+      const days = Math.floor((annSod(now).getTime() - annSod(t0).getTime()) / 864e5);
+      const next = [100, 200, 300, 365, 500, 666, 730, 1000, 1095, 1500, 1825].find((n) => n >= days);
+      if (next === void 0) return;
+      const d = new Date(annSod(t0).getTime() + next * 864e5);
+      A.push({ id: "ms:" + c.id + ":" + next, kind: "anniv", auto: 1, name: next % 365 == 0 ? "相识 " + next / 365 + " 周年" : "相识 " + next + " 天", date: d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate(), cid: c.id, yearly: 0 });
+    });
+  }
+  return A;
+}
+const annLabel = (it) => it.kind == "bday_me" ? "对方的生日" : it.kind == "bday_ta" ? "你的生日" : it.name;
+const annDir = (it) => it.kind == "bday_me" ? "me" : it.kind == "bday_ta" ? "ta" : it.kind == "anniv" ? "both" : "none";
+const ANN_RE = /生日|纪念|周年|快乐|礼物|蛋糕|祝|birthday|anniversary|happy/i;
+function annAcked(c, occ) {
+  const t0 = annSod(occ).getTime(), t1 = t0 + 864e5 * 2;
+  return (WX.msgs[c.id] || []).some((m) => m.me && !m.s && m.ts >= t0 && m.ts < t1 && (m.tf || ANN_RE.test(String(m.t || ""))));
+}
+function annAmt(c) {
+  const mx = +annOpt("max", 520) || 520, L = [52, 66.6, 88.8, 99.9, 131.4, 188, 200, 520, 666, 1314].filter((x) => x <= mx);
+  return L.length ? L[Math.floor(Math.random() * L.length)] : mx;
+}
+async function annAsk(c, extra, ask, fb) {
+  if (CFG.a.url && CFG.a.model) {
+    try { const o = String(await chat([{ role: "user", content: ask }], xaCsys(c, extra), null, 1)).trim().replace(/^[「“"]|[」”"]$/g, ""); if (o) return o; } catch (e) {}
+  }
+  return fb;
+}
+async function annMoment(c, topic) {
+  if (!(CFG.a.url && CFG.a.model)) return;
+  try {
+    const t = momClean(await momAsk(c, "（请以你的身份发一条朋友圈动态：" + topic + "。像真人一样，1-3 句，不要带话题标签。）"));
+    if (!t) return;
+    (WX.mom = Array.isArray(WX.mom) ? WX.mom : []).unshift({ id: momId(), w: c.id, t, im: [], ts: Date.now(), lk: [], cm: [] });
+    wsave(); try { if (momShown()) momR(); } catch (e) {}
+    try { notify("chat", nm(c), "发了一条朋友圈：" + t.slice(0, 30)); } catch (e) {}
+  } catch (e) {}
+}
+const annWait = (ms) => new Promise((r) => setTimeout(r, ms));
+async function annPrep(c, it) {
+  const lab = annLabel(it), t = await annAsk(c, "明天是" + lab + "，你已经记在心里，正在偷偷给对方准备礼物。", "请给我发一条微信：暗暗提一下明天，但不要剧透礼物，也不要说破，1-2 句，符合你的性格。", "明天……你有空吗？我有点事想跟你说。");
+  xaMsg(c, t);
+  if (annOpt("mom", 1) && Math.random() < 0.5) annMoment(c, "你在偷偷给某个重要的人准备礼物，不要点名是谁");
+}
+async function annGift(c, it) {
+  const lab = annLabel(it), bday = it.kind == "bday_me", s = cstOf(c);
+  if (annOpt("rp", 1)) {
+    const a = annAmt(c), n = bday ? "生日快乐" : "纪念日快乐", Lm = WX.msgs[c.id] || (WX.msgs[c.id] = []), ts = Date.now();
+    Lm.push({ me: 0, t: "[红包] ¥" + a.toFixed(2) + " " + n, tf: { k: "hb", a, n, st: 0 }, ts, h: new Date(ts).toTimeString().slice(0, 5) });
+    if (WX.cur != c.id) c.unread = (c.unread || 0) + 1;
+    try { wsave(); wxTouch(); if (WX.cur == c.id) { ml(); const e = $("#ml"); if (e) e.scrollTop = 1e9; } notify("chat", nm(c), "[红包] " + n); } catch (e) {}
+    await annWait(1800);
+  }
+  if (annOpt("essay", 1)) {
+    const t = await annAsk(c, "今天是" + lab + (it.kind == "anniv" && annParse(it.date) ? "（" + it.name + "）" : "") + "。你早就记着，想给对方写一段走心的小作文" + (annOpt("rp", 1) ? "（你刚给对方发了红包）" : "") + "。分 2-3 段，不超过 300 字，符合你的性格和你们的关系，可以提到你们之间真实发生过的事，不要列表、不要 emoji 堆砌。", "请写给我吧。", bday ? "生日快乐。今年也要好好的，我会一直在。" : "今天是我们的纪念日，谢谢你一直在。");
+    xaMsg(c, t);
+    await annWait(1500);
+  }
+  if (annOpt("mom", 1) && Math.random() < 0.7) await annMoment(c, "今天是" + lab + "，你为对方准备了礼物和祝福，可以含蓄地晒一下心情，不要点名");
+  s.m = Math.min(100, (s.m || 60) + 6); cstEv(s, "给对方准备了" + lab + "的礼物和祝福");
+}
+async function annSulk(c, it, hint) {
+  const lab = annLabel(it), s = cstOf(c);
+  const t = await annAsk(c, "今天是" + lab + (it.kind == "anniv" ? "（" + it.name + "）" : "") + "，可是对方到现在都没有祝福你，也没有任何表示。" + (hint ? "你先前已经暗示过一次。" : "") + "你感到失落或生气——怎么表现取决于你的性格（冷淡、委屈、嘴硬、闷气、阴阳怪气都可以）。1-3 句，不要太长，不要说“我是AI”。", "请发给我一条消息。", "……今天是什么日子，你不会真的忘了吧。");
+  xaMsg(c, t);
+  s.m = Math.max(0, (s.m || 60) - 15); cstEv(s, "对方忘了" + lab + "，很失落");
+}
+async function annHint(c, it) {
+  const t = await annAsk(c, "今天是" + annLabel(it) + (it.kind == "anniv" ? "（" + it.name + "）" : "") + "，你有点期待对方记得，但没有说破。", "请发一条微信：不直说，只轻轻暗示一下今天的特别（比如问对方今天过得怎么样、记不记得今天是什么日子），1 句，符合你的性格。", "今天……你有没有想起什么？");
+  xaMsg(c, t);
+}
+function annChars(it) {
+  if (it.cid) { const c = WX.cons.find((x) => x.id == it.cid); return c ? [c] : []; }
+  return WX.cons.filter((c) => !c.fid && (WX.msgs[c.id] || []).length).sort((a, b) => ((WX.msgs[b.id] || []).slice(-1)[0] || {}).ts - ((WX.msgs[a.id] || []).slice(-1)[0] || {}).ts || 0).slice(0, 3);
+}
+async function annTick() {
+  if (AN.busy) return;
+  const now = Date.now(), A = ANNO(), hr = new Date(now).getHours() + new Date(now).getMinutes() / 60;
+  const todo = [];
+  for (const it of annAll(now)) {
+    const dir = annDir(it);
+    if (dir == "none") continue;
+    for (const occ of annOccs(it, now)) {
+      const d0 = annSod(occ).getTime(), dd = (now - d0) / 864e5;
+      if (dd < -1 || dd >= 3) continue;
+      for (const c of annChars(it)) {
+        const key = it.id + ":" + c.id + ":" + occ.getFullYear(), g = A.log[key] || (A.log[key] = {});
+        if (dir != "ta" && annOpt("prep", 1) && !g.prep && now >= d0 - 6 * 36e5 && now < d0 + 864e5) todo.push([key, "prep", c, it, occ]);
+        else if (dir != "ta" && !g.gift && now >= d0) todo.push([key, "gift", c, it, occ]);
+        if (dir != "me" && annOpt("sulk", 1)) {
+          const ack = annAcked(c, occ);
+          if (!ack && annOpt("hint", 1) && !g.hint && !g.sulk && dd >= 0 && dd < 1 && hr >= 14 && hr < 21) todo.push([key, "hint", c, it, occ]);
+          if (!ack && !g.sulk && (dd >= 1 || (dd >= 0 && hr >= 21.5))) todo.push([key, "sulk", c, it, occ]);
+        }
+      }
+    }
+  }
+  if (!todo.length) return;
+  const [key, st, c, it] = todo[0], g = A.log[key];
+  g[st] = now; savePrefs();
+  AN.busy = 1;
+  try {
+    if (st == "prep") await annPrep(c, it); else if (st == "gift") await annGift(c, it); else if (st == "hint") await annHint(c, it); else await annSulk(c, it, g.hint);
+  } catch (e) {}
+  AN.busy = 0; savePrefs();
+  if (cur == "ann") annR();
+}
+setInterval(annTick, 6e4); setTimeout(annTick, 8e3);
+{
+  const cc3 = cstCross;
+  cstCross = function (c) {
+    let s = cc3(c);
+    try {
+      const now = Date.now(), L = [];
+      for (const it of annAll(now)) {
+        const dir = annDir(it);
+        if (dir == "none" || (it.cid && it.cid !== c.id)) continue;
+        const occ = annNext(it, now), p = annParse(it.date); if (!occ) continue;
+        const dd = annDays(occ, now), A = ANNO(), g = A.log[it.id + ":" + c.id + ":" + occ.getFullYear()] || {};
+        if (it.kind == "bday_me" && p) L.push("对方的生日是" + p.m + "月" + p.d + "日" + (dd == 0 ? "，就是今天" + (g.gift ? "（你已经送了礼物和祝福）" : "") : dd > 0 && dd <= 7 ? "，还有 " + dd + " 天" : dd < 0 && dd >= -3 ? "，刚过去 " + -dd + " 天" : ""));
+        else if (dd == 0 || (dd < 0 && dd >= -2)) {
+          const ack = dir != "me" && annAcked(c, occ);
+          L.push((dd == 0 ? "今天" : "前几天") + "是" + (it.kind == "bday_ta" ? "你的生日" : "你们的纪念日「" + it.name + "」") + (dir == "me" ? "" : ack ? "，对方已经表示过了" : g.sulk ? "，对方当时没有任何表示，你很失落" : "，对方还没有任何表示"));
+        } else if (dd > 0 && dd <= 7 && it.kind != "bday_me") L.push((it.kind == "bday_ta" ? "你的生日" : "纪念日「" + it.name + "」") + "还有 " + dd + " 天");
+      }
+      if (L.length) { const t = "日子：" + L.join("；") + "。"; s = s ? s + "\n- " + t : "【跨 App 近况】（这些都是你真实经历过的，在不同 App 里保持一致；合适时可以自然提起或接着聊，不要生硬复述）\n- " + t; }
+    } catch (e) {}
+    return s;
+  };
+}
+// ---- 界面 ----
+const annKindN = { bday_me: "我的生日", bday_ta: "角色生日", anniv: "纪念日", custom: "倒数日" };
+function annR() {
+  const now = Date.now(), L = annAll(now).map((it) => ({ it, occ: annNext(it, now) })).filter((x) => x.occ).map((x) => Object.assign(x, { d: annDays(x.occ, now) })).sort((a, b) => (a.d < 0) - (b.d < 0) || Math.abs(a.d) - Math.abs(b.d));
+  const hasMe = ANNO().items.some((x) => x.kind == "bday_me"), top = L.find((x) => x.d >= 0);
+  const row = (x) => {
+    const it = x.it, c = it.cid && WX.cons.find((z) => z.id == it.cid), p = annParse(it.date), yrs = it.yearly && p ? x.occ.getFullYear() - p.y : 0;
+    return `<div class="xa-row" data-an="op" data-id="${esc(it.id)}" role="button" tabindex="0" style="align-items:center"><div style="flex:none;width:58px;text-align:center"><b style="font-size:24px;font-weight:300">${x.d == 0 ? "今天" : Math.abs(x.d)}</b><s style="margin:0">${x.d == 0 ? "" : x.d > 0 ? "天后" : "天前"}</s></div><div><b>${esc(it.name || annLabel(it))}${it.auto ? '<span class="td-tag" style="margin-left:6px">自动</span>' : ""}</b><s>${x.occ.getFullYear()}年${x.occ.getMonth() + 1}月${x.occ.getDate()}日${yrs > 0 ? " · 第 " + yrs + " 年" : ""}${c ? " · " + esc(nm(c)) : ""} · ${annKindN[it.kind]}</s></div></div>`;
+  };
+  $("#app").innerHTML = xkHead("纪念日", `<div class="tbr"><button class="tbn" data-an="set" aria-label="设置">${ic("gear")}</button><button class="tbn" data-an="add" aria-label="添加">${ic("plus")}</button></div>`) +
+    `<div class="sc">${top ? `<div class="m2-c" style="margin:4px 0 10px"><small>最近的日子</small><b style="font-size:34px">${top.d == 0 ? "就是今天" : top.d + " 天后"}</b><small>${esc(top.it.name || annLabel(top.it))}</small></div>` : ""}${!hasMe ? `<div class="xa-btns"><button class="cb pr" data-an="mybd">设置我的生日，让角色记住</button></div>` : ""}${L.length ? L.map(row).join("") : '<p class="em" style="margin-top:60px">还没有日子<br>点右上角添加生日或纪念日，角色会记得，也会期待你记得</p>'}<p class="stt" style="margin:14px 0 0">角色会在你的生日、纪念日前一天暗示，当天发红包、写小作文、发朋友圈；如果你忘了 TA 的生日或纪念日，TA 会失落或生气。页面需要开着才会触发。</p></div>`;
+}
+function annForm(title, init, cb, noName) {
+  SHs.items = [{ t: "保存", f: () => cb({ name: ($("#an_n") || {}).value ? $("#an_n").value.trim() : "", date: $("#an_d").value, yearly: $("#an_y") ? ($("#an_y").checked ? 1 : 0) : 1 }) }];
+  shOpen(title, "", `<div style="padding:0 4px">${noName ? "" : `<div class="fd"><small>名称</small><input id="an_n" value="${esc(init.name || "")}" autocomplete="off"></div>`}<div class="fd"><small>日期</small><input id="an_d" type="date" value="${esc(init.date || "")}"></div>${init.fixedYearly ? "" : `<label style="display:flex;align-items:center;gap:8px;margin:14px 0 4px;font-size:14px"><input type="checkbox" id="an_y"${init.yearly === 0 ? "" : " checked"} style="width:18px;height:18px"> 每年重复</label>`}</div><div class="l"><button class="si" data-sk="0"><span>保存</span></button><button class="si" data-sk="x"><span>取消</span></button></div>`);
+}
+function annAdd(kind, cid) {
+  const A = ANNO();
+  const go = (init, c) => annForm(c ? "添加" + annKindN[kind] + " · " + nm(c) : "添加" + annKindN[kind], init, (v) => {
+    if (!v.date) return gtoast("请选择日期");
+    const nmv = kind == "bday_me" ? "我的生日" : kind == "bday_ta" ? nm(c) + "的生日" : v.name || (kind == "anniv" ? nm(c) + " 纪念日" : "倒数日");
+    if (kind == "bday_me") A.items = A.items.filter((x) => x.kind != "bday_me");
+    if (kind == "bday_ta") A.items = A.items.filter((x) => !(x.kind == "bday_ta" && x.cid == c.id));
+    A.items.push({ id: "a" + Date.now(), kind, name: nmv, date: v.date, cid: c ? c.id : 0, yearly: kind == "custom" ? v.yearly : kind == "anniv" ? v.yearly : 1 });
+    savePrefs(); annR(); setTimeout(annTick, 400);
+  }, kind == "bday_me" || kind == "bday_ta");
+  if (kind == "bday_me" || kind == "custom") go({ fixedYearly: kind == "bday_me" }, null);
+  else if (cid) go({ fixedYearly: kind == "bday_ta" }, WX.cons.find((x) => x.id == cid));
+  else xaPick("给哪位角色？", (c) => setTimeout(() => go({ fixedYearly: kind == "bday_ta" }, c), 260));
+}
+function annCelebrate(it) {
+  const c = WX.cons.find((x) => x.id == it.cid); if (!c) return;
+  const lab = it.kind == "bday_ta" ? "生日" : "纪念日", say = (txt, hint, pre) => {
+    const L = WX.msgs[c.id] || (WX.msgs[c.id] = []);
+    L.push(Object.assign({ me: 1, t: txt, ts: Date.now() }, pre || {})); wsave();
+    gtoast("已送出"); try { if (xaOK()) wxReply(c.id, hint); } catch (e) {}
+  };
+  actSheet("给 " + nm(c) + " 送上" + lab + "心意", [
+    { t: "发红包 ¥52.00", f: () => { if (!walPay(52, "给" + nm(c) + "的" + lab + "红包")) return; say("[红包] ¥52.00 " + lab + "快乐", "（我给你发了" + lab + "红包，并祝你" + lab + "快乐。请按你的性格和此刻的心情回应——如果我之前忘了，可以带点嗔怪。）", { tf: { k: "hb", a: 52, n: lab + "快乐", st: 0 } }); } },
+    { t: "订一个蛋糕 ¥88", f: () => { if (!walPay(88, "给" + nm(c) + "订蛋糕")) return; say("我给你订了一个蛋糕，" + lab + "快乐！🎂", "（我给你订了" + lab + "蛋糕并送到了。请按你的性格回应。）"); } },
+    { t: "写一句祝福", f: () => setTimeout(() => editSheet("写给 " + nm(c) + " 的祝福", "", (v) => { v = v.trim(); if (v) say(v, "（我在你的" + lab + "给你写了祝福。请按你的性格认真回应。）"); }, lab + "快乐！"), 260) }
+  ], "送了之后 TA 就知道你没忘");
+}
+function annOp(id) {
+  const it = annAll(Date.now()).find((x) => x.id == id); if (!it) return;
+  const A = ANNO(), L = [], c = it.cid && WX.cons.find((x) => x.id == it.cid);
+  if (c && annDir(it) != "me") L.push({ t: "给 " + nm(c) + " 送祝福 / 礼物", f: () => annCelebrate(it) });
+  if (annDir(it) != "ta" && annDir(it) != "none") L.push({ t: "现在就让 TA 们准备礼物（试一下）", f: () => { const occ = annNext(it, Date.now()); annChars(it).forEach((cc) => { const g = A.log[it.id + ":" + cc.id + ":" + occ.getFullYear()] || (A.log[it.id + ":" + cc.id + ":" + occ.getFullYear()] = {}); g.gift = Date.now(); }); savePrefs(); gtoast("TA 正在准备…"); (async () => { for (const cc of annChars(it)) await annGift(cc, it); })(); } });
+  if (!it.auto) { L.push({ t: "编辑日期", f: () => annForm("编辑", it, (v) => { if (!v.date) return; it.date = v.date; if (v.name) it.name = v.name; it.yearly = v.yearly; savePrefs(); annR(); }, it.kind == "bday_me" || it.kind == "bday_ta")}); L.push({ t: "删除", dg: 1, f: () => { A.items = A.items.filter((x) => x !== it); savePrefs(); annR(); } }); }
+  actSheet(it.name || annLabel(it), L);
+}
+function annSet() {
+  const o = (k, l, d) => ({ t: l + "：" + (annOpt(k, d) ? "开" : "关"), f: () => { ANNO().opt[k] = annOpt(k, d) ? 0 : 1; savePrefs(); setTimeout(annSet, 260); } });
+  actSheet("纪念日设置", [o("prep", "前一天暗示", 1), o("rp", "当天发红包", 1), o("essay", "当天写小作文", 1), o("mom", "发朋友圈", 1), o("hint", "你忘了时先暗示", 1), o("sulk", "你忘了时失落 / 生气", 1), o("auto", "自动生成相识纪念（100 天、周年…）", 1),
+    { t: "红包金额上限：¥" + annOpt("max", 520), f: () => setTimeout(() => actSheet("红包金额上限", [100, 200, 520, 1314].map((n) => ({ t: "¥" + n, f: () => { ANNO().opt.max = n; savePrefs(); } }))), 260) }], "关闭的项目角色就不会做");
+}
+$("#app").addEventListener("click", (e) => {
+  if (cur != "ann") return;
+  const t = e.target.closest("[data-an]"); if (!t) return;
+  e.stopPropagation();
+  const a = t.dataset.an;
+  if (a == "op") annOp(t.dataset.id);
+  else if (a == "mybd") annAdd("bday_me");
+  else if (a == "set") annSet();
+  else if (a == "add") actSheet("添加", [{ t: "我的生日", f: () => annAdd("bday_me") }, { t: "角色的生日", f: () => annAdd("bday_ta") }, { t: "和角色的纪念日", f: () => annAdd("anniv") }, { t: "倒数日（自己的日子）", f: () => annAdd("custom") }]);
+});
+xaAdd("ann", "纪念日", "M12 21s-7-4.5-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.5-9 9-9 9zM12 7v2", { el: "#app", open: () => annR() }, "生活", "生日与纪念日，角色会准备礼物，也会期待你记得");
+
+// ---------- 强力后台保活 ----------
+const KA_URL = "https://imgbed.heliar.top/i/93zdMSNlbJNb3T6R_%E9%9D%99%E9%9F%B330min.mp3";
+const KAS = { a: null, ctx: null, osc: null, hb: 0, lk: 0, wl: null, src: "mp3", t0: 0, ok: 0, n: 0, want: 0 };
+function kaUi() {
+  const el = document.getElementById("ka_s"); if (!el) return;
+  const up = KAS.t0 ? Math.round((Date.now() - KAS.t0) / 6e4) : 0;
+  el.textContent = !CFG.ka ? "未开启" : KAS.ok ? "运行中 · " + (KAS.src == "mp3" ? "静音音频（远程）" : "静音音频（本地备用）") + " · 已保活 " + up + " 分钟" + (KAS.ctx && KAS.ctx.state == "running" ? " · 音频引擎在线" : "") + (KAS.lk ? " · 锁已持有" : "") : "等待点击页面后启动（浏览器要求先有一次操作）";
+}
+function kaLayers() {
+  try {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (AC) {
+      if (!KAS.ctx) { KAS.ctx = new AC(); const o = KAS.ctx.createOscillator(), g = KAS.ctx.createGain(); g.gain.value = 1e-5; o.frequency.value = 18; o.connect(g); g.connect(KAS.ctx.destination); o.start(); KAS.osc = o; }
+      if (KAS.ctx.state != "running") KAS.ctx.resume().catch(() => {});
+    }
+  } catch (e) {}
+  try { if (!KAS.lk && navigator.locks && navigator.locks.request) { KAS.lk = 1; navigator.locks.request("xsj-keepalive", () => new Promise(() => {})).catch(() => { KAS.lk = 0; }); } } catch (e) {}
+  try { if (CFG.kawl && navigator.wakeLock && !KAS.wl && document.visibilityState == "visible") navigator.wakeLock.request("screen").then((w) => { KAS.wl = w; w.addEventListener("release", () => { KAS.wl = null; }); }).catch(() => {}); } catch (e) {}
+  try { if (navigator.mediaSession) { navigator.mediaSession.metadata = new MediaMetadata({ title: "雪穗机 · 后台运行中", artist: "静音保活" }); navigator.mediaSession.playbackState = "playing"; navigator.mediaSession.setActionHandler("play", () => kaStart()); navigator.mediaSession.setActionHandler("pause", () => kaStart()); } } catch (e) {}
+}
+kaStart = function () {
+  if (!CFG.ka) return;
+  KAS.want = 1;
+  try {
+    if (!KAS.a) {
+      const a = new Audio(); a.src = KA_URL; a.loop = true; a.preload = "auto"; a.volume = 1;
+      a.setAttribute("playsinline", ""); a.setAttribute("webkit-playsinline", "");
+      const wav = () => { if (KAS.src == "mp3") { KAS.src = "wav"; a.src = URL.createObjectURL(kaWav()); a.loop = true; a.play().then(() => { KAS.ok = 1; kaUi(); }).catch(() => {}); } };
+      a.addEventListener("error", wav);
+      a.addEventListener("stalled", () => { if (KAS.src == "mp3" && a.networkState == 3) wav(); });
+      a.addEventListener("pause", () => { if (KAS.want && CFG.ka) setTimeout(() => { if (KAS.a && KAS.a.paused && KAS.want) KAS.a.play().catch(() => {}); }, 400); });
+      a.addEventListener("ended", () => { KAS.n++; a.currentTime = 0; a.play().catch(() => {}); });
+      KAS.a = a; KA = a;
+    }
+    KAS.a.play().then(() => { KAS.ok = 1; if (!KAS.t0) KAS.t0 = Date.now(); kaUi(); }).catch(() => { KAS.ok = 0; kaUi(); });
+  } catch (e) {}
+  kaLayers();
+  if (!KAS.hb) KAS.hb = setInterval(() => { if (!CFG.ka) return; if (KAS.a && KAS.a.paused) KAS.a.play().catch(() => {}); kaLayers(); kaUi(); }, 15e3);
+};
+kaStop = function () {
+  KAS.want = 0; KAS.ok = 0; KAS.t0 = 0;
+  try { if (KAS.a) KAS.a.pause(); } catch (e) {}
+  try { if (KAS.ctx) KAS.ctx.suspend(); } catch (e) {}
+  try { if (KAS.wl) { KAS.wl.release(); KAS.wl = null; } } catch (e) {}
+  try { if (navigator.mediaSession) navigator.mediaSession.playbackState = "none"; } catch (e) {}
+  clearInterval(KAS.hb); KAS.hb = 0; kaUi();
+};
+document.addEventListener("visibilitychange", () => { if (CFG.ka) kaStart(); });
+addEventListener("pageshow", () => { if (CFG.ka) kaStart(); });
+setTimeout(() => { if (CFG.ka) kaStart(); }, 1500);
+{
+  const rs0 = rSet;
+  rSet = function (keep) {
+    rs0.apply(this, arguments);
+    try {
+      if (ST.tab != 3) return;
+      const sc = document.querySelector("#st .sc"); if (!sc || sc.querySelector("#ka_card")) return;
+      const d = document.createElement("div");
+      d.className = "card"; d.id = "ka_card";
+      d.innerHTML = `<h3>后台保活</h3><div class="lr"><div><b>强力静音保活</b><small>循环播放一段 30 分钟的静音音频，并叠加音频引擎、Web Lock，让页面切到后台时尽量不被系统冻结，角色的定时消息、待办催办、纪念日才能照常触发</small></div><button class="sw${CFG.ka ? " on" : ""}" role="switch" aria-checked="${CFG.ka ? "true" : "false"}" aria-label="后台保活" data-ka="1"><i></i></button></div><p class="stt" id="ka_s" style="margin:6px 0"></p><div class="lr"><div><b>屏幕常亮</b><small>页面在前台时不让屏幕熄灭（更耗电）</small></div><button class="sw${CFG.kawl ? " on" : ""}" role="switch" aria-checked="${CFG.kawl ? "true" : "false"}" aria-label="屏幕常亮" data-kawl="1"><i></i></button></div><div class="r2"><button class="cb" data-kare="1">立即重启保活</button></div><p class="stt">浏览器规定必须先点一下页面才能出声，开启后随便点一下即可。iPhone 请把本页「添加到主屏幕」再打开，效果更好；系统的省电模式、后台限制仍可能让它失效，无法 100% 保证。</p>`;
+      sc.appendChild(d); kaUi();
+    } catch (e) {}
+  };
+  document.addEventListener("click", (e) => {
+    const w = e.target.closest && e.target.closest("[data-kawl]"), r = e.target.closest && e.target.closest("[data-kare]");
+    if (w) { e.stopPropagation(); CFG.kawl = CFG.kawl ? 0 : 1; savePrefs(); w.classList.toggle("on", !!CFG.kawl); w.setAttribute("aria-checked", CFG.kawl ? "true" : "false"); if (!CFG.kawl && KAS.wl) { try { KAS.wl.release(); } catch (x) {} KAS.wl = null; } else if (CFG.ka) kaLayers(); }
+    if (r) { e.stopPropagation(); KAS.a = null; KAS.src = "mp3"; KAS.t0 = 0; if (!CFG.ka) { CFG.ka = 1; savePrefs(); } kaStart(); gtoast("已重启保活", 1400); setTimeout(() => { rSet(1); }, 600); }
+  }, true);
+  setInterval(kaUi, 30000);
+}
+
+// ---------- 通用 API 编辑器（自由 URL / 拉取模型 / 搜索 / 温度） ----------
+const AEL = {};
+const aeSig = (A) => (A.type || "") + "|" + String(A.url || "").trim().replace(/\/+$/, "").toLowerCase();
+async function aePull(A) {
+  const raw = String(A.url || "").trim();
+  let u; try { u = new URL(raw); } catch (e) { throw new Error("接口地址不是有效的网址"); }
+  if (!/^https?:$/.test(u.protocol)) throw new Error("接口地址要以 http:// 或 https:// 开头");
+  const ac = new AbortController(), to = setTimeout(() => ac.abort(), 15e3);
+  let r;
+  try { r = await fetch(eurl(A, "models"), { headers: hdrs(A), signal: ac.signal }); } catch (e) { clearTimeout(to); throw new Error(e && e.name == "AbortError" ? "连接超时" : "无法连接（地址错误或被浏览器跨域拦截）"); }
+  clearTimeout(to);
+  if (r.status == 401 || r.status == 403) throw new Error("密钥无效或没有权限（HTTP " + r.status + "）");
+  if (r.status == 404) throw new Error("这个地址没有 /models 接口，可手动填写模型名");
+  if (!r.ok) throw new Error("HTTP " + r.status);
+  let j; try { j = JSON.parse(await r.text()); } catch (e) { throw new Error("返回的不是 JSON"); }
+  const arr = Array.isArray(j) ? j : j && (j.data || j.models) || [], ids = [...new Set((Array.isArray(arr) ? arr : []).map((m) => typeof m == "string" ? m : m && (m.id || m.name)).filter(Boolean))];
+  if (!ids.length) throw new Error("接口没有返回模型列表");
+  return ids;
+}
+const AE = { A: null, o: null, q: "", busy: 0 };
+function aeRead() {
+  const g = (id) => { const e = document.getElementById(id); return e ? e.value : ""; };
+  const A = AE.A; A.type = g("ae_t") || A.type; A.url = g("ae_u").trim(); A.key = g("ae_k").trim(); A.model = g("ae_m").trim();
+  if (AE.o.temp !== false) A.temp = document.getElementById("ae_tf") && document.getElementById("ae_tf").checked ? null : +g("ae_tp");
+  return A;
+}
+function aeList() {
+  const el = document.getElementById("ae_l"); if (!el) return;
+  const A = AE.A, all = AEL[aeSig(A)] || [], q = AE.q.trim().toLowerCase(), L = q ? all.filter((m) => m.toLowerCase().includes(q)) : all;
+  el.innerHTML = all.length ? (L.length ? L.slice(0, 200).map((m) => `<div class="m2-sr" data-ae="pick" data-m="${esc(m)}" role="button" tabindex="0" style="padding:10px 0;font-size:14px;${m == A.model ? "font-weight:600" : ""}"><span style="word-break:break-all">${esc(m)}</span>${m == A.model ? "<small>✓</small>" : ""}</div>`).join("") : '<p class="stt">没有匹配的模型，可直接在上面的输入框里填写</p>') : '<p class="stt">还没有拉取模型列表。点「拉取模型」，或直接手动填写模型名。</p>';
+}
+function aeMsg(t, err) { const e = document.getElementById("ae_s"); if (e) { e.textContent = t; e.style.color = err ? "#ff3b30" : ""; } }
+function apiEditor(o) {
+  const A = Object.assign({ type: CFG.a.type || "openai", url: "", key: "", model: "", temp: null }, JSON.parse(JSON.stringify(o.A || {})));
+  AE.A = A; AE.o = o; AE.q = "";
+  const tf = A.temp == null;
+  SHs.items = [{ t: "保存", f: () => { aeRead(); o.onSave(AE.A); } }].concat(o.onReset ? [{ t: o.resetLabel || "恢复跟随全局", dg: 1, f: () => o.onReset() }] : []);
+  shOpen(o.title, o.sub || "", `<div id="ae" style="padding:0 4px;max-height:34vh;overflow-y:auto;-webkit-overflow-scrolling:touch">
+<div class="fd"><small>接口类型</small>${sel('id="ae_t"', [["openai", "OpenAI 兼容"], ["anthropic", "Anthropic"]], A.type)}</div>
+<div class="fd"><small>接口地址（可自由填写新的，如 https://api.example.com/v1）</small><input id="ae_u" value="${esc(A.url)}" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://"></div>
+<div class="fd"><small>密钥</small><input id="ae_k" value="${esc(A.key)}" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="sk-…"></div>
+<div class="fd"><small>${esc(o.modelLabel || "模型")}</small><input id="ae_m" value="${esc(A.model)}" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="手动填写，或从下面选择"></div>
+<div class="xa-btns" style="margin-top:10px"><button class="cb" data-ae="pull">拉取模型</button><button class="cb" data-ae="test">连接测试</button></div><p class="stt" id="ae_s" style="margin:2px 0 6px"></p>
+<input class="pw-q" id="ae_q" placeholder="搜索已拉取的模型" style="margin:0 0 6px;width:100%"><div id="ae_l" style="max-height:150px;overflow-y:auto;-webkit-overflow-scrolling:touch;border-top:1px solid var(--line)"></div>
+${o.temp === false ? "" : `<div class="fd"><small>温度 <span id="ae_tv">${tf ? "跟随全局 " + (+CFG.temp).toFixed(1) : (+A.temp).toFixed(1)}</span></small><input type="range" id="ae_tp" min="0" max="2" step="0.1" value="${tf ? CFG.temp : A.temp}"><label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-top:4px"><input type="checkbox" id="ae_tf"${tf ? " checked" : ""} style="width:16px;height:16px"> 跟随全局温度</label></div>`}</div>
+<div class="l"><button class="si" data-sk="0"><span>保存</span></button>${o.onReset ? `<button class="si dg" data-sk="1"><span>${o.resetLabel || "恢复跟随全局"}</span></button>` : ""}<button class="si" data-sk="x"><span>取消</span></button></div>`);
+  aeList();
+}
+$("#sh").addEventListener("click", async (e) => {
+  const b = e.target.closest("[data-ae]"); if (!b || !AE.A) return;
+  e.stopPropagation();
+  const a = b.dataset.ae;
+  if (a == "pick") { const m = document.getElementById("ae_m"); if (m) m.value = b.dataset.m; AE.A.model = b.dataset.m; aeList(); return; }
+  if (AE.busy) return;
+  const A = aeRead();
+  if (!A.url) return aeMsg("请先填写接口地址", 1);
+  AE.busy = 1; aeMsg(a == "pull" ? "拉取中…" : "测试中…");
+  try { const ids = await aePull(A); AEL[aeSig(A)] = ids; aeMsg((a == "test" ? "连接正常，" : "") + "已获取 " + ids.length + " 个模型"); aeList(); }
+  catch (er) { aeMsg(er.message || String(er), 1); }
+  AE.busy = 0;
+}, true);
+$("#sh").addEventListener("input", (e) => {
+  if (!AE.A) return;
+  if (e.target.id == "ae_q") { AE.q = e.target.value; aeList(); }
+  else if (e.target.id == "ae_tp") { const f = document.getElementById("ae_tf"); if (f) f.checked = false; const v = document.getElementById("ae_tv"); if (v) v.textContent = (+e.target.value).toFixed(1); }
+  else if (e.target.id == "ae_tf") { const v = document.getElementById("ae_tv"); if (v) v.textContent = e.target.checked ? "跟随全局 " + (+CFG.temp).toFixed(1) : (+document.getElementById("ae_tp").value).toFixed(1); }
+  else if (e.target.id == "ae_u" || e.target.id == "ae_t") aeList();
+});
+$("#sh").addEventListener("change", (e) => { if (AE.A && (e.target.id == "ae_tf" || e.target.id == "ae_t")) { const v = document.getElementById("ae_tv"), f = document.getElementById("ae_tf"), p = document.getElementById("ae_tp"); if (v && f && p) v.textContent = f.checked ? "跟随全局 " + (+CFG.temp).toFixed(1) : (+p.value).toFixed(1); if (e.target.id == "ae_t") { AE.A.type = e.target.value; aeList(); } } });
+// 绑定：联动账号的独立 API
+lkApiSet = function (c) {
+  const L = c.ls = c.ls || {};
+  apiEditor({
+    title: "独立 API", sub: "填全地址和模型后，TA 的好友来消息 / 回复我时就用这套 API，不占用主聊天的接口",
+    A: L.api || { type: CFG.a.type }, temp: true,
+    onSave: (A) => { if (A.url || A.model || A.key) L.api = A; else delete L.api; lkRe(c, lkGenSet)(); },
+    onReset: () => { delete L.api; lkRe(c, lkGenSet)(); }
+  });
+};
+// 绑定：向量化独立接口
+function memApiSet() {
+  const M = MEM.api || {};
+  apiEditor({
+    title: "向量化接口", sub: "用于生成记忆向量。留空地址则使用主接口。模型填写 embedding 模型，如 text-embedding-3-small", modelLabel: "向量模型", temp: false,
+    A: { type: M.type || CFG.a.type, url: M.url || "", key: M.key || "", model: MEM.model },
+    onSave: (A) => {
+      const old = MEM.api && MEM.api.url, nw = A.url ? { type: A.type, url: A.url, key: A.key } : null;
+      if (A.model && A.model != MEM.model || (old || "") != (nw ? nw.url : "")) { MEM.items.forEach((x) => { delete x.e2; }); for (const k in MEMQ) delete MEMQ[k]; }
+      MEM.api = nw; if (A.model) MEM.model = A.model.slice(0, 60);
+      memSave(); try { if (cur == "mem") m2R(1); } catch (e) {} if (MEM.emb) memEmbFill().catch(() => 0);
+    },
+    onReset: () => { MEM.api = null; MEM.items.forEach((x) => { delete x.e2; }); for (const k in MEMQ) delete MEMQ[k]; memSave(); if (MEM.emb) memEmbFill().catch(() => 0); }
+  });
+}
+{
+  const mg0 = m2G;
+  m2G = function () {
+    mg0();
+    try { SHs.items.splice(3, 1, { t: "向量化接口与模型：" + (MEM.api && MEM.api.url ? "独立（" + MEM.model + "）" : "跟随主接口（" + MEM.model + "）"), f: () => setTimeout(memApiSet, 260) }); const bs = document.querySelectorAll("#sh .si"); if (bs[3]) bs[3].firstElementChild.textContent = SHs.items[3].t; } catch (e) {}
+  };
 }
 
 //XEND
