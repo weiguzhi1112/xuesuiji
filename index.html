@@ -11737,14 +11737,14 @@ function memSync() {
   }
   if (add) {
     if (MEM.items.length > 2800) {
-      const keep = MEM.items.filter((x) => x.pin || x.imp >= 3 || x.src == "man"), rest = MEM.items.filter((x) => !(x.pin || x.imp >= 3 || x.src == "man")).sort((a, b) => b.ts - a.ts).slice(0, Math.max(0, 2800 - keep.length));
+      const kp = (x) => x.pin || x.imp >= 3 || x.src == "man" || x.src == "fact" || x.src == "arc" || x.src == "sum", keep = MEM.items.filter(kp), rest = MEM.items.filter((x) => !kp(x)).sort((a, b) => b.ts - a.ts).slice(0, Math.max(0, 2800 - keep.length));
       MEM.items = keep.concat(rest);
     }
     memSave();
   }
   return add;
 }
-const memSave = () => lazySave("mem", () => store("mem", { on: MEM.on, k: MEM.k, auto: MEM.auto, emb: MEM.emb, model: MEM.model, items: MEM.items, pos: MEM.pos }), 700);
+const memSave = () => lazySave("mem", () => store("mem", { on: MEM.on, k: MEM.k, auto: MEM.auto, emb: MEM.emb, model: MEM.model, items: MEM.items, pos: MEM.pos, cs: MEM.cs, rep: MEM.rep, la: MEM.la }), 700);
 function memRecall(cid, text, meta, k) {
   const q = memVec(text), q2 = MEM.emb ? MEMQ[memQTextKey] : null;
   if (!q.length) return [];
@@ -11988,7 +11988,7 @@ function mqDo(a, d) {
     mqR(1);
   } else if (a == "add") mqAdd();
   else if (a == "rebuild") confirmSheet("重建索引？", "重建", () => {
-    const keep = MEM.items.filter((x) => x.src == "man" || x.src == "sum" || x.pin);
+    const keep = MEM.items.filter((x) => x.src == "man" || x.src == "sum" || x.src == "fact" || x.src == "arc" || x.pin);
     MEM.items = keep;
     MEM.pos = {};
     memSync();
@@ -12136,6 +12136,10 @@ regData({
     MEM.model = isObj(o) && typeof o.model == "string" && o.model ? o.model.slice(0, 60) : "text-embedding-3-small";
     MEM.items = isObj(o) && Array.isArray(o.items) ? o.items.filter((x) => isObj(x) && typeof x.t == "string" && Array.isArray(x.v)) : [];
     MEM.pos = isObj(o) && isObj(o.pos) ? o.pos : {};
+    MEM.cs = isObj(o) && isObj(o.cs) ? o.cs : {};
+    MEM.rep = isObj(o) && isObj(o.rep) ? o.rep : {};
+    MEM.la = isObj(o) && isObj(o.la) ? o.la : {};
+    MEM.mb = {};
     MEM.busy = 0;
     MQ.res = null;
     MEMLAST = {};
@@ -19718,6 +19722,603 @@ regData({
   check: (m) => (m.scans === void 0 || Array.isArray(m.scans)) && (m.recs === void 0 || Array.isArray(m.recs)) ? "" : "扫描件或录音的数据格式不正确",
   hydrate() { SCN.L = null; REC.L = null; }
 });
+
+//XEND
+</script>
+<script type="text/plain" class="mp">
+// ===== 匿名通话不进微信记录 + 密码管理器 =====
+{
+  const ce2 = callEnd;
+  callEnd = function (why) {
+    const was = CALL.on, anon = was && CALL.via && /匿名/.test(CALL.via) && CALL.dir == "out", id = CALL.id;
+    const c0 = anon && WX.cons.find((x) => x.id == id), L0 = anon ? (WX.msgs[id] || []) : [], n0 = L0.length, ch0 = c0 && c0.chat;
+    const r = ce2.apply(this, arguments);
+    if (anon && c0) {
+      try {
+        const L = WX.msgs[id] || [];
+        for (let i = L.length - 1; i >= n0; i--) if (L[i] && L[i].call !== void 0) L.splice(i, 1);
+        if (!ch0 && !L.length) delete c0.chat;
+        wsave(); wxTouch();
+        if (WX.cur == id && cur == "chat") ml();
+      } catch (e) {}
+    }
+    return r;
+  };
+}
+
+const PWM = { tab: 0, lock: 1, q: "", pin: "" };
+const pwV = () => { let v = rd("pwds"); if (!isObj(v)) v = {}; if (!Array.isArray(v.me)) v.me = []; if (!isObj(v.ta)) v.ta = {}; return v; };
+let PWD = null;
+const pwD = () => PWD || (PWD = pwV());
+const pwSave = () => store("pwds", pwD());
+async function pwHash(pin, salt) {
+  const s = salt + ":" + pin;
+  try { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s)); return [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, "0")).join(""); }
+  catch (e) { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0; return "f" + h; }
+}
+function pwGen(n) {
+  const cs = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%&*?", a = new Uint32Array(n || 16);
+  crypto.getRandomValues(a);
+  let s = [...a].map((x) => cs[x % cs.length]).join("");
+  if (!/\d/.test(s) || !/[A-Z]/.test(s) || !/[a-z]/.test(s)) s = "Aa7" + s.slice(3);
+  return s;
+}
+const pwStr = (p) => { p = p || ""; const k = [/[a-z]/, /[A-Z]/, /\d/, /[^\w]/].filter((r) => r.test(p)).length; return p.length >= 12 && k >= 3 ? ["强", "#34c759"] : p.length >= 8 && k >= 2 ? ["中", "#ff9f0a"] : ["弱", "#ff3b30"]; };
+const xaCss3 = document.createElement("style");
+xaCss3.id = "xacss3";
+xaCss3.textContent = `.pw-av{flex:none;width:40px;height:40px;border-radius:12px;background:rgba(128,128,128,.14);display:grid;place-items:center;font-size:17px;font-weight:500}.pw-pad{display:grid;grid-template-columns:repeat(3,72px);gap:16px 22px;justify-content:center;margin:34px 0 0}.pw-pad button{width:72px;height:72px;border-radius:50%;border:0;background:rgba(128,128,128,.12);font-size:26px;font-weight:300;color:var(--ink);cursor:pointer}.pw-pad button:active{background:rgba(128,128,128,.3)}.pw-dots{display:flex;gap:16px;justify-content:center;margin:26px 0 4px}.pw-dots i{width:13px;height:13px;border-radius:50%;border:1.5px solid var(--ink)}.pw-dots i.on{background:var(--ink)}
+.pw-s{display:inline-block;font-size:11px;padding:0 6px;border-radius:8px;color:#fff;margin-left:6px}.pw-q{margin:0 22px 8px;flex:none;border:0;background:rgba(128,128,128,.12);border-radius:12px;padding:9px 14px;font:inherit;font-size:15px;color:var(--ink);outline:0;width:calc(100% - 44px);box-sizing:border-box}`;
+document.head.appendChild(xaCss3);
+function pwLockR() {
+  const n = pwD().pn || 4, d = PWM.pin.length;
+  $("#app").innerHTML = xkHead("密码", "") + `<div class="sc"><p class="em" style="margin:40px 0 0">输入 PIN 解锁</p><div class="pw-dots">${Array.from({ length: n }, (_, i) => `<i class="${i < d ? "on" : ""}"></i>`).join("")}</div><div class="pw-pad">${[1, 2, 3, 4, 5, 6, 7, 8, 9, "", 0, "⌫"].map((k) => k === "" ? "<span></span>" : `<button data-pw="k" data-v="${k}">${k}</button>`).join("")}</div></div>`;
+}
+function pwR() {
+  const D = pwD();
+  if (D.ph && PWM.lock) return pwLockR();
+  const cs = WX.cons.filter((c) => !c.fid);
+  $("#app").innerHTML = xkHead("密码", `<div class="tbr"><button class="tbn" data-pw="add" aria-label="添加">${ic("plus")}</button><button class="tbn" data-pw="menu" aria-label="更多">${ic("xmore")}</button></div>`) +
+    `<div class="xa-tabs">${["我的", "TA 的"].map((x, i) => `<button class="cb${PWM.tab == i ? " on" : ""}" data-pw="tab" data-v="${i}">${x}</button>`).join("")}</div><input class="pw-q" id="pw_q" placeholder="搜索" value="${esc(PWM.q)}"><div class="sc" id="pw_l"></div>`;
+  pwList();
+}
+function pwItems() {
+  const D = pwD(), q = PWM.q.trim().toLowerCase(), f = (x) => !q || (x.site + x.user + (x.note || "")).toLowerCase().includes(q);
+  if (PWM.tab == 0) return D.me.filter(f).map((x) => ({ x, c: null }));
+  const o = [];
+  WX.cons.forEach((c) => (D.ta[c.id] || []).filter(f).forEach((x) => o.push({ x, c })));
+  return o;
+}
+function pwList() {
+  const el = $("#pw_l"); if (!el) return;
+  const V = pwItems();
+  el.innerHTML = V.length ? V.map(({ x, c }) => { const s = pwStr(x.pw); return `<div class="xa-row" data-pw="op" data-id="${x.id}" role="button" tabindex="0" style="align-items:center"><div class="pw-av">${esc((x.site || "?")[0].toUpperCase())}</div><div><b>${esc(x.site)}${x.forgot ? '<span class="pw-s" style="background:#ff9f0a">待记录</span>' : x.pw ? `<span class="pw-s" style="background:${s[1]}">${s[0]}</span>` : ""}</b><s>${esc(x.user || "（无用户名）")}${c ? " · " + esc(nm(c)) : ""}</s></div></div>`; }).join("") : `<p class="em" style="margin-top:80px">${PWM.tab == 0 ? "还没有保存的账号<br>点右上角添加" : "TA 们还没有账号<br>点右上角「⋯」让角色来求助，或自己添加"}</p>`;
+}
+function pwForm(title, init, cb, o) {
+  o = o || {};
+  const fd = (id, l, v, ex) => `<div class="fd"${ex ? ' style="display:flex;gap:8px;align-items:flex-end"' : ""}><div style="flex:1"><small>${l}</small><input id="${id}" value="${esc(v || "")}" autocomplete="off" autocapitalize="off" spellcheck="false"></div>${ex || ""}</div>`;
+  SHs.items = [{ t: "保存", f: () => cb({ site: $("#pf_s").value.trim(), user: $("#pf_u").value.trim(), pw: $("#pf_p").value, note: $("#pf_n").value.trim() }) }];
+  shOpen(title, "", `<div style="padding:0 4px">${fd("pf_s", "网站 / App", init.site)}${fd("pf_u", "用户名 / 手机号 / 邮箱", init.user)}${fd("pf_p", "密码", init.pw, '<button class="cb" data-pwgen="1" style="margin:0 0 6px">生成</button>')}${fd("pf_n", "备注（可空）", init.note)}</div><div class="l"><button class="si" data-sk="0"><span>保存</span></button><button class="si" data-sk="x"><span>取消</span></button></div>`);
+  setTimeout(() => { const t = $("#pf_s"); if (t && !init.site) t.focus(); else if (o.pwFocus) { const p = $("#pf_p"); p && p.focus(); } }, 160);
+}
+$("#sh").addEventListener("click", (e) => { const b = e.target.closest("[data-pwgen]"); if (b) { e.stopPropagation(); const p = $("#pf_p"); if (p) { p.value = pwGen(16); } } }, true);
+function pwCopy(t, l) { navigator.clipboard.writeText(t).then(() => gtoast(l + "已复制"), () => gtoast("复制失败，请手动复制")); }
+function pwOpen(x, c) {
+  const D = pwD(), arr = c ? (D.ta[c.id] || (D.ta[c.id] = [])) : D.me;
+  const it = [];
+  if (x.pw) it.push({ t: "查看密码", f: () => setTimeout(() => actSheet(x.site, [{ t: "复制密码", f: () => pwCopy(x.pw, "密码") }, { t: "复制用户名", f: () => pwCopy(x.user, "用户名") }], "用户名：" + (x.user || "—") + "\n密码：" + x.pw + (x.note ? "\n备注：" + x.note : "")), 260) }, { t: "复制密码", f: () => pwCopy(x.pw, "密码") });
+  if (x.user) it.push({ t: "复制用户名", f: () => pwCopy(x.user, "用户名") });
+  if (c) {
+    if (x.forgot || !x.pw) it.push({ t: "帮 " + nm(c) + " 记下密码", f: () => pwForm("帮 " + nm(c) + " 记密码", x, (v) => {
+      if (!v.pw) return gtoast("请输入密码");
+      Object.assign(x, { site: v.site || x.site, user: v.user, pw: v.pw, note: v.note, forgot: 0, ts: Date.now() }); pwSave(); pwList();
+      if (xaOK()) { wxReply(c.id, "（我帮你把「" + x.site + "」的账号密码记在密码管理器里了，只有我知道，你以后忘了可以来问我。请按你的性格回应，比如道谢，别提到具体密码。）"); gtoast(nm(c) + " 知道你帮 TA 记好了"); }
+    }, { pwFocus: 1 }) });
+    if (x.pw && !x.forgot) {
+      it.push({ t: "把密码告诉 " + nm(c), f: () => { const L = WX.msgs[c.id] || (WX.msgs[c.id] = []); L.push({ me: 1, t: "「" + x.site + "」的账号是 " + x.user + "，密码是 " + x.pw, ts: Date.now() }); wsave(); gtoast("已发送"); try { wxReply(c.id); } catch (e) {} } });
+      it.push({ t: "让 " + nm(c) + " 又忘了这个密码", f: () => { x.forgot = 1; pwSave(); pwList(); if (xaOK()) wxReply(c.id, "（你又把「" + x.site + "」的密码忘了，请按你的性格主动跟我说一下，请我把密码告诉你。）"); } });
+    }
+  }
+  it.push({ t: "编辑", f: () => pwForm("编辑账号", x, (v) => { if (!v.site) return gtoast("请填写网站 / App"); Object.assign(x, v); pwSave(); pwList(); }) });
+  it.push({ t: "删除", dg: 1, f: () => { const i = arr.indexOf(x); if (i >= 0) arr.splice(i, 1); pwSave(); pwList(); } });
+  actSheet(x.site, it, x.user || "");
+}
+async function pwForget(c) {
+  const D = pwD(), L = D.ta[c.id] || (D.ta[c.id] = []);
+  let site = "", user = "", msg = "";
+  if (xaOK()) {
+    try {
+      const out = await chat([{ role: "user", content: "请编一个你最近忘了密码的账号。" }], xaCsys(c, "你有一些自己的网络账号（外卖、网盘、游戏、论坛、视频会员、购物等），符合你的人设和生活。现在你忘了其中一个账号的密码，想让对方（我）帮你记着。") + "\n只输出一个 JSON，不要别的：{\"site\":\"网站或App名\",\"user\":\"你的用户名/手机号/邮箱（编一个）\",\"msg\":\"你发给我的一条微信，口语化，说明你又忘了密码、希望我以后帮你记着\"}" + (L.length ? "\n已有账号（不要重复）：" + L.map((x) => x.site).join("、") : ""), null, 1);
+      const m = String(out).match(/\{[\s\S]*\}/); const j = m && JSON.parse(m[0]);
+      if (j && j.site) { site = String(j.site).slice(0, 20); user = String(j.user || "").slice(0, 40); msg = String(j.msg || "").slice(0, 200); }
+    } catch (e) {}
+  }
+  if (!site) { site = ["美团外卖", "百度网盘", "B站", "淘宝", "Steam"][Math.floor(Math.random() * 5)]; user = "user" + Math.floor(Math.random() * 9000 + 1000); msg = "我又把" + site + "的密码忘了…你能不能帮我记一下呀"; }
+  L.unshift({ id: "p" + Date.now(), site, user, pw: "", forgot: 1, note: "", ts: Date.now() });
+  D.last = Date.now(); pwSave(); xaMsg(c, msg || "我又把" + site + "的密码忘了，你帮我记着好不好？");
+  gtoast(nm(c) + " 忘了「" + site + "」的密码"); if (cur == "pwd") { PWM.tab = 1; pwR(); }
+}
+function pwMenu() {
+  const D = pwD();
+  actSheet("密码管理器", [
+    { t: "让角色来求助（忘记密码）", f: () => xaPick("让谁忘记密码？", pwForget) },
+    { t: "角色随机忘记密码：" + (D.auto ? "开" : "关"), f: () => { D.auto = D.auto ? 0 : 1; pwSave(); gtoast(D.auto ? "页面开着时，角色偶尔会来求助" : "已关闭"); } },
+    { t: D.ph ? "修改 PIN" : "设置 PIN 锁", f: () => pwSetPin() }].concat(D.ph ? [{ t: "关闭 PIN 锁", f: () => { D.ph = ""; D.ps = ""; pwSave(); gtoast("已关闭"); } }] : [], [{ t: "导出我的账号（CSV）", f: () => { const q = (s) => '"' + String(s || "").replace(/"/g, '""') + '"'; xaDl("data:text/csv;charset=utf-8," + encodeURIComponent("﻿site,user,password,note\n" + D.me.map((x) => [x.site, x.user, x.pw, x.note].map(q).join(",")).join("\n")), "passwords.csv"); } }]),
+    "数据保存在本机浏览器里，没有加密；PIN 只是界面锁。");
+}
+function pwSetPin() {
+  editSheet("设置 PIN（4-6 位数字）", "", async (v) => {
+    v = v.trim(); if (!/^\d{4,6}$/.test(v)) return gtoast("请输入 4-6 位数字");
+    const D = pwD(), salt = String(Math.random()).slice(2, 10);
+    D.ps = salt; D.ph = await pwHash(v, salt); D.pn = v.length; pwSave(); PWM.lock = 0; gtoast("PIN 已设置，下次进入需要解锁");
+  }, "数字，忘记后只能在「设置」里清除数据");
+}
+$("#app").addEventListener("click", async (e) => {
+  if (cur != "pwd") return;
+  const t = e.target.closest("[data-pw]");
+  if (!t) return;
+  e.stopPropagation();
+  const a = t.dataset.pw, D = pwD();
+  if (a == "k") {
+    const v = t.dataset.v;
+    if (v == "⌫") PWM.pin = PWM.pin.slice(0, -1); else if (PWM.pin.length < (D.pn || 4)) PWM.pin += v;
+    if (PWM.pin.length == (D.pn || 4)) {
+      const ok = (await pwHash(PWM.pin, D.ps)) == D.ph; PWM.pin = "";
+      if (ok) PWM.lock = 0; else { gtoast("PIN 不正确"); if (CFG.hap && navigator.vibrate) navigator.vibrate(40); }
+    }
+    return pwR();
+  }
+  if (a == "tab") { PWM.tab = +t.dataset.v; pwR(); }
+  else if (a == "menu") pwMenu();
+  else if (a == "add") {
+    const mk2 = (c) => pwForm(c ? "给 " + nm(c) + " 添加账号" : "添加账号", {}, (v) => { if (!v.site) return gtoast("请填写网站 / App"); (c ? (D.ta[c.id] || (D.ta[c.id] = [])) : D.me).unshift(Object.assign({ id: "p" + Date.now(), ts: Date.now() }, v)); pwSave(); pwList(); });
+    if (PWM.tab == 1) xaPick("给谁添加？", mk2); else mk2(null);
+  }
+  else if (a == "op") {
+    const id = t.dataset.id, f = pwItems().find((o) => o.x.id == id);
+    if (f) pwOpen(f.x, f.c);
+  }
+});
+$("#app").addEventListener("input", (e) => { if (cur == "pwd" && e.target.id == "pw_q") { PWM.q = e.target.value; pwList(); } });
+setInterval(() => {
+  const D = pwD();
+  if (!D.auto || Date.now() - (D.last || 0) < 6 * 36e5 || Math.random() > 0.3) return;
+  const cs = WX.cons.filter((c) => !c.fid && !(D.ta[c.id] || []).some((x) => x.forgot));
+  if (cs.length && CFG.a.url) pwForget(cs[Math.floor(Math.random() * cs.length)]);
+}, 15 * 6e4);
+{
+  const cc1 = cstCross;
+  cstCross = function (c) {
+    let s = cc1(c);
+    try {
+      const L = (pwD().ta[c.id] || []).slice(0, 4);
+      if (L.length) {
+        const t = "你的网络账号：" + L.map((x) => "「" + x.site + "」" + (x.forgot ? "（你忘了密码，在等我帮你记/告诉你）" : "（密码我帮你记着，你要找我问）")).join("；") + "。你不会凭空知道自己忘掉的密码。";
+        s = s ? s + "\n- " + t : "【跨 App 近况】（这些都是你真实经历过的，在不同 App 里保持一致；合适时可以自然提起或接着聊，不要生硬复述）\n- " + t;
+      }
+    } catch (e) {}
+    return s;
+  };
+}
+xaAdd("pwd", "密码", "M7 11V8a5 5 0 0 1 10 0v3M5 11h14v9H5zM12 15v2", { el: "#app", open: () => { PWM.tab = 0; PWM.q = ""; PWM.pin = ""; PWM.lock = 1; pwR(); }, close: () => { PWM.lock = 1; } }, "工具", "保存账号密码，角色会忘记密码让你帮 TA 记");
+regData({
+  id: "pwds", name: "密码管理器", keys: () => ["pwds"], affects: "密码管理器里保存的账号、PIN 锁与角色的账号",
+  info: (m) => { const v = isObj(m.pwds) ? m.pwds : {}; return [["我的账号", (Array.isArray(v.me) ? v.me.length : 0) + " 个"], ["PIN 锁", v.ph ? "已设置" : "未设置"]]; },
+  check: (m) => m.pwds === void 0 || isObj(m.pwds) ? "" : "密码管理器的数据格式不正确",
+  hydrate() { PWD = null; }
+});
+
+//XEND
+</script>
+<script type="text/plain" class="mp">
+// ===== 记忆库 2.0：分层（事实/热/温/归档）、事实提炼、合并去重、旧事归档、分层召回 =====
+MEM.cs = MEM.cs || {}; MEM.rep = MEM.rep || {}; MEM.mb = {};
+const MCAT = ["喜好", "习惯", "忌口", "关系", "约定", "事件", "个人", "其他"];
+const mcs = (cid) => MEM.cs[cid] || (MEM.cs[cid] = {});
+const mHot = (cid) => +mcs(cid).hot || 14, mArc = (cid) => +mcs(cid).arc || 30;
+const mIsFact = (x) => x.src == "fact" || x.src == "sum" || x.src == "man";
+const mIsRaw = (x) => !mIsFact(x) && x.src != "arc";
+const mTier = (x, now) => x.src == "arc" ? "cold" : mIsFact(x) ? "fact" : ((now || Date.now()) - x.ts) / 864e5 <= mHot(x.cid) ? "hot" : "warm";
+const mYM = (ts) => { const d = new Date(ts); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0"); };
+const mYMs = (ym) => { const [y, m] = ym.split("-"); return y + "年" + (+m) + "月"; };
+const mOwn = (cid) => MEM.items.filter((x) => x.cid === cid);
+const mBg = (s) => { const c = [...String(s).replace(/[^一-龥A-Za-z0-9]/g, "")], o = new Set(); for (let i = 0; i < c.length - 1; i++) o.add(c[i] + c[i + 1]); return o; };
+const mJac = (a, b) => { if (!a.size || !b.size) return 0; let n = 0; a.forEach((x) => { if (b.has(x)) n++; }); return n / (a.size + b.size - n); };
+const mSim = (a, b) => Math.max(mJac(mBg(a.t), mBg(b.t)), memCos(a.v, b.v) * 0.9, a.e2 && b.e2 ? memCos2(a.e2, b.e2) : 0);
+const mNid = () => xkId() + Math.floor(Math.random() * 1e3);
+function memFactAdd(cid, cat, t, conf, srcTs) {
+  t = String(t).replace(/\s+/g, " ").trim().slice(0, 120);
+  const it = { id: mNid(), cid, src: "fact", ck: "", e: 0, t, ts: Date.now(), imp: 2, pin: 0, v: memVec(t, 64), cat: MCAT.includes(cat) ? cat : "其他", conf: Math.max(1, Math.min(3, +conf || 1)), sup: 1, first: srcTs || Date.now(), last: Date.now(), hist: [], old: 0 };
+  MEM.items.push(it);
+  return it;
+}
+/* 本地兜底：从「我：…」的话里抽取明确的事实 */
+const MLP = [[/我(?:很|特别|最|超|真的)?(?:喜欢|爱|爱吃|爱喝|爱玩|爱看)([^，。！？,.!?~…]{1,14})/, "喜好", (m) => "喜欢" + m[1]], [/我(?:不喜欢|讨厌|不爱|不吃|不能吃|不喝)([^，。！？,.!?~…]{1,12})/, "忌口", (m) => "不喜欢/不吃" + m[1]], [/我对([^，。！？,.!?]{1,8})过敏/, "忌口", (m) => "对" + m[1] + "过敏"], [/我(?:的)?生日(?:是|在)?([^，。！？,.!?]{2,12})/, "个人", (m) => "生日" + m[1]], [/我(?:住在|在)([^，。！？,.!?]{2,10})(?:工作|上班|上学|读书)/, "个人", (m) => "在" + m[1] + "工作/学习"], [/我(每天|每周|每次|总是|一般|通常|习惯)([^，。！？,.!?]{2,16})/, "习惯", (m) => m[1] + m[2]], [/(?:我们|咱们)?(?:约好|说好|答应|一言为定)([^，。！？,.!?]{2,20})/, "约定", (m) => "约定" + m[1]], [/我叫([^，。！？,.!?\s]{1,6})/, "个人", (m) => "自称" + m[1]]];
+function memFactsLocal(cid) {
+  const src = mOwn(cid).filter((x) => mIsRaw(x) && !x.su), F = mOwn(cid).filter((x) => mIsFact(x)), res = { add: 0, cf: 0 };
+  src.forEach((x) => {
+    x.su = 1;
+    (String(x.t).match(/我：[^]*?(?=\s[^\s：]{1,10}：|$)/g) || []).forEach((seg) => {
+      MLP.forEach(([re, cat, f]) => {
+        const m = seg.match(re); if (!m) return;
+        const t = f(m), cand = { t, v: memVec(t, 64) }, dup = F.find((y) => !y.old && mSim(cand, y) >= 0.6);
+        if (dup) { dup.sup = (dup.sup || 1) + 1; dup.conf = Math.min(3, Math.max(dup.conf || 1, 2)); dup.last = Date.now(); dup.ts = Date.now(); res.cf++; }
+        else { F.push(memFactAdd(cid, cat, t, 1, x.ts)); res.add++; }
+      });
+    });
+  });
+  return res;
+}
+function memJson(out) {
+  let s = String(out || "").replace(/```(?:json)?/gi, "").trim();
+  const a = s.indexOf("["), b = s.lastIndexOf("]");
+  if (a < 0 || b <= a) return null;
+  try { const j = JSON.parse(s.slice(a, b + 1)); return Array.isArray(j) ? j : null; } catch (e) { return null; }
+}
+/* LLM：提炼确定事实 + 与已有事实合并（新增/确认/更新/过时） */
+async function memFactsLLM(cid, batch) {
+  const c = WX.cons.find((x) => x.id == cid), cn = c ? nm(c) : "角色";
+  const F = mOwn(cid).filter((x) => mIsFact(x) && !x.old).sort((a, b) => (b.pin - a.pin) || ((b.last || b.ts) - (a.last || a.ts))).slice(0, 50);
+  const sys = "你是记忆整理助手。下面有一位角色「" + cn + "」与“我”（用户）的聊天片段 R1..Rn，以及已经记录的事实 F1..Fm。请只提炼关于“我”和你们关系的【确定事实】：对话里明确说出或明确发生的事（喜好、习惯、忌口/过敏、个人信息、重要事件、约定/承诺、称呼、关系变化）。不要猜测、不要记一时的情绪和闲聊、不要把角色编造的内容当成我的事实。\n对每条事实给出操作，输出一个 JSON 数组，不要任何其他文字：\n" +
+    `[{"op":"add","cat":"喜好|习惯|忌口|关系|约定|事件|个人|其他","t":"一句话事实，30字内","conf":1到3},\n {"op":"confirm","id":"F2"}   // 片段再次印证了已有事实\n {"op":"update","id":"F3","t":"更新后的表述"}   // 同一件事有了新情况\n {"op":"retire","id":"F5"}   // 片段明确说明已有事实已不成立]\nconf：1=提到一次，2=说得很明确，3=反复确认。最多 8 条操作；没有可记的就输出 []。`;
+  const txt = "【已有事实】\n" + (F.length ? F.map((x, i) => "F" + (i + 1) + " [" + (x.cat || "要点") + "] " + x.t).join("\n") : "（无）") + "\n\n【聊天片段】\n" + batch.map((x, i) => "R" + (i + 1) + " [" + memDay(x.ts) + "] " + x.t).join("\n");
+  const ops = memJson(await chat([{ role: "user", content: txt }], sys, null, 1));
+  if (!ops) throw new Error("整理结果格式不对");
+  const r = { add: 0, cf: 0, up: 0, rt: 0 };
+  ops.slice(0, 10).forEach((o) => {
+    if (!o || typeof o != "object") return;
+    const fx = typeof o.id == "string" && /^F\d+$/.test(o.id) ? F[+o.id.slice(1) - 1] : null;
+    if (o.op == "add" && o.t) {
+      const cand = { t: String(o.t), v: memVec(String(o.t), 64) }, dup = F.find((y) => mSim(cand, y) >= 0.6);
+      if (dup) { dup.sup = (dup.sup || 1) + 1; dup.conf = Math.max(dup.conf || 1, +o.conf || 1); dup.last = Date.now(); dup.ts = Date.now(); r.cf++; }
+      else { F.push(memFactAdd(cid, o.cat, o.t, o.conf, batch[0] && batch[0].ts)); r.add++; }
+    } else if (o.op == "confirm" && fx) { fx.sup = (fx.sup || 1) + 1; fx.conf = Math.min(3, (fx.conf || 1) + 1); fx.last = Date.now(); fx.ts = Date.now(); r.cf++; }
+    else if (o.op == "update" && fx && o.t) { (fx.hist = fx.hist || []).push({ t: fx.t, ts: fx.last || fx.ts }); fx.t = String(o.t).slice(0, 120); fx.v = memVec(fx.t, 64); delete fx.e2; fx.last = Date.now(); fx.ts = Date.now(); fx.sup = (fx.sup || 1) + 1; r.up++; }
+    else if (o.op == "retire" && fx && !fx.pin) { fx.old = Date.now(); r.rt++; }
+  });
+  return r;
+}
+/* 合并去重：事实互相合并；原始片段去掉重复 */
+function memDedupe(cid) {
+  let n = 0;
+  const F = mOwn(cid).filter((x) => mIsFact(x) && x.src != "man" && !x.old).sort((a, b) => (b.pin - a.pin) || (b.conf || 1) - (a.conf || 1) || (b.sup || 1) - (a.sup || 1) || (b.last || b.ts) - (a.last || a.ts)), dead = new Set();
+  for (let i = 0; i < F.length; i++) {
+    if (dead.has(F[i])) continue;
+    for (let j = i + 1; j < F.length; j++) {
+      if (dead.has(F[j]) || F[i].cat != F[j].cat && !(F[i].src == "sum" || F[j].src == "sum")) continue;
+      if (mSim(F[i], F[j]) >= 0.6) {
+        const a = F[i], b = F[j];
+        a.sup = (a.sup || 1) + (b.sup || 1); a.conf = Math.min(3, Math.max(a.conf || 1, b.conf || 1)); a.pin = a.pin || b.pin;
+        a.first = Math.min(a.first || a.ts, b.first || b.ts); a.last = Math.max(a.last || a.ts, b.last || b.ts); a.ts = a.last;
+        if (b.t.length > a.t.length + 6 && !a.pin) { (a.hist = a.hist || []).push({ t: a.t, ts: a.last }); a.t = b.t; a.v = b.v; if (b.e2) a.e2 = b.e2; }
+        dead.add(b); n++;
+      }
+    }
+  }
+  const seen = new Set();
+  mOwn(cid).filter((x) => mIsRaw(x)).sort((a, b) => a.ts - b.ts).forEach((x) => { const k = x.t.replace(/\s+/g, "").slice(0, 80); if (seen.has(k) && !x.pin && x.imp < 3) { dead.add(x); n++; } else seen.add(k); });
+  if (dead.size) MEM.items = MEM.items.filter((x) => !dead.has(x));
+  return n;
+}
+/* 旧事压缩归档 */
+function memLocalCompress(L) {
+  const P = L.slice().sort((a, b) => (b.imp - a.imp) || a.ts - b.ts).slice(0, 8).sort((a, b) => a.ts - b.ts);
+  return P.map((x) => memDay(x.ts) + " " + String(x.t).replace(/^\S*?\[[^\]]*\]/, "").slice(0, 38)).join("；").slice(0, 260);
+}
+async function memCompress(cid, L, label, lv) {
+  const c = WX.cons.find((x) => x.id == cid), cn = c ? nm(c) : "角色";
+  if (CFG.a.url && CFG.a.model) {
+    try {
+      const sys = "你是记忆归档助手。把下面「" + cn + "」与“我”在" + label + "的一批聊天片段压缩成一段时间线摘要（" + (lv > 1 ? "150-260" : "80-180") + "字）：保留日期、发生了什么、重要的约定与情绪变化，去掉寒暄和重复；用第三人称“我”和“" + cn + "”；只输出摘要本身。";
+      const out = String(await chat([{ role: "user", content: L.slice(0, 50).map((x) => "[" + memDay(x.ts) + "] " + x.t.slice(0, 120)).join("\n") }], sys, null, 1)).trim();
+      if (out.length >= 10) return out.slice(0, 420);
+    } catch (e) {}
+  }
+  return memLocalCompress(L);
+}
+async function memArchive(cid) {
+  const now = Date.now(), cut = now - mArc(cid) * 864e5, r = { arcs: 0, items: 0 };
+  const C = mOwn(cid).filter((x) => mIsRaw(x) && x.su && x.ts < cut && !x.pin && x.imp < 3);
+  const G = {};
+  C.forEach((x) => (G[mYM(x.ts)] = G[mYM(x.ts)] || []).push(x));
+  for (const ym of Object.keys(G).sort()) {
+    const L = G[ym];
+    if (L.length < 3 && L.every((x) => now - x.ts < 90 * 864e5)) continue;
+    const t = await memCompress(cid, L, mYMs(ym), 1);
+    const ts = L.map((x) => x.ts), ex = MEM.items.find((x) => x.cid === cid && x.src == "arc" && x.ym == ym && x.lv == 1);
+    if (ex) { ex.t = (await memCompress(cid, [{ ts: ex.span[0], t: ex.t, imp: 2 }].concat(L), mYMs(ym), 1)); ex.n += L.length; ex.span = [Math.min(ex.span[0], ...ts), Math.max(ex.span[1], ...ts)]; ex.v = memVec(ex.t, 64); delete ex.e2; }
+    else MEM.items.push({ id: mNid(), cid, src: "arc", ck: "", e: 0, t, ts: Math.max(...ts), imp: 2, pin: 0, v: memVec(t, 64), ym, lv: 1, n: L.length, span: [Math.min(...ts), Math.max(...ts)] });
+    const S = new Set(L); MEM.items = MEM.items.filter((x) => !S.has(x));
+    r.arcs++; r.items += L.length;
+  }
+  return r;
+}
+async function memArcRoll(cid) {
+  const cut = Date.now() - 180 * 864e5, A = mOwn(cid).filter((x) => x.src == "arc" && x.lv == 1 && x.ts < cut), G = {}, r = { q: 0 };
+  A.forEach((x) => { const d = new Date(x.span[0]), k = d.getFullYear() + "Q" + (Math.floor(d.getMonth() / 3) + 1); (G[k] = G[k] || []).push(x); });
+  for (const k of Object.keys(G)) {
+    const L = G[k]; if (L.length < 2) continue;
+    const t = await memCompress(cid, L.map((x) => ({ ts: x.span[0], t: x.t, imp: 2 })), k.replace("Q", "年第") + "季度", 2), S = new Set(L), ts = L.flatMap((x) => x.span);
+    const ex = MEM.items.find((x) => x.cid === cid && x.src == "arc" && x.ym == k && x.lv == 2);
+    if (ex) { ex.t = t; ex.n += L.reduce((a, x) => a + x.n, 0); ex.span = [Math.min(ex.span[0], ...ts), Math.max(ex.span[1], ...ts)]; ex.v = memVec(t, 64); delete ex.e2; }
+    else MEM.items.push({ id: mNid(), cid, src: "arc", ck: "", e: 0, t, ts: Math.max(...ts), imp: 2, pin: 0, v: memVec(t, 64), ym: k, lv: 2, n: L.reduce((a, x) => a + x.n, 0), span: [Math.min(...ts), Math.max(...ts)] });
+    MEM.items = MEM.items.filter((x) => !S.has(x)); r.q++;
+  }
+  return r;
+}
+async function memMaint(cid, o) {
+  o = o || {};
+  if (MEM.mb[cid]) return null;
+  MEM.mb[cid] = 1;
+  const rp = [];
+  try {
+    memSync();
+    const api = !!(CFG.a.url && CFG.a.model), parts = o.only || ["facts", "dedupe", "arc"];
+    if (parts.includes("facts")) {
+      let add = 0, cf = 0, up = 0, rt = 0, rounds = 0;
+      for (; rounds < (o.force ? 5 : 2); rounds++) {
+        const pend = mOwn(cid).filter((x) => mIsRaw(x) && !x.su).sort((a, b) => a.ts - b.ts);
+        if (!pend.length || (!o.force && pend.length < 10)) break;
+        if (api) {
+          const batch = pend.slice(0, 30);
+          try { const r = await memFactsLLM(cid, batch); add += r.add; cf += r.cf; up += r.up; rt += r.rt; batch.forEach((x) => x.su = 1); }
+          catch (e) { const l = memFactsLocal(cid); add += l.add; cf += l.cf; rp.push("接口整理失败（" + em(e) + "），已用本地规则"); break; }
+        } else { const l = memFactsLocal(cid); add += l.add; cf += l.cf; break; }
+      }
+      if (add || cf || up || rt) rp.push("事实 +" + add + "，确认 " + cf + "，更新 " + up + "，过时 " + rt);
+    }
+    if (parts.includes("dedupe")) { const n = memDedupe(cid); if (n) rp.push("合并去重 " + n + " 条"); }
+    if (parts.includes("arc")) {
+      const la = MEM.la || (MEM.la = {});
+      if (o.force || Date.now() - (la[cid] || 0) > 864e5) {
+        const r = await memArchive(cid); la[cid] = Date.now();
+        const q = await memArcRoll(cid);
+        if (r.arcs) rp.push("归档 " + r.items + " 条旧记忆 → " + r.arcs + " 段");
+        if (q.q) rp.push("季度合并 " + q.q + " 段");
+      }
+    }
+    memSave();
+    if (!rp.length) rp.push("没有需要整理的内容");
+    MEM.rep[cid] = { ts: Date.now(), t: rp.join("；") };
+    memSave();
+    try { memEmbFill().catch(() => 0); } catch (e) {}
+    return MEM.rep[cid].t;
+  } catch (e) { MEM.rep[cid] = { ts: Date.now(), t: "整理出错：" + em(e) }; return MEM.rep[cid].t; }
+  finally { MEM.mb[cid] = 0; if (cur == "mem") try { m2R(1); } catch (e) {} }
+}
+{
+  const lastRun = {};
+  memAuto = function (cid) {
+    if (!MEM.on || cid == null) return;
+    const s = mcs(cid), on = s.auto == null ? MEM.auto : s.auto;
+    if (!on || MEM.mb[cid] || Date.now() - (lastRun[cid] || 0) < 20 * 6e4) return;
+    lastRun[cid] = Date.now();
+    memMaint(cid).catch(() => 0);
+  };
+}
+/* ---- 分层召回 ---- */
+memRecall = function (cid, text, meta, k) {
+  const q = memVec(text), q2 = MEM.emb ? MEMQ[memQTextKey] : null;
+  if (!q.length) return [];
+  const now = Date.now(), cvs = meta && meta.ck ? memConvs().find((x) => x.ck == meta.ck) : null, c = WX.cons.find((x) => x.id == cid), ctxN = Math.max(1, +(c && c.ctx) || 500), len = cvs ? cvs.L.filter((m) => isObj(m) && !m.s && !m.p).length : 0;
+  const past = /去年|前年|以前|那时候|曾经|上次|当初|最早|第一次|几月|多久以前|还记得/.test(text), R = [];
+  for (const it of MEM.items) {
+    if (it.cid !== cid && it.cid !== 0) continue;
+    if (cvs && it.ck == cvs.ck && it.e >= len - ctxN) continue;
+    const tier = mTier(it, now);
+    let cs = memCos(q, it.v), strong = 0;
+    if (q2 && it.e2) { const c2 = memCos2(q2, it.e2); cs = 0.35 * cs + 0.65 * Math.max(0, c2) * 1.2; strong = c2 >= 0.3; if (c2 < 0.22 && cs < 0.08 && !it.pin) continue; }
+    else if (cs < 0.08 && !it.pin) continue;
+    if (tier == "cold" && cs < 0.14 && !strong && !past) continue;
+    if (it.old && cs < 0.2) continue;
+    const age = (now - it.ts) / 864e5;
+    let s = cs + (tier == "fact" ? 0.1 + 0.04 * ((it.conf || 1) - 1) : 0) + (tier == "cold" ? (past ? 0.1 : -0.02) : 0) + 0.04 * (it.imp - 1) + (it.pin ? 0.12 : 0) + (tier == "warm" ? 0.02 * Math.exp(-age / 60) : 0.05 * Math.exp(-age / 30)) - (it.old ? 0.1 : 0);
+    R.push({ it, s, cs });
+  }
+  R.sort((a, b) => b.s - a.s);
+  return R.slice(0, (k || MEM.k) + (past ? 3 : 0));
+};
+memBlock = function (cid, hist, meta) {
+  if (!MEM.on || cid == null) return "";
+  memQTextKey = memQText(hist);
+  const c = WX.cons.find((x) => x.id == cid);
+  if (!c || c.nomem) return "";
+  try { memSync(); } catch (e) {}
+  const tx = hist.slice(-4).map((h) => String(h.content || "")).join("\n").replace(/（[^）]{1,12}）/g, ""), last = hist.length ? String(hist[hist.length - 1].content || "") : "";
+  const score = (x) => (x.pin ? 10 : 0) + (x.imp || 1) * 1.5 + (x.conf || 1) + 0.3 * Math.min(8, x.sup || 1) + Math.max(0, 2 - (Date.now() - (x.last || x.ts)) / 864e5 / 60);
+  const core = MEM.items.filter((x) => (x.cid === cid || x.cid === 0) && mIsFact(x) && !x.old && (x.pin || x.src == "fact" || x.src == "man" || (x.src == "sum" && x.imp >= 3))).sort((a, b) => score(b) - score(a)).slice(0, 8);
+  let R;
+  if (/主动给我发/.test(last)) {
+    const old = MEM.items.filter((x) => (x.cid === cid || x.cid === 0) && x.src != "man" && Date.now() - x.ts > 2 * 864e5 && !x.old);
+    const pick = old.length ? old[Math.floor(Math.random() * old.length)] : null;
+    R = pick ? memRecall(cid, pick.t, meta, MEM.k).filter((r) => r.it !== pick) : [];
+    if (pick) R.unshift({ it: pick, cs: 1 });
+  } else R = memRecall(cid, last + "\n" + last + "\n" + tx, meta);
+  const seen = new Set(core.map((x) => x.id));
+  R = R.filter((r) => !seen.has(r.it.id));
+  MEMLAST[cid] = { ts: Date.now(), items: core.map((x) => ({ it: x, cs: 1 })).concat(R) };
+  if (!core.length && !R.length) return "";
+  const lab = (it) => it.src == "arc" ? "[" + (it.lv == 2 ? it.ym.replace("Q", "年第") + "季度" : mYMs(it.ym)) + " 归档]" : mIsFact(it) ? "[" + (it.cat || "要点") + "]" : "[" + memDay(it.ts) + " " + (MSRC[it.src] || "") + "]";
+  const f = (it) => "- " + lab(it) + (it.old ? "（以前的情况，现已不是）" : "") + " " + it.t.slice(0, 200);
+  let s = "【记忆】以下是你和对方过去的相关经历与要点，来自微信、短信、通话、线下剧情等所有渠道。你自然地记得这些，可以在合适的时候提起，但不要生硬复述，也不要说“根据记忆”。如果和上面的聊天内容冲突，以最新的聊天为准。";
+  if (core.length) s += "\n你确定知道的关于对方的事实：\n" + core.map(f).join("\n");
+  if (R.length) s += "\n和当前话题相关的往事：\n" + R.map((r) => f(r.it)).join("\n");
+  return s.slice(0, 3200);
+};
+
+// ---- 记忆库 2.0 界面：每个角色一个独立页面 + 分组标签 ----
+const M2 = { cid: null, tab: 0, q: "", cat: "全部", tl: "全部", lim: 40, open: {}, busy: "" };
+const M2T = ["概览", "事实", "时间线", "记忆流", "归档", "设置"];
+const m2css = document.createElement("style");
+m2css.id = "m2css";
+m2css.textContent = `.m2-g{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:6px 0 12px}.m2-c{border:1px solid var(--line);border-radius:14px;padding:12px 14px}.m2-c b{display:block;font-size:26px;font-weight:300}.m2-c small{font-size:12px;color:var(--t4)}
+.m2-bar{display:flex;height:8px;border-radius:4px;overflow:hidden;background:rgba(128,128,128,.15);margin:4px 0 6px}.m2-bar i{display:block;height:100%}.m2-lg{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--t4);margin-bottom:10px}.m2-lg span:before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--d);margin-right:4px}
+.m2-mh{position:sticky;top:0;background:var(--app);padding:10px 0 4px;font-size:13px;font-weight:600;z-index:2}.m2-tl{position:relative;padding-left:18px;margin-left:4px;border-left:1.5px solid var(--line)}.m2-te{position:relative;padding:8px 0 10px}.m2-te:before{content:"";position:absolute;left:-23.5px;top:14px;width:9px;height:9px;border-radius:50%;background:var(--d,#999);border:2px solid var(--app)}.m2-te b{display:block;font-size:14px;font-weight:400;line-height:1.55;word-break:break-word}.m2-te s{display:block;text-decoration:none;font-size:11px;color:var(--t5);margin-top:2px}
+.m2-tg{display:inline-block;font-size:10px;padding:0 6px;border-radius:7px;color:#fff;margin-left:6px;vertical-align:1px}.m2-st{display:flex;align-items:center;gap:6px;color:var(--t4);font-size:13px}.m2-rep{text-align:left;font-size:12.5px;color:var(--t4);line-height:1.7;margin:6px 0 10px}.m2-sr{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--line);font-size:15px;cursor:pointer}.m2-sr small{color:var(--t4);font-size:13px;margin-left:12px;text-align:right}`;
+document.head.appendChild(m2css);
+const M2C = { fact: "#34c759", hot: "#ff9f0a", warm: "#8e8e93", cold: "#5e5ce6" };
+function m2Stats(cid) {
+  const now = Date.now(), s = { fact: 0, old: 0, hot: 0, warm: 0, cold: 0, arcN: 0, pin: 0, emb: 0, n: 0, kb: 0 };
+  mOwn(cid).forEach((x) => { const t = mTier(x, now); s.n++; if (x.old) s.old++; else s[t]++; if (t == "cold") s.arcN += x.n || 0; if (x.pin) s.pin++; if (x.e2) s.emb++; s.kb += JSON.stringify(x).length; });
+  s.kb = Math.round(s.kb / 1024);
+  return s;
+}
+const m2Name = (cid) => cid === 0 ? "所有角色共享" : mqName(cid);
+function m2R(keep) {
+  const y0 = keep && $("#app .sc") ? $("#app .sc").scrollTop : 0;
+  if (M2.cid === null) m2A(); else m2B();
+  if (keep && $("#app .sc")) $("#app .sc").scrollTop = y0;
+}
+function m2A() {
+  const cs = WX.cons.filter((c) => !c.fid), sh = mOwn(0).length, tot = MEM.items.length;
+  try { memSync(); } catch (e) {}
+  const row = (c, cid) => {
+    const s = m2Stats(cid), nomem = c && c.nomem;
+    return `<div class="xa-row" data-m2="go" data-c="${cid}" role="button" tabindex="0" style="align-items:center"><span style="flex:none;display:block;width:46px;height:46px">${c ? av(c, 46) : `<span class="pw-av" style="width:46px;height:46px;border-radius:50%;display:grid">共</span>`}</span><div><b>${esc(c ? nm(c) : "所有角色共享")}${nomem ? '<span class="m2-tg" style="background:#8e8e93">未启用</span>' : ""}${MEM.mb[cid] ? '<span class="m2-tg" style="background:#ff9f0a">整理中</span>' : ""}</b><s>事实 ${s.fact} · 记忆 ${s.hot + s.warm} · 归档 ${s.cold} 段${s.arcN ? "（" + s.arcN + " 条）" : ""}</s><div class="m2-bar" style="margin:6px 0 0;height:4px">${["fact", "hot", "warm", "cold"].map((k) => `<i style="width:${s.n ? s[k] / s.n * 100 : 0}%;background:${M2C[k]}"></i>`).join("")}</div></div></div>`;
+  };
+  $("#app").innerHTML = xkHead("记忆", `<div class="tbr"><button class="tbn" data-m2="gset" aria-label="全局设置">${ic("gear")}</button></div>`) +
+    `<div class="sc"><div class="m2-c" style="margin:4px 0 8px"><small>记忆库 · ${MEM.on ? "已启用" : "已关闭"} · ${MEM.emb ? "接口向量化" : "本地检索"}</small><b>${tot}<em style="font-size:13px;font-style:normal;color:var(--t4)"> 条（分层存储）</em></b></div><p class="stt" style="margin:0 0 4px">每位角色有自己独立的记忆库，点进去查看事实、时间线、归档并整理。</p>${cs.map((c) => row(c, c.id)).join("") || '<p class="em" style="margin-top:50px">还没有角色</p>'}${sh ? row(null, 0) : ""}</div>`;
+}
+function m2B() {
+  const cid = M2.cid, c = WX.cons.find((x) => x.id == cid);
+  const withQ = [1, 2, 3].includes(M2.tab);
+  $("#app").innerHTML = xkHead(c ? nm(c) : "共享记忆", `<div class="tbr"><button class="tbn" data-m2="bk" aria-label="返回">${ic("back")}</button></div>`) +
+    `<div class="xa-tabs">${M2T.map((x, i) => `<button class="cb${M2.tab == i ? " on" : ""}" data-m2="tab" data-v="${i}">${x}</button>`).join("")}</div>${withQ ? `<input class="pw-q" id="m2_q" placeholder="${M2.tab == 1 ? "搜索事实" : "按意思搜索"}" value="${esc(M2.q)}">` : ""}<div class="sc" id="m2_sc"><div id="m2_b"></div></div>`;
+  m2Fill();
+}
+function m2Fill() {
+  const el = $("#m2_b"); if (!el) return;
+  const cid = M2.cid;
+  el.innerHTML = [m2Ov, m2Fa, m2Tl, m2Sm, m2Ar, m2Se][M2.tab](cid);
+}
+const m2Match = (x, q) => { if (!q) return 1; const lq = q.toLowerCase(); return String(x.t).toLowerCase().includes(lq) || memCos(memVec(q), x.v) > 0.18; };
+function m2Ov(cid) {
+  const s = m2Stats(cid), c = WX.cons.find((x) => x.id == cid), rp = MEM.rep[cid], last = MEMLAST[cid], busy = MEM.mb[cid];
+  const cell = (l, n, sub, col) => `<div class="m2-c"><small style="color:${col}">● ${l}</small><b>${n}</b><small>${sub}</small></div>`;
+  return `<div class="m2-g">${cell("事实", s.fact, "确定信息，优先想起" + (s.pin ? "，置顶 " + s.pin : ""), M2C.fact)}${cell("热记忆", s.hot, "最近 " + mHot(cid) + " 天的原文", M2C.hot)}${cell("温记忆", s.warm, "待归档的原文", M2C.warm)}${cell("归档", s.cold, "段旧事（共压缩 " + s.arcN + " 条）", M2C.cold)}</div>
+<div class="m2-bar">${["fact", "hot", "warm", "cold"].map((k) => `<i style="width:${s.n ? s[k] / s.n * 100 : 0}%;background:${M2C[k]}"></i>`).join("")}</div><div class="m2-lg">${[["fact", "事实"], ["hot", "热"], ["warm", "温"], ["cold", "归档"]].map((x) => `<span style="--d:${M2C[x[0]]}">${x[1]}</span>`).join("")}${s.old ? `<span style="--d:#c7c7cc">过时 ${s.old}</span>` : ""}</div>
+<div class="xa-btns"><button class="cb pr" data-m2="run" data-p="all"${busy ? " disabled" : ""}>${busy ? "整理中…" : "立即整理"}</button><button class="cb" data-m2="run" data-p="facts"${busy ? " disabled" : ""}>提炼事实</button><button class="cb" data-m2="run" data-p="dedupe"${busy ? " disabled" : ""}>合并去重</button><button class="cb" data-m2="run" data-p="arc"${busy ? " disabled" : ""}>归档旧事</button></div>
+<p class="m2-rep">${rp ? "上次整理 " + xaDate(rp.ts) + "：" + esc(rp.t) : "还没有整理过。「立即整理」会：从聊天里提炼确定事实 → 与已有事实合并、更新、标记过时 → 合并重复 → 把超过 " + mArc(cid) + " 天的旧记忆压缩成时间线摘要。" + (CFG.a.url ? "" : "（未配置接口时使用本地规则）")}</p>
+<div class="m2-st">${MEM.emb ? "接口向量化已启用 · 已处理 " + s.emb + " / " + s.n + " 条" + (MEM.err ? " · " + esc(MEM.err) : "") : "本地检索（未启用接口向量化，可在右上角设置里开启）"} · 约 ${s.kb} KB</div>
+${last && last.items.length ? `<div class="xa-sec">上一次回复用到的记忆（${Math.max(1, Math.round((Date.now() - last.ts) / 6e4))} 分钟前）</div>${last.items.slice(0, 8).map((r) => `<div class="xa-row" style="padding:8px 0"><div><b style="font-size:13px;font-weight:400">${esc(r.it.t.slice(0, 80))}</b><s>${r.it.src == "arc" ? "归档 " + mYMs(r.it.ym.replace(/Q.*/, "-01").replace(/^(\d+)$/, "$1-01")) : mIsFact(r.it) ? "事实 · " + (r.it.cat || "要点") : (MSRC[r.it.src] || "")}</s></div></div>`).join("")}` : ""}`;
+}
+function m2Fa(cid) {
+  const F = mOwn(cid).filter((x) => mIsFact(x) && m2Match(x, M2.q)), A = F.filter((x) => !x.old), O = F.filter((x) => x.old);
+  const cats = ["全部"].concat(MCAT.concat(["要点"]).filter((k) => A.some((x) => (x.cat || "要点") == k)));
+  const V = A.filter((x) => M2.cat == "全部" || (x.cat || "要点") == M2.cat).sort((a, b) => (b.pin - a.pin) || (b.conf || 1) - (a.conf || 1) || (b.last || b.ts) - (a.last || a.ts));
+  const row = (x) => `<div class="xa-row" data-m2="it" data-id="${x.id}" role="button" tabindex="0" style="${x.old ? "opacity:.55" : ""}"><div><b style="font-size:14.5px">${x.pin ? "★ " : ""}${esc(x.t)}</b><s>${esc(x.cat || "要点")}${x.old ? " · 已过时" : x.src == "man" ? " · 手记" : " · 确认 " + (x.sup || 1) + " 次"} · ${memDay(x.first || x.ts)}起${x.hist && x.hist.length ? " · 修订 " + x.hist.length + " 次" : ""}</s></div></div>`;
+  return `<div class="xa-btns" style="margin:0 0 6px"><button class="cb pr" data-m2="fadd">+ 添加事实</button>${cats.map((k) => `<button class="cb${M2.cat == k ? " on" : ""}" data-m2="cat" data-v="${k}">${k}</button>`).join("")}</div>${V.length ? V.map(row).join("") : '<p class="em" style="margin:50px 0 0">还没有事实<br>点「立即整理」从聊天里提炼，或手动添加</p>'}${O.length ? `<div class="xa-sec">已过时的事实（${O.length}）</div>${O.map(row).join("")}` : ""}`;
+}
+function m2Tl(cid) {
+  const q = M2.q.trim(), flt = M2.tl, E = [];
+  mOwn(cid).forEach((x) => {
+    const t = mTier(x);
+    if (!m2Match(x, q)) return;
+    if (flt == "事实" && t != "fact") return; if (flt == "归档" && t != "cold") return; if (flt == "片段" && !(t == "hot" || t == "warm")) return;
+    E.push({ x, t, d: x.src == "arc" ? x.span[0] : mIsFact(x) ? (x.first || x.ts) : x.ts });
+    if (x.old && mIsFact(x) && flt != "片段" && flt != "归档") E.push({ x, t: "end", d: x.old });
+  });
+  E.sort((a, b) => b.d - a.d);
+  const show = E.slice(0, M2.lim); let ym = "", h = "";
+  show.forEach((e) => {
+    const k = mYM(e.d); if (k != ym) { if (ym) h += "</div>"; ym = k; h += `<div class="m2-mh">${mYMs(k)}</div><div class="m2-tl">`; }
+    const x = e.x, op = M2.open[x.id + e.t], txt = x.t, long = txt.length > 70 && !op;
+    const tag = e.t == "fact" ? ["事实", M2C.fact] : e.t == "end" ? ["过时", "#c7c7cc"] : e.t == "cold" ? ["归档", M2C.cold] : e.t == "hot" ? ["热", M2C.hot] : ["温", M2C.warm];
+    h += `<div class="m2-te" style="--d:${tag[1]}" data-m2="tlo" data-id="${x.id}" data-t="${e.t}" role="button" tabindex="0"><b>${e.t == "end" ? "不再成立：" : ""}${esc(long ? txt.slice(0, 70) + "…" : txt)}<span class="m2-tg" style="background:${tag[1]}">${tag[0]}</span></b><s>${xaDate(e.d)}${x.src == "arc" ? " · 含 " + x.n + " 条 · " + (x.lv == 2 ? "季度合并" : "月度归档") : mIsRaw(x) ? " · " + (MSRC[x.src] || "") : ""}${op ? " · 点按收起" : ""}</s></div>`;
+  });
+  if (ym) h += "</div>";
+  return `<div class="xa-btns" style="margin:0 0 4px">${["全部", "事实", "片段", "归档"].map((k) => `<button class="cb${M2.tl == k ? " on" : ""}" data-m2="tlf" data-v="${k}">${k}</button>`).join("")}</div>${h || '<p class="em" style="margin:50px 0 0">时间线是空的</p>'}${E.length > M2.lim ? `<div class="xa-btns" style="justify-content:center"><button class="cb" data-m2="more">更早的 ${E.length - M2.lim} 条…</button></div>` : ""}`;
+}
+function m2Sm(cid) {
+  const q = M2.q.trim(), L = mOwn(cid).filter((x) => mIsRaw(x) && m2Match(x, q)).sort((a, b) => b.ts - a.ts), V = L.slice(0, 60);
+  return `<p class="stt" style="margin:0 0 4px">原始对话片段（热 + 温）。超过 ${mArc(cid)} 天的会被压缩归档。</p>` + (V.length ? V.map((x) => { const t = mTier(x); return `<div class="xa-row" data-m2="it" data-id="${x.id}" role="button" tabindex="0"><div><b style="font-size:13.5px;font-weight:400">${esc(x.t.slice(0, 120))}</b><s>${xaDate(x.ts)} · ${MSRC[x.src] || ""} · ${t == "hot" ? "热" : "温"}${x.su ? " · 已提炼" : ""}${x.pin ? " · ★" : ""}</s></div></div>`; }).join("") + (L.length > 60 ? `<p class="stt" style="text-align:center">仅显示最近 60 条，搜索可查找更多</p>` : "") : '<p class="em" style="margin:50px 0 0">没有片段</p>');
+}
+function m2Ar(cid) {
+  const A = mOwn(cid).filter((x) => x.src == "arc").sort((a, b) => b.span[0] - a.span[0]);
+  return `<div class="xa-btns" style="margin:0 0 6px"><button class="cb pr" data-m2="run" data-p="arc"${MEM.mb[cid] ? " disabled" : ""}>立即归档旧记忆</button></div><p class="stt" style="margin:0 0 6px">超过 ${mArc(cid)} 天的原文会按月压缩成一段摘要，半年以前的月度摘要再按季度合并，库不会无限膨胀；归档仍参与向量检索，聊到相关往事时会被想起。</p>` + (A.length ? A.map((x) => `<div class="xa-row" data-m2="it" data-id="${x.id}" role="button" tabindex="0"><div><b style="font-size:14px;font-weight:400;line-height:1.6">${esc(x.t)}</b><s>${x.lv == 2 ? x.ym.replace("Q", "年第") + "季度" : mYMs(x.ym)} · 压缩了 ${x.n} 条</s></div></div>`).join("") : '<p class="em" style="margin:40px 0 0">还没有归档</p>');
+}
+function m2Se(cid) {
+  const c = WX.cons.find((x) => x.id == cid), s = mcs(cid), on = s.auto == null ? "跟随全局（" + (MEM.auto ? "开" : "关") + "）" : s.auto ? "开" : "关";
+  const r = (k, l, v) => `<div class="m2-sr" data-m2="se" data-k="${k}" role="button" tabindex="0"><span>${l}</span><small>${v}</small></div>`;
+  return (c ? r("use", "使用记忆库", c.nomem ? "关" : "开") : "") + r("auto", "自动整理", on) + r("hot", "热记忆保留", mHot(cid) + " 天") + r("arc", "归档阈值", "超过 " + mArc(cid) + " 天") + r("rebuild", "重建本角色向量索引", "") + r("export", "导出本角色记忆", "JSON") + r("clear", '<span style="color:#ff3b30">清空本角色记忆</span>', "");
+}
+function m2Run(p) {
+  const cid = M2.cid; if (MEM.mb[cid]) return;
+  gtoast("整理中…", 1800);
+  memMaint(cid, { only: p == "all" ? null : [p], force: 1 }).then((t) => { if (t) gtoast(t.slice(0, 60), 3200); }).catch(() => 0);
+  setTimeout(() => cur == "mem" && m2R(1), 60);
+}
+function m2Cat(cb) { actSheet("分类", MCAT.map((k) => ({ t: k, f: () => cb(k) }))); }
+function m2It(id) {
+  const x = MEM.items.find((y) => y.id == id); if (!x) return;
+  const done = () => { memSave(); m2R(1); }, it = [];
+  const edit = () => editSheet("编辑", x.t, (v) => { v = v.trim().slice(0, 400); if (v.length < 2) return gtoast("内容太短了"); if (mIsFact(x) && x.t != v) (x.hist = x.hist || []).push({ t: x.t, ts: Date.now() }); x.t = v; x.v = memVec(v, 64); delete x.e2; done(); });
+  if (x.src == "arc") it.push({ t: "编辑摘要", f: edit });
+  else if (mIsFact(x)) {
+    it.push({ t: "编辑", f: edit }, { t: "修改分类", f: () => m2Cat((k) => { x.cat = k; done(); }) }, { t: x.pin ? "取消置顶" : "置顶（每次都会想起）", f: () => { x.pin = x.pin ? 0 : 1; done(); } });
+    it.push(x.old ? { t: "恢复为现在成立", f: () => { x.old = 0; x.last = Date.now(); done(); } } : { t: "标为过时（已不成立）", f: () => { x.old = Date.now(); x.pin = 0; done(); } });
+    if (x.hist && x.hist.length) it.push({ t: "查看修订历史（" + x.hist.length + "）", f: () => setTimeout(() => actSheet("修订历史", [], x.hist.slice().reverse().map((h) => xaDate(h.ts) + "：" + h.t).join("\n")), 260) });
+  } else {
+    it.push({ t: "提炼为事实", f: () => m2Cat((k) => editSheet("记成一句事实", x.t.replace(/^\S{1,8}：/, "").slice(0, 60), (v) => { v = v.trim(); if (v.length < 2) return; memFactAdd(x.cid, k, v, 2, x.ts); x.su = 1; done(); gtoast("已加入事实"); })) }, { t: "编辑", f: edit }, { t: x.pin ? "取消置顶" : "置顶", f: () => { x.pin = x.pin ? 0 : 1; done(); } }, { t: x.imp >= 3 ? "取消重要" : "标为重要（不会被归档）", f: () => { x.imp = x.imp >= 3 ? 1 : 3; done(); } });
+  }
+  it.push({ t: "删除", dg: 1, f: () => { MEM.items = MEM.items.filter((y) => y !== x); done(); } });
+  actSheet(x.t.slice(0, 24), it, x.src == "arc" ? "归档 · 压缩了 " + x.n + " 条" : mIsFact(x) ? "事实 · " + (x.cat || "要点") : "原始片段 · " + (MSRC[x.src] || ""));
+}
+function m2G() {
+  const st = MEM.items.reduce((a, x) => a + JSON.stringify(x).length, 0);
+  actSheet("记忆库设置", [
+    { t: "启用记忆：" + (MEM.on ? "开" : "关"), f: () => { MEM.on = MEM.on ? 0 : 1; memSave(); m2R(1); } },
+    { t: "接口向量化：" + (MEM.emb ? "开" : "关（本地检索）"), f: () => { MEM.emb = MEM.emb ? 0 : 1; MEM.err = ""; memSave(); m2R(1); if (MEM.emb) memEmbFill().catch(() => 0); } },
+    { t: "向量模型：" + MEM.model, f: () => mqDo("model", {}) },
+    { t: "每次回忆条数：" + MEM.k, f: () => setTimeout(() => actSheet("每次回忆条数", [4, 6, 8, 10, 12].map((n) => ({ t: n + " 条", f: () => { MEM.k = n; memSave(); } }))), 260) },
+    { t: "自动整理（默认）：" + (MEM.auto ? "开" : "关"), f: () => { MEM.auto = MEM.auto ? 0 : 1; memSave(); m2R(1); } },
+    { t: "重建全部向量索引", f: () => { MEM.items.forEach((x) => { x.v = memVec(x.t, 64); delete x.e2; }); for (const k in MEMQ) delete MEMQ[k]; memSave(); gtoast("已重建，共 " + MEM.items.length + " 条"); if (MEM.emb) memEmbFill().catch(() => 0); } }
+  ], "共 " + MEM.items.length + " 条 · 约 " + Math.round(st / 1024) + " KB");
+}
+$("#app").addEventListener("click", (e) => {
+  if (cur != "mem") return;
+  const t = e.target.closest("[data-m2]");
+  if (!t) return;
+  e.stopPropagation(); e.preventDefault();
+  const a = t.dataset.m2, cid = M2.cid;
+  if (a == "go") { M2.cid = t.dataset.c === "0" ? 0 : (WX.cons.find((x) => String(x.id) == t.dataset.c) || {}).id; M2.tab = 0; M2.q = ""; M2.cat = "全部"; M2.tl = "全部"; M2.lim = 40; M2.open = {}; m2R(); }
+  else if (a == "bk") { M2.cid = null; m2R(); }
+  else if (a == "gset") m2G();
+  else if (a == "tab") { M2.tab = +t.dataset.v; M2.q = ""; M2.lim = 40; m2R(); }
+  else if (a == "run") m2Run(t.dataset.p);
+  else if (a == "cat") { M2.cat = t.dataset.v; m2Fill(); }
+  else if (a == "tlf") { M2.tl = t.dataset.v; M2.lim = 40; m2Fill(); }
+  else if (a == "more") { M2.lim += 40; m2Fill(); }
+  else if (a == "tlo") { const k = t.dataset.id + t.dataset.t; M2.open[k] = !M2.open[k]; if (t.dataset.t == "fact" || t.dataset.t == "end") m2It(t.dataset.id); else m2Fill(); }
+  else if (a == "it") m2It(t.dataset.id);
+  else if (a == "fadd") m2Cat((k) => editSheet("添加事实", "", (v) => { v = v.trim().slice(0, 120); if (v.length < 2) return gtoast("内容太短了"); const f = memFactAdd(cid, k, v, 3); f.src = "man"; f.imp = 3; memSave(); m2R(1); }, "写下 TA 应该确定知道的事，如：我对花生过敏"));
+  else if (a == "se") {
+    const k = t.dataset.k, c = WX.cons.find((x) => x.id == cid), s = mcs(cid), back = () => { memSave(); m2R(1); };
+    if (k == "use" && c) { c.nomem = c.nomem ? 0 : 1; wsave(); m2R(1); }
+    else if (k == "auto") actSheet("自动整理", [{ t: "跟随全局", f: () => { delete s.auto; back(); } }, { t: "开", f: () => { s.auto = 1; back(); } }, { t: "关", f: () => { s.auto = 0; back(); } }], "对话攒够新内容后，自动提炼事实、去重、归档（会调用接口）");
+    else if (k == "hot") actSheet("热记忆保留", [7, 14, 30].map((n) => ({ t: n + " 天", f: () => { s.hot = n; back(); } })));
+    else if (k == "arc") actSheet("归档阈值", [30, 60, 90, 180].map((n) => ({ t: "超过 " + n + " 天的记忆归档", f: () => { s.arc = n; back(); } })));
+    else if (k == "rebuild") { mOwn(cid).forEach((x) => { x.v = memVec(x.t, 64); delete x.e2; }); for (const q in MEMQ) delete MEMQ[q]; memSave(); gtoast("已重建"); if (MEM.emb) memEmbFill().catch(() => 0); m2R(1); }
+    else if (k == "export") xaDl("data:application/json;charset=utf-8," + encodeURIComponent(JSON.stringify(mOwn(cid).map((x) => { const o = Object.assign({}, x); delete o.v; delete o.e2; return o; }), null, 1)), "memory-" + m2Name(cid) + ".json");
+    else if (k == "clear") confirmSheet("清空 " + m2Name(cid) + " 的全部记忆？", "清空", () => { MEM.items = MEM.items.filter((x) => x.cid !== cid); delete MEM.rep[cid]; memSave(); m2R(1); gtoast("已清空"); }, "事实、片段和归档都会删除，无法恢复。聊天记录本身不受影响。");
+  }
+});
+$("#app").addEventListener("input", (e) => { if (cur == "mem" && e.target.id == "m2_q") { M2.q = e.target.value; clearTimeout(M2.tm); M2.tm = setTimeout(m2Fill, 180); } });
+REG.mem = { el: "#app", open: () => { M2.cid = null; M2.tab = 0; M2.q = ""; m2A(); } };
+function m2Go(cid) { openApp("mem"); M2.cid = cid; M2.tab = 0; M2.q = ""; M2.lim = 40; M2.cat = "全部"; M2.tl = "全部"; m2R(); }
+{
+  const rc2 = rCS;
+  rCS = function (id) {
+    rc2(id);
+    const row = document.querySelector('#vc [data-a="cos"]');
+    if (row && row.parentNode && !row.parentNode.querySelector('[data-a="cmem2"]')) {
+      const d = document.createElement("div");
+      d.innerHTML = `<div class="lr btn" role="button" tabindex="0" data-a="cmem2" data-id="${id}"><div><b>TA 的记忆库</b><small>事实、时间线、归档与整理</small></div>${ic("chev").replace('class="ico"', 'class="ico ch"')}</div>`;
+      row.parentNode.appendChild(d.firstChild);
+    }
+  };
+  const cd2 = csDo;
+  csDo = function (a, el) { if (a == "cmem2") { const c = WX.cons.find((x) => x.id == WX.cur); if (c) m2Go(c.id); return; } return cd2.apply(this, arguments); };
+}
 
 //XEND
 </script>
