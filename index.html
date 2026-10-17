@@ -3352,10 +3352,10 @@ $("#wx").addEventListener("change", async (e) => {
   v.textContent = "";
   l.querySelector("span").textContent = "更换头像";
 });
-const PREF_KEYS = ["ann", "kawl", "todo", "trw", "cst", "pst", "pstd", "hdr", "ccss", "pam", "wzs", "uim", "pcap", "nolock", "lkbg", "lkc", "lkts", "lkdim", "nln", "fold", "lb", "rs", "ico", "icn", "ist", "isz", "wz", "wzd", "shell", "sbar", "isl", "hbar", "tb", "momAuto", "amapKey", "ka", "persona", "rx", "ui", "rad", "hap", "pace", "snd", "theme", "af", "bc", "gl", "sp", "sm", "sn", "sv", "sti", "sys", "qh", "dy", "kg", "kbf"];
+const PREF_KEYS = ["air", "sysm", "ann", "kawl", "todo", "trw", "cst", "pst", "pstd", "hdr", "ccss", "pam", "wzs", "uim", "pcap", "nolock", "lkbg", "lkc", "lkts", "lkdim", "nln", "fold", "lb", "rs", "ico", "icn", "ist", "isz", "wz", "wzd", "shell", "sbar", "isl", "hbar", "tb", "momAuto", "amapKey", "ka", "persona", "rx", "ui", "rad", "hap", "pace", "snd", "theme", "af", "bc", "gl", "sp", "sm", "sn", "sv", "sti", "sys", "qh", "dy", "kg", "kbf"];
 const nx = () => ({ type: "openai", url: "", key: "", model: "" });
 const apiDef = () => ({ a: nx(), b: nx(), presets: [], pi: -1, stream: "auto", temp: 0.8, reason: "off", bare: 0, fb: 1, black: [], tok: 0, vis: { on: 1, detail: "high", n: 3, re: "high", desc: 1, px: 1280 }, tts: {}, net: { direct: 1, proxy: "" }, ml: { a: { sig: "", list: [] }, b: { sig: "", list: [] } } });
-const prefDef = () => ({ ann: { items: [], log: {}, opt: {} }, kawl: 0, todo: [], trw: [], cst: {}, pst: [], pstd: 0, hdr: 0, ccss: "", pam: {}, tb: {}, momAuto: 0, amapKey: "", ka: 0, wzs: {}, uim: 0, pcap: 0, nolock: 0, lkbg: "", lkc: "", lkts: 0, lkdim: 12, nln: 0, fold: {}, lb: {}, rs: {}, ico: {}, icn: {}, ist: "", isz: 0, wz: { l: "one", a: "date", b: "clock" }, wzd: {}, shell: 1, sbar: 1, isl: 1, hbar: 1, persona: "", rx: [{ id: 1, name: "隐藏思考内容", find: "<think>[\\s\\S]*?</think>", flags: "gi", rep: "", scope: "ai", where: "both", on: 1 }], ui: 100, dy: 0, kg: 8, kbf: 1, rad: 19, hap: 1, pace: 1, snd: 1, theme: "auto", af: {}, bc: {}, gl: 0, sp: 1, sm: "both", sn: {}, sv: 70, sti: 0, sys: 0, qh: { on: 0, s: 23, e: 7 } });
+const prefDef = () => ({ air: 1, sysm: 0, ann: { items: [], log: {}, opt: {} }, kawl: 0, todo: [], trw: [], cst: {}, pst: [], pstd: 0, hdr: 0, ccss: "", pam: {}, tb: {}, momAuto: 0, amapKey: "", ka: 0, wzs: {}, uim: 0, pcap: 0, nolock: 0, lkbg: "", lkc: "", lkts: 0, lkdim: 12, nln: 0, fold: {}, lb: {}, rs: {}, ico: {}, icn: {}, ist: "", isz: 0, wz: { l: "one", a: "date", b: "clock" }, wzd: {}, shell: 1, sbar: 1, isl: 1, hbar: 1, persona: "", rx: [{ id: 1, name: "隐藏思考内容", find: "<think>[\\s\\S]*?</think>", flags: "gi", rep: "", scope: "ai", where: "both", on: 1 }], ui: 100, dy: 0, kg: 8, kbf: 1, rad: 19, hap: 1, pace: 1, snd: 1, theme: "auto", af: {}, bc: {}, gl: 0, sp: 1, sm: "both", sn: {}, sv: 70, sti: 0, sys: 0, qh: { on: 0, s: 23, e: 7 } });
 let CFG = Object.assign(apiDef(), prefDef());
 function fixCfg() {
   for (const x of ["a", "b"]) CFG[x] = Object.assign(nx(), isObj(CFG[x]) ? CFG[x] : {});
@@ -12419,7 +12419,7 @@ setTimeout(() => {
 }, 2e4);
 function sndCard() {
   const ev = SEV.map(([k, l]) => `<div class="thr" role="button" tabindex="0" data-xa="sas" data-e="${k}"><b>${l}</b><s>${esc(sndName(sndOf(k)))}</s>${ic("chev").replace('class="ico"', 'class="ico ch"')}</div>`).join("");
-  return `<div class="xkc"><small>系统通知</small>${thSw("sys", !!CFG.sys && sysOK() && Notification.permission == "granted", "系统通知", "离开页面或切到后台时，用浏览器的通知提醒你")}<p class="xkn" style="margin:2px 0 0;font-size:12px;line-height:1.6">状态：${esc(sysStatus())}。通知只在页面仍开着时有效（电脑与安卓浏览器可用；iPhone 需添加到主屏幕后使用，且系统限制较多）。</p><div class="thr" style="margin-top:10px"><div style="flex:1"><b>后台保活</b><small>切到后台时用一段静音音频让页面继续运行，角色的回复才能及时弹出系统通知。会多耗一点电，系统控制中心可能显示正在播放</small></div><button class="sw${CFG.ka ? " on" : ""}" role="switch" aria-checked="${CFG.ka ? "true" : "false"}" aria-label="后台保活" data-ka="1"><i></i></button></div><div class="xkb"><button data-xa="stest">发送测试通知</button></div></div>
+  return `<div class="xkc"><small>系统通知</small>${thSw("sys", CFG.sys !== 0 && sysOK() && Notification.permission == "granted", "系统通知", "离开页面或切到后台时，用浏览器的通知提醒你")}<p class="xkn" style="margin:2px 0 0;font-size:12px;line-height:1.6">状态：${esc(sysStatus())}。通知只在页面仍开着时有效（电脑与安卓浏览器可用；iPhone 需添加到主屏幕后使用，且系统限制较多）。</p><div class="thr" style="margin-top:10px"><div style="flex:1"><b>后台保活</b><small>切到后台时用一段静音音频让页面继续运行，角色的回复才能及时弹出系统通知。会多耗一点电，系统控制中心可能显示正在播放</small></div><button class="sw${CFG.ka ? " on" : ""}" role="switch" aria-checked="${CFG.ka ? "true" : "false"}" aria-label="后台保活" data-ka="1"><i></i></button></div><div class="xkb"><button data-xa="stest">发送测试通知</button></div></div>
  <div class="xkc"><small>提示音</small>${thSw("snd", CFG.snd !== 0, "提示音", "新消息、来电、计时结束时播放")}${thSw("sti", !!CFG.sti, "聊天内收发音", "正在聊天时，发送和收到消息也有轻微的声音")}${thSw("qh", !!(CFG.qh && CFG.qh.on), "免打扰时段", "这段时间不响提示音、不发系统通知")}${CFG.qh && CFG.qh.on ? `<div class="thr" role="button" tabindex="0" data-xa="qhs"><b>开始</b><s>${String(CFG.qh.s).padStart(2, "0")}:00</s></div><div class="thr" role="button" tabindex="0" data-xa="qhe"><b>结束</b><s>${String(CFG.qh.e).padStart(2, "0")}:00</s></div>` : ""}<div class="thr"><div style="flex:1"><b>音量</b></div><s>${CFG.sv == null ? 70 : CFG.sv}%</s></div><input type="range" min="0" max="100" value="${CFG.sv == null ? 70 : CFG.sv}" id="k_sv" aria-label="提示音音量" style="width:100%"><div style="margin-top:6px">${ev}</div></div>
  <div class="xkc"><small>声音库</small><p class="xkn" style="margin:8px 0 4px">上传 mp3 / wav / m4a / ogg（单个不超过 1.5 MB，最多 8 个），可指定给任意事件或某位角色。</p>${SLIB.map((f) => `<div class="thr"><div style="flex:1;min-width:0"><b>${esc(f.name)}</b></div><button class="sbtn" data-xa="spl" data-id="${esc(f.id)}">试听</button><button class="tbn" data-xa="sdel" data-id="${esc(f.id)}" aria-label="删除声音">${ic("trash")}</button></div>`).join("")}<div class="xkb" style="margin-top:10px"><label class="cb">上传声音<input type="file" id="k_snd" accept="audio/*,.mp3,.wav,.m4a,.ogg" multiple hidden></label></div></div>`;
 }
@@ -12464,7 +12464,7 @@ $("#app").addEventListener("click", (e) => {
   const a = t.dataset.xa, d = t.dataset;
   const H = {
     sys: async () => {
-      if (CFG.sys) {
+      if (CFG.sys !== 0 && sysOK() && Notification.permission == "granted") {
         CFG.sys = 0;
         savePrefs();
         thR(1);
@@ -20720,6 +20720,557 @@ function memApiSet() {
     mg0();
     try { SHs.items.splice(3, 1, { t: "向量化接口与模型：" + (MEM.api && MEM.api.url ? "独立（" + MEM.model + "）" : "跟随主接口（" + MEM.model + "）"), f: () => setTimeout(memApiSet, 260) }); const bs = document.querySelectorAll("#sh .si"); if (bs[3]) bs[3].firstElementChild.textContent = SHs.items[3].t; } catch (e) {}
   };
+}
+
+//XEND
+</script>
+<script type="text/plain" class="mp">
+// ===== 后台系统通知即时化 + 后台请求读取世界书 =====
+sysNote = function (n, force) {
+  if (!force && (CFG.sys === 0 || S.dnd || qhOn())) return;
+  if (!sysOK() || Notification.permission != "granted") return;
+  if (!force && !(document.hidden || !document.hasFocus())) return;
+  sysShow(n).catch(() => {});
+};
+sysShow = async function (n) {
+  let ic0 = ""; try { ic0 = document.querySelector("link[rel=apple-touch-icon]").href; } catch (e) {}
+  const o = { body: n.b, tag: "xsj-" + n.k + "-" + n.id, icon: ic0 || void 0, silent: false, renotify: true, data: { k: n.k } };
+  try { const r = await Promise.race([swReg(), new Promise((ok) => setTimeout(() => ok(null), 800))]); if (r && r.showNotification) { await r.showNotification(n.t, o); return "sw"; } } catch (e) {}
+  const x = new Notification(n.t, o);
+  x.onclick = () => { try { window.focus(); x.close(); } catch (e) {} if (n.k && APPS[n.k]) unlock(() => openApp(n.k)); };
+  return "n";
+};
+{
+  const clr = () => { try { BQ.length = 0; clearTimeout(bt); bqBusy = 0; hideB(); } catch (e) {} };
+  const nf0 = notify;
+  notify = function () {
+    const r = nf0.apply(this, arguments);
+    if (document.hidden || !document.hasFocus()) clr();
+    return r;
+  };
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) clr(); });
+  document.addEventListener("pointerdown", () => {
+    if (!sysOK() || Notification.permission != "default" || CFG.sys === 0 || CFG.sysAsked) return;
+    CFG.sysAsked = 1;
+    try { Notification.requestPermission().then((p) => { if (p == "granted") { CFG.sys = 1; savePrefs(); } }).catch(() => {}); } catch (e) {}
+  });
+}
+{
+  const cx1 = window.CALLX;
+  window.CALLX = function (body, an) {
+    try { cx1 && cx1(body, an); } catch (e) {}
+    try {
+      const w = cstWho(body, an);
+      if (!w || w.off || /【匿名来电】|【世界设定】|【补充设定】/.test(w.sy)) return;
+      const c = w.c, recent = (WX.msgs[c.id] || []).filter((m) => !m.s && !m.p).slice(-12).map((m) => String(m.t || "")).join("\n");
+      const wb = wbBuild(c.id, [{ content: (c.persona || "") + "\n" + recent + "\n" + w.sy }]);
+      const pre = wb.before.length ? "【世界设定】\n" + wb.before.join("\n") + "\n\n" : "", post = wb.after.length ? "\n\n【补充设定】\n" + wb.after.join("\n") : "";
+      if (!pre && !post) return;
+      if (an) body.system = pre + body.system + post; else body.messages[0].content = pre + body.messages[0].content + post;
+    } catch (e) {}
+  };
+}
+
+
+try { if (!CFG.sysm) { CFG.sysm = 1; if (sysOK() && Notification.permission == "granted") CFG.sys = 1; savePrefs(); } } catch (e) {}
+//XEND
+</script>
+<script type="text/plain" class="mp">
+// ===== 线下剧情增强：多版本滑动 / 续写 / 灵感 / 停止 / 自动摘要 =====
+const O2 = { ac: null, alt: {}, sb: {} };
+{
+  const f0 = window.fetch;
+  window.fetch = function (u, init) {
+    try { if (O2.ac && OF.id != null && OF.busy[OF.id] && init && String(init.method).toUpperCase() == "POST" && !init.signal) init = Object.assign({}, init, { signal: O2.ac.signal }); } catch (e) {}
+    return f0.call(this, u, init);
+  };
+}
+const o2Last = (L) => { for (let i = L.length - 1; i >= 0; i--) if (!L[i].p) return L[i].me ? null : L[i]; return null; };
+const o2Sync = (m) => { if (m && m.vs && m.vs[m.vi]) m.vs[m.vi] = { t: m.t, cot: m.cot }; };
+function o2Stash(id, m) {
+  if (!m || m.me || m.p || !m.t) return;
+  o2Sync(m);
+  O2.alt[id] = { vs: m.vs ? m.vs.slice() : [{ t: m.t, cot: m.cot }] };
+}
+function o2Bar() {
+  const b = document.querySelector('#vo [data-o2="stop"]'); if (!b) return;
+  const busy = OF.id != null && OF.busy[OF.id];
+  b.hidden = !busy;
+  document.querySelectorAll('#vo [data-o2="idea"],#vo [data-o2="cont"]').forEach((x) => { x.disabled = !!busy; x.style.opacity = busy ? ".4" : ""; });
+}
+{
+  const r0 = ofReply;
+  ofReply = async function (id, hint) {
+    const L = ofL(id);
+    if (OF.busy[id]) return r0.apply(this, arguments);
+    O2.ac = new AbortController();
+    const st = O2.alt[id]; delete O2.alt[id];
+    setTimeout(o2Bar, 30);
+    try { return await r0.apply(this, arguments); }
+    finally {
+      O2.ac = null;
+      try {
+        const last = o2Last(L);
+        if (st && last && !last.part && L[L.length - 1] === last) { last.vs = st.vs.concat([{ t: last.t, cot: last.cot }]).slice(-8); last.vi = last.vs.length - 1; wsave(); }
+        else if (st && last == null) { /* 生成失败，保持原状 */ }
+        const c = WX.cons.find((x) => x.id == id); if (c) ofCompact(c).catch(() => {});
+      } catch (e) {}
+      o2Bar();
+      if (OF.id == id) ofPaint();
+    }
+  };
+  const ob0 = ofBeat;
+  ofBeat = function (i) {
+    ob0.apply(this, arguments);
+    try {
+      const id = OF.id, L = ofL(id), m = L[i];
+      (SHs.items || []).forEach((it) => { if (/重新生成/.test(it.t)) { const f = it.f; it.f = () => { o2Stash(id, m); f(); }; } });
+    } catch (e) {}
+  };
+}
+async function ofCont() {
+  const id = OF.id, L = ofL(id);
+  if (OF.busy[id]) return;
+  const k = L.length - 1, last = L[k];
+  if (!last || last.me || last.p || !last.t) return gtoast("还没有可续写的剧情");
+  const n = L.length;
+  await ofReply(id, "接着上一段的最后一句继续往下写，不要重复已写过的内容，也不要重新开头");
+  const nw = L[n];
+  if (nw && !nw.me && !nw.p && L[k] === last) { last.t = String(last.t).replace(/\s+$/, "") + "\n" + nw.t; if (nw.cot) last.cot = nw.cot; L.splice(n, 1); o2Sync(last); wsave(); ofPaint(); }
+}
+async function ofIdea() {
+  if (!xaOK()) return;
+  const id = OF.id, c = WX.cons.find((x) => x.id == id); if (!c || OF.busy[id]) return;
+  const ctx = ofL(id).filter((m) => !m.p).slice(-8).map((m) => (m.me ? "我：" : "剧情：") + String(m.t).slice(0, 700)).join("\n\n");
+  gtoast("正在想…", 1800);
+  try {
+    const out = await chat([{ role: "user", content: "最近的剧情：\n" + (ctx || "（还没有开始）") + "\n\n请给出我（玩家）下一步可以采取的 4 个走向不同的行动或对白，每个不超过 40 字，第一人称，风格各异（如温柔、强势、试探、幽默）。只输出 JSON 字符串数组。" }], "你是互动小说的编剧助手，只输出 JSON。角色「" + nm(c) + "」，人设：" + (c.persona || "无") + "。", null, 1);
+    const m = String(out).match(/\[[\s\S]*\]/); const a = m ? JSON.parse(m[0]).filter((x) => typeof x == "string" && x.trim()).slice(0, 5) : [];
+    if (!a.length) return gtoast("没想出来，再点一次试试");
+    actSheet("给点灵感", a.map((t) => ({ t, f: () => { const i = $("#oin"); if (!i) return; i.value = (i.value ? i.value + "\n" : "") + t; i.dispatchEvent(new Event("input", { bubbles: true })); i.focus(); } })), "点一项填入输入框，可以再修改");
+  } catch (e) { gtoast("生成失败：" + em(e)); }
+}
+// ---- 摘要 ----
+const o2KeepN = (c) => Math.max(8, +c.okeep || 24);
+async function ofCompact(c, force) {
+  if (O2.sb[c.id]) return;
+  if (!force && c.oauto === 0) return;
+  const M = ofL(c.id).filter((m) => !m.p), osn = c.osn || 0, n = M.length - osn;
+  const keep = force ? Math.min(o2KeepN(c), Math.max(2, Math.floor(n / 2))) : o2KeepN(c);
+  if (force ? n < 4 : n < keep + 36) { if (force) gtoast("剧情还不长，暂时不需要摘要"); return; }
+  if (!CFG.a.url || !CFG.a.model) return;
+  const take = M.slice(osn, M.length - keep); if (!take.length) return;
+  O2.sb[c.id] = 1;
+  try {
+    const txt = take.map((m) => (m.me ? "【我】" : "【剧情】") + String(m.t).slice(0, 1500)).join("\n");
+    const out = String(await chat([{ role: "user", content: (c.osum ? "已有的剧情摘要：\n" + c.osum + "\n\n" : "") + "新增的剧情：\n" + txt + "\n\n请合并成一份更新后的剧情摘要：按时间顺序，保留人物关系的变化、关键事件、重要承诺与伏笔、重要设定，以及当前所处的场景与时间。不超过 700 字，客观概括，不要评价，只输出摘要正文。" }], "你是小说编辑，负责为长篇互动剧情做摘要。角色「" + nm(c) + "」。", null, 1)).trim();
+    if (out.length > 20) { c.osum = out.slice(0, 3000); c.osn = osn + take.length; wsave(); if (force) gtoast("已生成摘要，已压缩 " + take.length + " 段"); }
+  } catch (e) { if (force) gtoast("摘要失败：" + em(e)); }
+  O2.sb[c.id] = 0;
+}
+{
+  const oh1 = ofHist;
+  ofHist = function (c) {
+    if (!c.osum || !c.osn) return oh1(c);
+    const M = ofL(c.id).filter((m) => !m.p);
+    if (M.length < c.osn) { delete c.osum; c.osn = 0; return oh1(c); }
+    const s = [OFX.on, OFX.c]; OFX.on = 1; OFX.c = c;
+    try {
+      const arr = M.slice(c.osn).slice(-(+c.ctx || 500)).map((m) => ({ role: m.me ? "user" : "assistant", content: rxRun(m.t, m.me ? "user" : "ai", "prompt") }));
+      arr.unshift({ role: "user", content: "【此前剧情摘要——这些已经发生过，请保持连贯，不要复述】\n" + c.osum });
+      return mergeH(arr);
+    } finally { OFX.on = s[0]; OFX.c = s[1]; }
+  };
+}
+function ofTools() {
+  const id = OF.id, c = WX.cons.find((x) => x.id == id); if (!c) return;
+  const M = ofL(id).filter((m) => !m.p), words = M.reduce((a, m) => a + String(m.t || "").length, 0);
+  actSheet("剧情工具", [
+    { t: "酒馆楼层样式：" + (c.otv === 0 ? "关" : "开"), f: () => { c.otv = c.otv === 0 ? 1 : 0; wsave(); ofPaint(); } },
+    { t: "书签", f: () => setTimeout(o4Bm, 260) },
+    { t: "导入酒馆聊天记录（.jsonl）", f: () => o4Import() },
+    { t: "导出为酒馆 jsonl", f: () => o4Export() },
+    { t: "立即生成 / 更新摘要", f: () => { gtoast("正在整理剧情…", 2000); ofCompact(c, true); } },
+    { t: c.osum ? "查看 / 编辑摘要（已压缩 " + (c.osn || 0) + " 段）" : "摘要（还没有）", f: () => setTimeout(() => editSheet("剧情摘要", c.osum || "", (v) => { v = v.trim(); if (!v) { delete c.osum; c.osn = 0; } else { c.osum = v; if (!c.osn) c.osn = Math.max(0, M.length - o2KeepN(c)); } wsave(); }, "可手动修改，摘要会代替更早的剧情发给模型"), 260) },
+    { t: "自动摘要：" + (c.oauto === 0 ? "关" : "开（超过 " + (o2KeepN(c) + 36) + " 段自动压缩）"), f: () => { c.oauto = c.oauto === 0 ? 1 : 0; wsave(); setTimeout(ofTools, 260); } },
+    { t: "清除摘要（恢复发送完整剧情）", dg: 1, f: () => { delete c.osum; c.osn = 0; wsave(); gtoast("已清除摘要"); } }
+  ], "共 " + M.length + " 段，约 " + words + " 字");
+}
+// ---- UI ----
+{
+  const ro1 = rOff;
+  rOff = function (id) {
+    const r = ro1.apply(this, arguments);
+    try {
+      const bar = document.querySelector("#vo .xo-c");
+      if (bar && !bar.querySelector("[data-o2]")) bar.insertAdjacentHTML("beforeend", '<button data-o2="cont">续写</button><button data-o2="idea">灵感</button><button data-o2="tools">摘要</button><button data-o2="stop" hidden style="background:#ff3b30;color:#fff">停止</button>');
+      o2Bar();
+    } catch (e) {}
+    return r;
+  };
+  const op1 = ofPaint;
+  ofPaint = function () {
+    const r = op1.apply(this, arguments);
+    try {
+      const L = ofL(OF.id), m = o2Last(L);
+      if (m && m.vs && m.vs.length > 1 && !(OF.busy[OF.id])) {
+        const i = L.indexOf(m), el = document.querySelector('#ol .xo-ai[data-i="' + i + '"]');
+        if (el && !el.querySelector(".o2-sw")) el.insertAdjacentHTML("beforeend", '<div class="o2-sw"><button data-o2="vp" aria-label="上一版本">‹</button><span>' + (m.vi + 1) + " / " + m.vs.length + '</span><button data-o2="vn" aria-label="下一版本">›</button></div>');
+      }
+    } catch (e) {}
+    return r;
+  };
+  document.addEventListener("click", (e) => {
+    const re = e.target.closest && e.target.closest('#vo [data-a="ofre"]');
+    if (re) { try { const L = ofL(OF.id); if (!OF.busy[OF.id]) { const l = L[L.length - 1]; if (l && !l.me && !l.p) o2Stash(OF.id, l); } } catch (x) {} return; }
+    const b = e.target.closest && e.target.closest("[data-o2]"); if (!b) return;
+    e.stopPropagation();
+    const a = b.dataset.o2, id = OF.id, L = ofL(id);
+    if (a == "stop") { try { O2.ac && O2.ac.abort(); } catch (x) {} return; }
+    if (a == "cont") return ofCont();
+    if (a == "idea") return ofIdea();
+    if (a == "tools") return ofTools();
+    if (a == "vp" || a == "vn") {
+      const m = o2Last(L); if (!m || !m.vs || OF.busy[id]) return;
+      o2Sync(m);
+      const k = Math.max(0, Math.min(m.vs.length - 1, m.vi + (a == "vn" ? 1 : -1)));
+      if (k == m.vi) return;
+      m.vi = k; m.t = m.vs[k].t; if (m.vs[k].cot) m.cot = m.vs[k].cot; else delete m.cot;
+      wsave(); ofPaint();
+    }
+  }, true);
+}
+{
+  const st = document.createElement("style");
+  st.textContent = ".xo-c{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}.xo-c::-webkit-scrollbar{display:none}.xo-c button{white-space:nowrap;flex:none}.o2-sw{display:flex;align-items:center;gap:10px;margin-top:10px;font:12px/1 -apple-system,system-ui,sans-serif;color:var(--t3)}.o2-sw button{width:28px;height:28px;border-radius:14px;border:0;background:var(--soft);color:var(--ink);font-size:16px;line-height:1;cursor:pointer}";
+  document.head.appendChild(st);
+}
+
+//XEND
+</script>
+<script type="text/plain" class="mp">
+// ===== 线下剧情：酒馆楼层样式 =====
+const o3T = (ts) => { if (!ts) return ""; const d = new Date(ts), n = new Date(), p = (x) => String(x).padStart(2, "0"), h = p(d.getHours()) + ":" + p(d.getMinutes()); return d.toDateString() == n.toDateString() ? h : p(d.getMonth() + 1) + "-" + p(d.getDate()) + " " + h; };
+function o3Dec() {
+  const e = $("#ol"), c = OF.id != null && WX.cons.find((x) => x.id == OF.id); if (!e || !c) return;
+  const tv = c.otv !== 0; e.classList.toggle("tv", tv);
+  const L = ofL(OF.id), real = L.filter((x) => !x.p), me = (WX.acc && WX.acc.name) || "我";
+  const gt = document.querySelector("#vo .gt"); if (gt) { gt.dataset.o3 = "jump"; let s = gt.querySelector(".tv-n"); if (!s) { s = document.createElement("small"); s.className = "tv-n"; gt.appendChild(s); } s.textContent = real.length ? "共 " + real.length + " 层" : ""; }
+  if (!tv) return;
+  e.querySelectorAll(".xo-ai,.xo-me").forEach((el) => {
+    if (el.querySelector(":scope>.tv-h")) return;
+    const i = el.dataset.i !== undefined ? +el.dataset.i : L.length - 1, m = L[i]; if (!m) return;
+    const fl = m.p ? real.length + 1 : L.slice(0, i).filter((x) => !x.p).length + 1, isMe = !!m.me;
+    const len = String(m.t || "").replace(/\s/g, "").length;
+    const av2 = isMe ? '<span class="tv-me">' + esc(String(me).slice(0, 1)) + "</span>" : av(c, 28);
+    el.insertAdjacentHTML("afterbegin", '<div class="tv-h"><span class="tv-av">' + av2 + '</span><div class="tv-m"><b>' + esc(isMe ? me : nm(c)) + "</b><small>" + [o3T(m.ts), m.p ? (len ? "生成中 " + len + " 字" : "生成中…") : len + " 字", m.vs && m.vs.length > 1 ? "版本 " + (m.vi + 1) + "/" + m.vs.length : "", m.hid ? "已隐藏" : ""].filter(Boolean).join(" · ") + "</small></div><em>#" + fl + "</em>" + (m.p ? "" : '<button data-o3="more" data-i="' + i + '" aria-label="更多">⋯</button>') + "</div>");
+    if (m.hid) el.classList.add("tv-hid");
+  });
+}
+{
+  const op2 = ofPaint;
+  ofPaint = function () { const r = op2.apply(this, arguments); try { o3Dec(); } catch (e) {} return r; };
+  let pt = 0, pq = 0;
+  ofPaintT = function () {
+    const n = Date.now();
+    if (n - pt >= 110) { pt = n; ofPaint(); return; }
+    if (!pq) pq = setTimeout(() => { pq = 0; pt = Date.now(); ofPaint(); }, 110);
+  };
+  const ro2 = rOff;
+  rOff = function (id) {
+    const r = ro2.apply(this, arguments);
+    try { const v = $("#vo"); if (v && !v.querySelector(".tv-nav")) v.insertAdjacentHTML("beforeend", '<div class="tv-nav"><button data-o3="top" aria-label="回到开头">↑</button><button data-o3="end" aria-label="回到最新">↓</button></div>'); o3Dec(); } catch (e) {}
+    return r;
+  };
+  // 隐藏楼层：不发送给模型
+  const oh2 = ofHist;
+  ofHist = function (c) {
+    const k = "o" + c.id, orig = WX.msgs[k];
+    if (!Array.isArray(orig) || !orig.some((m) => m.hid)) return oh2(c);
+    WX.msgs[k] = orig.filter((m) => !m.hid);
+    try { return oh2(c); } finally { WX.msgs[k] = orig; }
+  };
+  const ob2 = ofBeat;
+  ofBeat = function (i) {
+    ob2.apply(this, arguments);
+    try {
+      const id = OF.id, L = ofL(id), m = L[i]; if (!m || m.p || !SHs.items || !SHs.items.length) return;
+      const fl = L.slice(0, i).filter((x) => !x.p).length + 1, items = SHs.items.slice(), last = items.pop();
+      items.push({ t: m.hid ? "取消隐藏（重新发送给模型）" : "隐藏此楼层（不再发送给模型）", f: () => { if (m.hid) delete m.hid; else m.hid = 1; wsave(); ofPaint(); gtoast(m.hid ? "已隐藏，剧情仍显示但模型看不到" : "已取消隐藏", 1800); } });
+      items.push({ t: "跳到最新楼层", f: () => { const e = $("#ol"); if (e) e.scrollTop = 1e9; } });
+      items.push({ t: "从第 " + fl + " 层起删除之后全部", dg: 1, f: () => setTimeout(() => confirmSheet("删除第 " + fl + " 层及之后", "确认删除 " + (L.length - i) + " 层", () => { L.splice(i); wsave(); ofPaint(); }), 260) });
+      items.push(last);
+      actSheet((m.me ? "我的行动" : "剧情") + " · #" + fl, items);
+    } catch (e) {}
+  };
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest && e.target.closest("[data-o3]"); if (!b) return;
+    e.stopPropagation();
+    const a = b.dataset.o3, el = $("#ol");
+    if (a == "more") return ofBeat(+b.dataset.i);
+    if (a == "top" && el) return el.scrollTo({ top: 0, behavior: "smooth" });
+    if (a == "end" && el) return el.scrollTo({ top: 1e9, behavior: "smooth" });
+    if (a == "jump") {
+      const n = ofL(OF.id).filter((x) => !x.p).length; if (!n) return;
+      editSheet("跳转到楼层（1–" + n + "）", "", (v) => { const k = Math.max(1, Math.min(n, parseInt(v) || 0)); if (!k) return; const t = document.querySelector('#ol [data-i="' + (ofL(OF.id).findIndex((x, j) => ofL(OF.id).slice(0, j + 1).filter((y) => !y.p).length == k && !x.p)) + '"]'); if (t) t.scrollIntoView({ block: "start", behavior: "smooth" }); }, "输入楼层号");
+    }
+  }, true);
+  const st = document.createElement("style");
+  st.textContent = ".tv-n{margin-left:8px;font-size:11px;color:var(--t4);font-weight:400}#vo .gt{cursor:pointer}.tv .xo-ai,.tv .xo-me{margin:0 0 12px;padding:12px 14px 14px;border-radius:16px;background:var(--soft);border:0;color:var(--ink)}.tv .xo-me{margin-left:10%;background:transparent;box-shadow:inset 0 0 0 1px var(--line)}.tv .xo-me>small{display:none}.tv .tv-hid{opacity:.45}.tv-h{display:flex;align-items:center;gap:9px;margin:0 0 10px;padding-bottom:9px;border-bottom:1px solid var(--line);font:12px/1.2 -apple-system,system-ui,sans-serif}.tv-av{width:28px;height:28px;border-radius:9px;overflow:hidden;flex:none;display:flex}.tv-av .av{flex:none}.tv-me{width:28px;height:28px;border-radius:9px;background:var(--ink);color:var(--app);display:flex;align-items:center;justify-content:center;font-size:13px}.tv-m{flex:1;min-width:0}.tv-m b{display:block;font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tv-m small{display:block;margin-top:2px;font-size:11px;color:var(--t4);font-weight:400;letter-spacing:0}.tv-h em{font-style:normal;font-size:11px;color:var(--t3);padding:3px 8px;border-radius:10px;background:var(--app)}.tv-h button{width:28px;height:28px;border:0;border-radius:14px;background:transparent;color:var(--t3);font-size:18px;line-height:1;cursor:pointer}.tv-nav{position:absolute;right:10px;bottom:150px;z-index:4;display:flex;flex-direction:column;gap:8px}.tv-nav button{width:32px;height:32px;border-radius:16px;border:0;background:var(--soft);color:var(--t3);font-size:15px;cursor:pointer;opacity:.85;box-shadow:0 1px 6px rgba(0,0,0,.12)}";
+  document.head.appendChild(st);
+}
+
+//XEND
+</script>
+<script type="text/plain" class="mp">
+// ===== 线下剧情：完整 HTML 模块（沙箱 iframe）/ Markdown / 就地编辑 / 书签 / 酒馆 jsonl =====
+const O4 = { h: {} };
+const o4Hash = (s) => { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0; return (h >>> 0).toString(36); };
+const o4Need = (s) => /<(script|svg|button|input|textarea|select|form|canvas|iframe|html|body|head|audio|video|link|meta)\b|<!doctype|\son[a-z]+\s*=|position\s*:\s*(fixed|absolute|sticky)|url\s*\(|@import|@font-face|<style[^>]*>[\s\S]*?(#[\w-]+[^{}]*\{|(^|[\s,}])(body|html|:root|\*)\s*[{,])/i.test(s);
+function o4Frame(html, key) {
+  const c = OF.id != null ? WX.cons.find((x) => x.id == OF.id) : null, fs = (c && c.ofs) || 16;
+  let col = "#111"; try { col = getComputedStyle(document.body).color || col; } catch (e) {}
+  const head = '<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><base target="_blank"><style>html,body{margin:0;padding:0;background:transparent}body{color:' + col + ";font:" + Math.max(13, fs - 1) + 'px/1.7 -apple-system,system-ui,"PingFang SC","Noto Sans SC",sans-serif;overflow-wrap:anywhere}img,video,canvas{max-width:100%}</style>';
+  const js = '<script>(function(){var k=' + JSON.stringify(key) + ';function s(){try{var b=document.body,r=b.getBoundingClientRect(),h=Math.ceil(r.bottom+(parseFloat(getComputedStyle(b).marginBottom)||0)+(window.pageYOffset||0));parent.postMessage({xsjH:h,k:k},"*")}catch(e){}}addEventListener("load",s);try{new ResizeObserver(s).observe(document.documentElement)}catch(e){}setInterval(s,800);s()})();<\/script>';
+  const doc = "<!doctype html><html><head>" + head + "</head><body>" + html + js + "</body></html>";
+  return '<iframe class="ohf" data-k="' + key + '" sandbox="allow-scripts" referrerpolicy="no-referrer" style="height:' + (O4.h[key] || 80) + 'px" srcdoc="' + esc(doc) + '"></iframe>';
+}
+window.addEventListener("message", (e) => {
+  const d = e.data; if (!d || typeof d != "object" || !d.xsjH || !d.k) return;
+  const f = [...document.querySelectorAll("iframe.ohf")].find((x) => x.dataset.k == d.k);
+  if (!f || e.source !== f.contentWindow) return;
+  const h = Math.min(2600, Math.max(24, Math.round(d.xsjH)));
+  O4.h[d.k] = h; if (Math.abs((parseFloat(f.style.height) || 0) - h) > 1) f.style.height = h + "px";
+});
+function ohxRender(h, st, c) {
+  const tp = document.createElement("template"); tp.innerHTML = h; const ctx = { css: "" };
+  const b = [...tp.content.childNodes].map((x) => ohxNode(x, 1, st, c, ctx)).join("");
+  return (ctx.css ? "<style>" + ctx.css + "</style>" : "") + b;
+}
+{
+  const or1 = offRender;
+  offRender = function (t, role) {
+    const c = OF.id != null ? WX.cons.find((x) => x.id == OF.id) : null;
+    const Lx = OF.id != null ? ofL(OF.id) : [], lastp = Lx[Lx.length - 1], streaming = !!(lastp && lastp.p && lastp.t === t);
+    RXH = { store: [] };
+    let s;
+    try { s = rxRun(t, role, "show"); } finally { var st = RXH.store; RXH = null; }
+    s = String(s);
+    const frames = [];
+    s = s.replace(/(^|\n)[ \t]*```[ \t]*([\w+-]*)[ \t]*\n([\s\S]*?)\n?[ \t]*```[ \t]*(?=\n|$)/g, (m, a, lang, body) => {
+      lang = lang.toLowerCase();
+      if (/^(html?|xml|svg)$/.test(lang) || (!lang && /^\s*<(!doctype|html|div|style|section|table|svg|details)\b/i.test(body))) frames.push({ html: body });
+      else frames.push({ code: body });
+      return a + '<xsj-frame k="' + (frames.length - 1) + '"></xsj-frame>';
+    });
+    const heavy = o4Need(s.replace(/<xsj-frame[^>]*><\/xsj-frame>/g, ""));
+    if (!frames.length && !heavy) return or1.call(this, t, role);
+    s = s.replace(/<!--[\s\S]*?(-->|$)/g, "");
+    const tp = document.createElement("template"); tp.innerHTML = s;
+    const nodes = [...tp.content.childNodes], styles = nodes.filter((n) => n.nodeType == 1 && n.localName == "style").map((n) => n.outerHTML).join("");
+    const out = []; let run = [], bk = 0;
+    const flush = () => {
+      if (!run.length) return;
+      const h = run.map((n) => n.nodeType == 1 ? n.outerHTML : n.nodeValue).join("");
+      run = [];
+      if (!/<[a-z]/i.test(h)) return;
+      if (streaming) out.push('<div class="ohx">' + ohxRender(styles + h, st, c) + "</div>");
+      else out.push(o4Frame(styles + h, o4Hash(h + styles) + "_" + bk++));
+    };
+    for (const n of nodes) {
+      if (n.nodeType == 1 && n.localName == "xsj-frame") {
+        flush();
+        const f = frames[+n.getAttribute("k")]; if (!f) continue;
+        if (f.code != null) out.push('<pre class="ohc"><code>' + esc(f.code) + "</code></pre>");
+        else if (streaming) out.push('<div class="ohc ohp">HTML 模块生成中…</div>');
+        else out.push(o4Frame(f.html, o4Hash(f.html) + "_f" + (bk++)));
+      } else if (n.nodeType == 1 && n.localName == "style") continue;
+      else if (n.nodeType == 3 && /\S/.test(n.nodeValue)) { flush(); out.push(n.nodeValue.split(/\n+/).map((x) => x.trim()).filter(Boolean).map((p) => "<p>" + offP(p, st, c) + "</p>").join("")); }
+      else run.push(n);
+    }
+    flush();
+    return '<div class="ohm">' + out.join("") + "</div>";
+  };
+}
+// ---- Markdown 行内 ----
+{
+  const op0 = offP;
+  offP = function (p, store, c) {
+    if (store) {
+      const put = (h) => { store.push(h); return "\u0001" + (store.length - 1) + "\u0002"; };
+      let m;
+      if (/^\s*([-*_])(\s*\1){2,}\s*$/.test(p)) return '<hr class="omhr">';
+      if ((m = p.match(/^\s*(#{1,6})\s+(.+)$/))) return '<b class="omh">' + esc(m[2]) + "</b>";
+      if ((m = p.match(/^\s*>\s?(.*)$/))) return '<span class="omq">' + esc(m[1]) + "</span>";
+      p = p.replace(/^\s*[-+*]\s+(?=\S)/, "• ");
+      p = p.replace(/`([^`\n]+)`/g, (x, a) => put("<code>" + esc(a) + "</code>"));
+      p = p.replace(/\*\*([^*\n]+)\*\*/g, (x, a) => put("<b>" + esc(a) + "</b>")).replace(/__([^_\n]+)__/g, (x, a) => put("<b>" + esc(a) + "</b>")).replace(/~~([^~\n]+)~~/g, (x, a) => put("<s>" + esc(a) + "</s>"));
+    }
+    return op0.call(this, p, store, c);
+  };
+}
+// ---- 就地编辑 ----
+function o4Edit(i) {
+  const L = ofL(OF.id), m = L[i], el = document.querySelector('#ol [data-i="' + i + '"]'); if (!m || !el || OF.busy[OF.id]) return;
+  const h = el.querySelector(":scope>.tv-h"); el.innerHTML = ""; if (h) el.appendChild(h);
+  el.insertAdjacentHTML("beforeend", '<textarea class="tv-ed" rows="6">' + esc(m.t) + '</textarea><div class="tv-eb"><button data-o4="save" data-i="' + i + '">保存</button><button data-o4="cancel">取消</button></div>');
+  const ta = el.querySelector("textarea"); ta.style.height = Math.min(window.innerHeight * 0.5, ta.scrollHeight + 6) + "px"; ta.focus();
+}
+// ---- 书签 ----
+function o4Bm() {
+  const L = ofL(OF.id), r = []; let f = 0;
+  L.forEach((m, i) => { if (m.p) return; f++; if (m.bm) r.push({ i, f, m }); });
+  if (!r.length) return gtoast("还没有书签，点楼层的「⋯」→ 加书签");
+  actSheet("书签", r.map((x) => ({ t: "#" + x.f + " · " + String(x.m.t).replace(/\s+/g, " ").slice(0, 24), f: () => { const t = document.querySelector('#ol [data-i="' + x.i + '"]'); if (t) t.scrollIntoView({ block: "start", behavior: "smooth" }); } })));
+}
+// ---- 酒馆 jsonl ----
+function o4Export() {
+  const id = OF.id, c = WX.cons.find((x) => x.id == id), L = ofL(id).filter((m) => !m.p); if (!c || !L.length) return gtoast("还没有可导出的剧情");
+  const me = (WX.acc && WX.acc.name) || "我", dt = (ts) => new Date(ts || Date.now()).toISOString();
+  const rows = [{ user_name: me, character_name: nm(c), create_date: dt(L[0].ts), chat_metadata: {} }].concat(L.map((m) => {
+    o2Sync(m);
+    const o = { name: m.me ? me : nm(c), is_user: !!m.me, is_system: !!m.hid, send_date: dt(m.ts), mes: m.t, extra: {} };
+    if (!m.me && m.vs && m.vs.length > 1) { o.swipes = m.vs.map((v) => v.t); o.swipe_id = m.vi; }
+    return o;
+  }));
+  const url = URL.createObjectURL(new Blob([rows.map((r) => JSON.stringify(r)).join("\n")], { type: "application/x-ndjson" }));
+  xaDl(url, nm(c) + " - 线下剧情.jsonl"); setTimeout(() => URL.revokeObjectURL(url), 4e3); gtoast("已导出为酒馆 jsonl");
+}
+function o4Import() {
+  const i = document.createElement("input"); i.type = "file"; i.accept = ".jsonl,.json,.txt,application/json"; i.style.cssText = "position:fixed;left:-999px;opacity:0";
+  i.onchange = () => { const f = i.files && i.files[0]; i.remove(); if (!f) return; const r = new FileReader(); r.onload = () => o4Parse(String(r.result), f.name); r.readAsText(f); };
+  document.body.appendChild(i); i.click();
+}
+function o4Parse(txt, fn) {
+  let arr = [];
+  try { const j = JSON.parse(txt); arr = Array.isArray(j) ? j : Array.isArray(j.messages) ? j.messages : Array.isArray(j.chat) ? j.chat : []; } catch (e) { arr = txt.split(/\r?\n/).map((l) => { try { return JSON.parse(l); } catch (x) { return null; } }).filter(Boolean); }
+  const msgs = arr.filter((o) => o && typeof o.mes == "string" && o.mes.trim()).map((o) => {
+    const ts = Date.parse(o.send_date) || Date.now(), m = { me: o.is_user ? 1 : 0, t: o.mes, ts };
+    if (o.is_system) m.hid = 1;
+    if (!m.me && Array.isArray(o.swipes) && o.swipes.filter((x) => typeof x == "string").length > 1) { m.vs = o.swipes.filter((x) => typeof x == "string").slice(0, 8).map((x) => ({ t: x })); m.vi = Math.max(0, Math.min(m.vs.length - 1, +o.swipe_id || 0)); m.t = m.vs[m.vi].t; }
+    return m;
+  });
+  if (!msgs.length) return gtoast("没有识别到酒馆聊天记录（需要 .jsonl，每行一条消息）", 3200);
+  const id = OF.id, L = ofL(id);
+  actSheet("导入 " + msgs.length + " 条楼层", [
+    { t: "追加到当前剧情之后", f: () => { msgs.forEach((m) => L.push(m)); wsave(); ofPaint(); gtoast("已追加 " + msgs.length + " 层"); } },
+    { t: "替换当前剧情", dg: 1, f: () => { L.length = 0; msgs.forEach((m) => L.push(m)); const c = WX.cons.find((x) => x.id == id); if (c) { delete c.osum; c.osn = 0; } wsave(); ofPaint(); gtoast("已导入 " + msgs.length + " 层"); } }
+  ], fn);
+}
+// ---- 入口 ----
+{
+  const ob3 = ofBeat;
+  ofBeat = function (i) {
+    ob3.apply(this, arguments);
+    try {
+      const L = ofL(OF.id), m = L[i]; if (!m || m.p || !SHs.items || !SHs.items.length) return;
+      const items = SHs.items.slice(), k = items.findIndex((x) => /^从第 \d+ 层起删除/.test(x.t));
+      items.splice(k < 0 ? items.length - 1 : k, 0, { t: m.bm ? "取消书签" : "加书签", f: () => { if (m.bm) delete m.bm; else m.bm = 1; wsave(); ofPaint(); } });
+      actSheet((m.me ? "我的行动" : "剧情") + " · #" + (L.slice(0, i).filter((x) => !x.p).length + 1), items);
+    } catch (e) {}
+  };
+  const od3 = o3Dec;
+  o3Dec = function () {
+    od3.apply(this, arguments);
+    try {
+      document.querySelectorAll("#ol .tv-h").forEach((h) => {
+        const el = h.parentElement, i = +el.dataset.i; if (isNaN(i)) return;
+        const m = ofL(OF.id)[i]; if (!m) return;
+        if (m.bm && !h.querySelector(".tv-bm")) h.querySelector("em").insertAdjacentHTML("beforebegin", '<i class="tv-bm">★</i>');
+        if (!h.querySelector('[data-o4="edit"]')) { const b = h.querySelector('[data-o3="more"]'); if (b) b.insertAdjacentHTML("beforebegin", '<button data-o4="edit" data-i="' + i + '" aria-label="编辑">✎</button>'); }
+      });
+    } catch (e) {}
+  };
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest && e.target.closest("[data-o4]"); if (!b) return;
+    e.stopPropagation();
+    const a = b.dataset.o4;
+    if (a == "edit") return o4Edit(+b.dataset.i);
+    if (a == "cancel") return ofPaint();
+    if (a == "save") { const m = ofL(OF.id)[+b.dataset.i], ta = b.closest(".xo-ai,.xo-me").querySelector("textarea"); if (m && ta) { const v = ta.value.trim(); if (!v) return gtoast("内容不能为空"); m.t = v; o2Sync(m); wsave(); } ofPaint(); }
+  }, true);
+  const st = document.createElement("style");
+  st.textContent = ".ohf{display:block;width:100%;border:0;background:transparent;margin:6px 0;color-scheme:normal}.ohm>p{margin:.5em 0}.ohc{margin:8px 0;padding:10px 12px;border-radius:10px;background:rgba(128,128,128,.12);font:12.5px/1.6 ui-monospace,Menlo,monospace;white-space:pre-wrap;overflow-x:auto;word-break:break-all}.ohp{opacity:.6;font-family:inherit}.omh{font-size:1.15em;font-weight:600}.omq{display:block;padding-left:10px;border-left:2px solid rgba(128,128,128,.4);opacity:.85}.omhr{border:0;border-top:1px solid rgba(128,128,128,.3);margin:.5em 0}.xo-ai code,.xo-me code{padding:1px 5px;border-radius:5px;background:rgba(128,128,128,.14);font-size:.9em}.tv-ed{width:100%;box-sizing:border-box;min-height:120px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit;font-size:15px;line-height:1.7;background:var(--app);color:var(--ink);resize:vertical;outline:none}.tv-eb{display:flex;gap:8px;margin-top:8px}.tv-eb button{height:32px;padding:0 18px;border-radius:16px;border:0;background:var(--soft);color:var(--ink);font-size:13px;cursor:pointer}.tv-eb button:first-child{background:var(--ink);color:var(--app)}.tv-bm{font-style:normal;color:#f5a623;font-size:13px}.tv-h [data-o4=edit]{font-size:15px}";
+  document.head.appendChild(st);
+}
+
+//XEND
+</script>
+<script type="text/plain" class="mp">
+// ===== 空气感界面风格（锁屏 / 桌面 / 小组件 / 图标 / 引用气泡统一）=====
+const AIR_CSS = `
+html:has(body.air){--w1:#ffffff;--w2:#dde7f2;--w3:#fcfbf9;--w4:#edf0f5;--wk:rgba(255,236,232,.55)}
+@media (prefers-color-scheme:dark){html:has(body.air):not([data-theme="light"]){--w1:#394152;--w2:#07080c;--w3:#171a21;--w4:#0a0b0f;--wk:transparent}}
+html[data-theme="dark"]:has(body.air){--w1:#394152;--w2:#07080c;--w3:#171a21;--w4:#0a0b0f;--wk:transparent}
+body.air #wall{background:radial-gradient(90% 46% at 12% -4%,var(--w1),transparent 62%),radial-gradient(70% 40% at 100% 96%,var(--w2),transparent 70%),radial-gradient(60% 30% at 0% 70%,var(--wk,transparent),transparent 70%),linear-gradient(var(--w3),var(--w4));background-size:cover;background-position:center}
+/* 锁屏 */
+body.air #lock::before{background:linear-gradient(180deg,rgba(var(--wc),calc(var(--lo,.8)*.3)),rgba(var(--wc),calc(var(--lo,.8)*.06)) 46%,rgba(var(--wc),calc(var(--lo,.8)*.36)));backdrop-filter:blur(40px) saturate(1.3);-webkit-backdrop-filter:blur(40px) saturate(1.3)}
+body.air #home{transition:opacity .45s ease .05s}body.air.lkon #home{opacity:0;transition:none}
+body.air #lk{margin-top:78px;opacity:.5}body.air #lk .ico{width:18px;height:18px;stroke-width:1.2}
+body.air #ld{margin-top:34px;font-size:12.5px;font-weight:400;letter-spacing:.24em;text-indent:.24em;color:var(--t3)}
+body.air #lt{font-size:var(--lkts,104px);font-weight:100;letter-spacing:-4px;line-height:1;margin-top:18px;font-variant-numeric:tabular-nums;text-indent:-4px}
+body.air #lock:not(.lkc) #lt{background:linear-gradient(180deg,var(--ink) 20%,rgba(var(--kc),.42));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+body.air #lt::after{content:"";display:block;width:26px;height:1px;margin:26px auto 0;background:rgba(var(--kc),.28);-webkit-text-fill-color:initial}
+body.air #ln{top:420px;left:28px;right:28px;gap:10px}
+body.air #lq{bottom:62px;padding:0 44px}
+body.air #lq button{width:46px;height:46px;background:rgba(var(--wc),.42);color:var(--t2);backdrop-filter:blur(24px) saturate(1.5);-webkit-backdrop-filter:blur(24px) saturate(1.5);box-shadow:inset 0 0 0 .5px rgba(255,255,255,calc(.9*var(--hk))),0 10px 28px -8px rgba(40,60,90,.16)}
+body.air #lq button .ico{width:19px;height:19px;stroke-width:1.2}
+body.air #lh{bottom:26px;font-size:10.5px;letter-spacing:.5em;text-indent:.5em;color:var(--t3);opacity:.6}
+/* 通知卡片 */
+body.air .nt{padding:13px 16px;border-radius:24px;background:linear-gradient(155deg,rgba(var(--wc),.7),rgba(var(--wc),.4));backdrop-filter:blur(30px) saturate(1.5);-webkit-backdrop-filter:blur(30px) saturate(1.5);box-shadow:inset 0 0 0 .5px rgba(255,255,255,calc(.9*var(--hk))),0 14px 36px -12px rgba(40,60,90,.18)}
+body.air .nt i{width:34px;height:34px;border-radius:11px;background:rgba(var(--kc),.06);color:var(--ink);box-shadow:inset 0 0 0 .5px rgba(var(--kc),.08)}
+body.air .nt .ico{stroke-width:1.2}
+body.air .nt b{font-size:13.5px;font-weight:500;letter-spacing:.01em}body.air .nt s{font-size:12.5px;color:var(--t4)}
+/* 桌面图标 */
+body.air .ic i{border-radius:var(--r,25px);background:linear-gradient(158deg,rgba(var(--wc),.82),rgba(var(--wc),.44));backdrop-filter:blur(26px) saturate(1.5);-webkit-backdrop-filter:blur(26px) saturate(1.5);box-shadow:inset 0 0 0 .5px rgba(255,255,255,calc(.95*var(--hk))),inset 0 1px 0 rgba(255,255,255,calc(.9*var(--hk))),0 0 0 .5px rgba(var(--kc),.05),0 16px 32px -12px rgba(40,60,90,.2),0 2px 5px rgba(40,60,90,.04)}
+body.air .ic i:not(.cu) .ico{stroke-width:1.05;opacity:.86}
+body.air #phone .ic span{color:var(--lbc,var(--t3));font-size:var(--lbs,10.5px);font-weight:var(--lbw,400);letter-spacing:.06em;margin-top:9px}
+body.air #dock{border-radius:38px;background:linear-gradient(160deg,rgba(var(--wc),.5),rgba(var(--wc),.26));backdrop-filter:blur(34px) saturate(1.6);-webkit-backdrop-filter:blur(34px) saturate(1.6);box-shadow:inset 0 0 0 .5px rgba(255,255,255,calc(.9*var(--hk))),inset 0 1px 0 rgba(255,255,255,calc(.8*var(--hk))),0 24px 50px -16px rgba(40,60,90,.22)}
+body.air #dock .ic i{background:linear-gradient(158deg,rgba(var(--wc),.92),rgba(var(--wc),.6))}
+body.air #dots{bottom:128px;gap:7px}body.air #dots i{width:5px;height:5px;background:rgba(var(--kc),.16);transition:width .25s,background .25s}body.air #dots i.on{width:16px;border-radius:3px;background:rgba(var(--kc),.62)}
+/* 小组件 */
+body.air .wg,body.air .wgx{border-radius:36px;background:linear-gradient(155deg,rgba(var(--wc),.74),rgba(var(--wc),.4));backdrop-filter:blur(32px) saturate(1.5);-webkit-backdrop-filter:blur(32px) saturate(1.5);box-shadow:inset 0 0 0 .5px rgba(255,255,255,calc(.95*var(--hk))),inset 0 1px 0 rgba(255,255,255,calc(.9*var(--hk))),0 0 0 .5px rgba(var(--kc),.04),0 28px 60px -22px rgba(40,60,90,.22)}
+body.air .wg{padding:28px 30px}body.air .wgx{padding:24px 24px}
+body.air .wg small,body.air .wgx small{font-size:10.5px;letter-spacing:.32em;color:var(--t4);font-weight:400}
+body.air .wg em,body.air .wgx em{font-size:11.5px;letter-spacing:.26em;color:var(--t3);right:30px;top:28px}
+body.air .wgx em{right:24px;top:24px}
+body.air .wg b{font-size:78px;font-weight:100;letter-spacing:-4px;margin-top:20px}
+body.air .wgx .bg1{font-size:68px;font-weight:100;letter-spacing:-3px}body.air .wgx .wcd{font-weight:100}
+body.air .wgx .wq,body.air .wgx .wnt{font-size:14px;line-height:1.9;letter-spacing:.03em;color:var(--t2)}
+body.air .wg .bar,body.air .wgx .wbar{left:30px;right:30px;bottom:30px;height:1px;background:rgba(var(--kc),.1)}body.air .wgx .wbar{left:24px;right:24px;bottom:24px}
+body.air .wg u,body.air .wgx .wbar u{position:relative;height:1px;background:var(--ink)}
+body.air .wg u::after,body.air .wgx .wbar u::after{content:"";position:absolute;right:-2.5px;top:-2px;width:5px;height:5px;border-radius:50%;background:var(--ink)}
+body.air .wgx .wcal i.t{background:var(--ink);color:var(--app)}
+/* 控制中心 / 弹窗略带清透 */
+body.air #sh .p{border-radius:34px 34px 0 0;box-shadow:0 -20px 60px -20px rgba(40,60,90,.18)}
+`;
+const QUOTE_CSS = `
+#phone .qp,#phone .qp.qm,#phone .qp.qo,#phone .mr .qp,#phone .mr.me .qp,#phone .mr:not(.me) .qp{background:rgba(var(--wc),.78)!important;border:1px solid rgba(var(--kc),.14)!important;color:var(--c-text)!important;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 6px 18px -8px rgba(40,60,90,.14)}
+#phone .qp::after,#phone .qp::before,#phone .qp.qm::after,#phone .qp.qm::before,#phone .qp.qo::after,#phone .qp.qo::before,#phone .mr.me .qp::after,#phone .mr.me .qp::before,#phone .mr:not(.me) .qp::after,#phone .mr:not(.me) .qp::before{border-color:rgba(var(--kc),.2)!important;background:rgba(var(--wc),.9)!important;opacity:1!important}
+`;
+{
+  const a = document.createElement("style"); a.id = "aircss"; a.textContent = AIR_CSS; document.head.appendChild(a);
+  const q = document.createElement("style"); q.id = "quotecss"; q.textContent = QUOTE_CSS; document.head.appendChild(q);
+  try { const lk0 = document.getElementById("lock"), sy = () => document.body.classList.toggle("lkon", !lk0.classList.contains("up")); sy(); new MutationObserver(sy).observe(lk0, { attributes: true, attributeFilter: ["class"] }); } catch (e) {}
+  const apply = () => { try { document.body.classList.toggle("air", CFG.air !== 0); } catch (e) {} };
+  window.airApply = apply; apply();
+  const rs1 = rSet;
+  rSet = function (keep) {
+    rs1.apply(this, arguments);
+    try {
+      if (ST.tab != 3) return;
+      const sc = document.querySelector("#st .sc"); if (!sc || sc.querySelector("#air_card")) return;
+      const d = document.createElement("div"); d.className = "card"; d.id = "air_card";
+      d.innerHTML = '<h3>界面风格</h3><div class="lr"><div><b>空气感</b><small>留白、清透、细线条的锁屏、桌面、图标与小组件；关闭则恢复原来的样式</small></div><button class="sw' + (CFG.air !== 0 ? " on" : "") + '" role="switch" aria-checked="' + (CFG.air !== 0 ? "true" : "false") + '" aria-label="空气感风格" data-air="1"><i></i></button></div>';
+      const ka = sc.querySelector("#ka_card"); if (ka) sc.insertBefore(d, ka); else sc.appendChild(d);
+    } catch (e) {}
+  };
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest && e.target.closest("[data-air]"); if (!b) return;
+    e.stopPropagation();
+    CFG.air = CFG.air === 0 ? 1 : 0; savePrefs(); apply();
+    b.classList.toggle("on", CFG.air !== 0); b.setAttribute("aria-checked", CFG.air !== 0 ? "true" : "false");
+  }, true);
 }
 
 //XEND
