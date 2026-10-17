@@ -1688,8 +1688,10 @@ const keepScroll = (e, f) => {
 };
 let cur = null;
 const CONS = ["#wx", "#st", "#sm", "#cr", "#app"];
+var OPENAT = 0;
 function openApp(k) {
   if (!APPS[k]) return;
+  OPENAT = Date.now();
   if (CFG.hap && navigator.vibrate) navigator.vibrate(8);
   const e = els[k], r = phone.getBoundingClientRect(), q = e.getBoundingClientRect(), sc = r.width / PW, cx = (q.left + q.width / 2 - r.left) / sc, cy = (q.top + 30 * sc - r.top) / sc;
   if (!pos[k].d && page != (pos[k].p || 0)) go(pos[k].p || 0);
@@ -1992,6 +1994,9 @@ sbr();
 tick();
 rl();
 rl();
+document.addEventListener("click", (e) => {
+  if (Date.now() - OPENAT < 420 && e.target.closest && e.target.closest("#app,#sm,#cr,#st,#wx")) { e.stopPropagation(); e.preventDefault(); }
+}, true);
 const SHs = { items: [] };
 function shOpen(title, sub, html) {
   const e = $("#sh");
@@ -4636,7 +4641,7 @@ function lpress(root, sel, cb) {
   });
 }
 phone.addEventListener("click", (e) => {
-  const b = e.target.closest && e.target.closest(".ph>b,.tb>b,.g26>.gt,#app>h1");
+  const b = e.target.closest && e.target.closest(".ph>b,.tb>b,.g26>.gt,#app>h1,.muth>b,.mudh>b,.brs>h2");
   if (!b || !cur || !b.closest("#app,#sm,#cr,#st,#wx")) return;
   if (b.closest("#wx") && !b.closest(".ph,.tb,.g26")) return;
   const hd = b.parentElement, back = hd && hd.querySelector('[aria-label="返回"],[data-a=back],[data-a=home],[data-a=sback]');
@@ -7944,6 +7949,7 @@ regApp("app:music", "音乐", () => {
   Object.assign(MU, { api: "", cookie: "", user: null, lists: [], fav: [], hist: [], recent: [], mode: 0, pl: null, md: null, tab: 0 });
   if (isObj(s)) {
     MU.api = typeof s.api == "string" ? s.api : "";
+    MU.gd = isObj(s.gd) ? s.gd : {};
     MU.cookie = typeof s.cookie == "string" ? s.cookie : "";
     MU.user = isObj(s.user) ? s.user : null;
     const T = (a) => Array.isArray(a) ? a.filter((x) => isObj(x) && x.id != null && typeof x.n == "string") : [];
@@ -7954,7 +7960,7 @@ regApp("app:music", "音乐", () => {
     MU.lists = Array.isArray(s.lists) ? s.lists.filter((x) => isObj(x) && x.id != null && typeof x.name == "string").map((x) => ({ id: x.id, name: x.name, cover: x.cover || "", nid: x.nid || 0, ts: x.ts || 0, tracks: T(x.tracks) })) : [];
   }
 });
-const muSave = () => store("app:music", { api: MU.api, cookie: MU.cookie, user: MU.user, lists: MU.lists, fav: MU.fav, recent: MU.recent, hist: MU.hist, mode: MU.mode });
+const muSave = () => store("app:music", { gd: MU.gd || {}, api: MU.api, cookie: MU.cookie, user: MU.user, lists: MU.lists, fav: MU.fav, recent: MU.recent, hist: MU.hist, mode: MU.mode });
 const muTm = (s) => {
   s = Math.max(0, Math.floor(s || 0));
   return Math.floor(s / 60) + ":" + f2(s % 60);
@@ -8189,7 +8195,7 @@ function muRadio() {
         if (cur == "music" && MU.tab == 1 && !MU.pl) muTab();
       });
     }
-    return `<div class="muc"><h3>热门单曲</h3><p class="mun" style="margin:0 4px 6px">内置曲库：每首可试听 30 秒。设置网易云接口后可播放完整歌曲。</p></div>${MU.top && MU.top.length ? `<div class="mulist">${muRows(MU.top)}</div>` : `<p class="muem">${MU.top ? esc(MU.topErr || "暂时没有数据") + '<br><br><button class="mubtn" data-mu="rld">重试</button>' : "正在加载…"}</p>`}<div class="muc"><div class="mubt" style="margin-top:20px"><button data-mu="api">设置网易云接口</button></div></div>`;
+    return `<div class="muc"><h3>热门单曲</h3><p class="mun" style="margin:0 4px 6px">热门榜单 · 点播时自动匹配完整音源，匹配不到则试听 30 秒。</p></div>${MU.top && MU.top.length ? `<div class="mulist">${muRows(MU.top)}</div>` : `<p class="muem">${MU.top ? esc(MU.topErr || "暂时没有数据") + '<br><br><button class="mubtn" data-mu="rld">重试</button>' : "正在加载…"}</p>`}<div class="muc"><div class="mubt" style="margin-top:20px"><button data-mu="api">设置网易云接口</button></div></div>`;
   }
   if (!rec) return '<div class="muc"><p class="muem">正在加载…</p></div>';
   return `<div class="muc">${rec.pl.length ? "<h3>推荐歌单</h3>" + muGrid(rec.pl, "rp") : ""}${rec.top.length ? "<h3>排行榜</h3>" + muGrid(rec.top, "rt") : ""}${!rec.pl.length && !rec.top.length ? '<p class="muem">加载失败，请检查接口地址<br><br><button class="mubtn" data-mu="rld">重试</button></p>' : ""}</div>`;
@@ -8235,7 +8241,7 @@ async function muSearch(q, type) {
       MU.sres = L;
       MU.res = { html: seg + '<div class="muc">' + (L.length ? muGrid(L, "sp") : '<p class="muem">没有找到相关歌单</p>') + "</div>" };
     } else {
-      const L = MU.api ? (res.songs || []).map(muMap) : await muItunes(q);
+      const L = MU.api ? (res.songs || []).map(muMap) : await muFree(q);
       MU.sres = L;
       MU.res = { html: seg + '<div class="mulist">' + (L.length ? muRows(L) : '<p class="muem">没有找到相关歌曲</p>') + "</div>" };
     }
@@ -8283,7 +8289,7 @@ const muClose = () => {
 };
 function muLoginHtml(t) {
   MU.lt = t;
-  const hint = MU.api ? "" : '<p class="mun warn">还没设置接口地址，登录和搜索都需要。<button data-mu="api">去设置</button></p>';
+  const hint = "";
   const tabs = ["验证码", "密码", "Cookie", "扫码"].map((l, i) => `<button data-mu="lt" data-n="${i}" class="${i == t ? "on" : ""}">${l}</button>`).join("");
   let b = "";
   if (t == 0) b = `<input id="mu_ph" type="tel" inputmode="numeric" placeholder="手机号" aria-label="手机号"><div class="mucd"><input id="mu_cd" inputmode="numeric" placeholder="短信验证码" aria-label="短信验证码"><button data-mu="sms">获取验证码</button></div><p class="mun">未注册的手机号将自动创建账号</p><button class="mugo" data-mu="dologin">登录</button>`;
@@ -20629,7 +20635,8 @@ async function aePull(A) {
   if (!/^https?:$/.test(u.protocol)) throw new Error("接口地址要以 http:// 或 https:// 开头");
   const ac = new AbortController(), to = setTimeout(() => ac.abort(), 15e3);
   let r;
-  try { r = await fetch(eurl(A, "models"), { headers: hdrs(A), signal: ac.signal }); } catch (e) { clearTimeout(to); throw new Error(e && e.name == "AbortError" ? "连接超时" : "无法连接（地址错误或被浏览器跨域拦截）"); }
+  const b0 = raw.replace(/\/+$/, ""), cands = A.type == "anthropic" ? [eurl(A, "models")] : /\/v\d+$/.test(b0) ? [b0 + "/models"] : (u.pathname.replace(/\/+$/, "") ? [b0 + "/models", b0 + "/v1/models"] : [b0 + "/v1/models", b0 + "/models"]);
+  try { for (const cu of cands) { r = await fetch(cu, { headers: hdrs(A), signal: ac.signal }); if (r.status != 404) break; } } catch (e) { clearTimeout(to); throw new Error(e && e.name == "AbortError" ? "连接超时" : "无法连接（地址错误或被浏览器跨域拦截）"); }
   clearTimeout(to);
   if (r.status == 401 || r.status == 403) throw new Error("密钥无效或没有权限（HTTP " + r.status + "）");
   if (r.status == 404) throw new Error("这个地址没有 /models 接口，可手动填写模型名");
@@ -20657,14 +20664,14 @@ function apiEditor(o) {
   AE.A = A; AE.o = o; AE.q = "";
   const tf = A.temp == null;
   SHs.items = [{ t: "保存", f: () => { aeRead(); o.onSave(AE.A); } }].concat(o.onReset ? [{ t: o.resetLabel || "恢复跟随全局", dg: 1, f: () => o.onReset() }] : []);
-  shOpen(o.title, o.sub || "", `<div id="ae" style="padding:0 4px;max-height:34vh;overflow-y:auto;-webkit-overflow-scrolling:touch">
-<div class="fd"><small>接口类型</small>${sel('id="ae_t"', [["openai", "OpenAI 兼容"], ["anthropic", "Anthropic"]], A.type)}</div>
+  shOpen(o.title, o.sub || "", `<div id="ae" style="padding:0 4px;max-height:46vh;overflow-y:auto;-webkit-overflow-scrolling:touch">
+<div class="fd"><small>接口类型</small>${sel('id="ae_t"', o.types || [["openai", "OpenAI 兼容"], ["anthropic", "Anthropic"]], A.type)}</div>
 <div class="fd"><small>接口地址（可自由填写新的，如 https://api.example.com/v1）</small><input id="ae_u" value="${esc(A.url)}" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://"></div>
 <div class="fd"><small>密钥</small><input id="ae_k" value="${esc(A.key)}" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="sk-…"></div>
 <div class="fd"><small>${esc(o.modelLabel || "模型")}</small><input id="ae_m" value="${esc(A.model)}" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="手动填写，或从下面选择"></div>
 <div class="xa-btns" style="margin-top:10px"><button class="cb" data-ae="pull">拉取模型</button><button class="cb" data-ae="test">连接测试</button></div><p class="stt" id="ae_s" style="margin:2px 0 6px"></p>
-<input class="pw-q" id="ae_q" placeholder="搜索已拉取的模型" style="margin:0 0 6px;width:100%"><div id="ae_l" style="max-height:150px;overflow-y:auto;-webkit-overflow-scrolling:touch;border-top:1px solid var(--line)"></div>
-${o.temp === false ? "" : `<div class="fd"><small>温度 <span id="ae_tv">${tf ? "跟随全局 " + (+CFG.temp).toFixed(1) : (+A.temp).toFixed(1)}</span></small><input type="range" id="ae_tp" min="0" max="2" step="0.1" value="${tf ? CFG.temp : A.temp}"><label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-top:4px"><input type="checkbox" id="ae_tf"${tf ? " checked" : ""} style="width:16px;height:16px"> 跟随全局温度</label></div>`}</div>
+<input class="pw-q" id="ae_q" placeholder="搜索已拉取的模型" style="margin:0 0 6px;width:100%"><div id="ae_l" style="max-height:130px;overflow-y:auto;-webkit-overflow-scrolling:touch;border-top:1px solid var(--line)"></div>
+${o.extra || ""}${o.temp === false ? "" : `<div class="fd"><small>温度 <span id="ae_tv">${tf ? "跟随全局 " + (+CFG.temp).toFixed(1) : (+A.temp).toFixed(1)}</span></small><input type="range" id="ae_tp" min="0" max="2" step="0.1" value="${tf ? CFG.temp : A.temp}"><label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-top:4px"><input type="checkbox" id="ae_tf"${tf ? " checked" : ""} style="width:16px;height:16px"> 跟随全局温度</label></div>`}</div>
 <div class="l"><button class="si" data-sk="0"><span>保存</span></button>${o.onReset ? `<button class="si dg" data-sk="1"><span>${o.resetLabel || "恢复跟随全局"}</span></button>` : ""}<button class="si" data-sk="x"><span>取消</span></button></div>`);
   aeList();
 }
@@ -21271,6 +21278,195 @@ const QUOTE_CSS = `
     CFG.air = CFG.air === 0 ? 1 : 0; savePrefs(); apply();
     b.classList.toggle("on", CFG.air !== 0); b.setAttribute("aria-checked", CFG.air !== 0 ? "true" : "false");
   }, true);
+}
+
+//XEND
+</script>
+<script type="text/plain" class="mp">
+// ===== 音乐：免费聚合接口（GD 音乐台）默认绑定 + 自由切换接口/音源 =====
+const GD_URL = "https://music-api.gdstudio.xyz/api.php";
+const GD_SRC = [["netease", "网易云音乐"], ["tencent", "QQ 音乐"], ["kuwo", "酷我音乐"], ["kugou", "酷狗音乐"], ["migu", "咪咕音乐"], ["joox", "JOOX"]];
+const GD_PX = ["https://corsproxy.io/?url=", "https://api.allorigins.win/raw?url="];
+const gdCfg = () => { const g = MU.gd = isObj(MU.gd) ? MU.gd : {}; if (typeof g.url != "string" || !g.url) g.url = ""; if (!g.src) g.src = "netease"; return g; };
+const gdName = () => (GD_SRC.find((x) => x[0] == gdCfg().src) || GD_SRC[0])[1];
+async function gdGet(p, noProxy) {
+  const g = gdCfg(), base = g.url || GD_URL, u = base + (base.includes("?") ? "&" : "?") + new URLSearchParams(p);
+  const one = async (x) => { const ac = new AbortController(), to = setTimeout(() => ac.abort(), 9e3); try { const r = await fetch(x, { signal: ac.signal }); if (!r.ok) throw new Error("接口返回 " + r.status); const tx = await r.text(); try { return JSON.parse(tx); } catch (e) { throw new Error("接口返回的不是 JSON"); } } finally { clearTimeout(to); } };
+  try { return await one(u); }
+  catch (e) { if (noProxy) throw e; for (const px of GD_PX) { try { return await one(px + encodeURIComponent(u)); } catch (x) {} } throw e; }
+}
+const muMapG = (x, s) => ({ id: "g:" + s + ":" + x.id, n: String(x.name || ""), ar: (Array.isArray(x.artist) ? x.artist : [x.artist]).filter(Boolean).join(" / "), al: x.album || "", pic: "", dt: 0, gd: { s, id: x.id, pid: x.pic_id || "", lid: x.lyric_id || x.id } });
+async function muFree(q) {
+  const g = gdCfg();
+  if (g.on !== 0) {
+    const first = g.src || "netease", srcs = [first].concat(["netease", "kuwo", "tencent"].filter((x) => x != first));
+    for (const s of srcs) { try { const j = await gdGet({ types: "search", source: s, name: q, count: 30, pages: 1 }); if (Array.isArray(j) && j.length) return j.map((x) => muMapG(x, x.source || s)); } catch (e) {} }
+  }
+  return muItunes(q);
+}
+{
+  const mu0 = muUrl;
+  muUrl = async function (t) {
+    const g = gdCfg();
+    if (g.on !== 0 && !t.local) {
+      try {
+        let gd = t.gd;
+        if (!gd && /^i/.test(String(t.id)) && t.n) {
+          const j = await gdGet({ types: "search", source: g.src, name: t.n + " " + String(t.ar || "").split(" / ")[0], count: 5, pages: 1 });
+          const h = Array.isArray(j) ? j.find((x) => String(x.name).toLowerCase().includes(String(t.n).toLowerCase().slice(0, 6))) || j[0] : null;
+          if (h) { gd = { s: h.source || g.src, id: h.id, pid: h.pic_id || "", lid: h.lyric_id || h.id }; t.gd = gd; }
+        }
+        if (gd) {
+          let u = "";
+          for (const br of [320, 192, 128]) { const j = await gdGet({ types: "url", source: gd.s, id: gd.id, br }); u = j && j.url; if (u) break; }
+          if (!t.pic && gd.pid) gdGet({ types: "pic", source: gd.s, id: gd.pid, size: 300 }).then((j) => { if (j && j.url) { t.pic = String(j.url).replace(/^http:/, "https:"); muSave(); if (MU.cur === t) muPaint(); } }).catch(() => {});
+          if (u) return String(u).replace(/^http:/, "https:");
+        }
+      } catch (e) {}
+    }
+    if (t.url) return t.url;
+    if (/^g:/.test(String(t.id))) throw new Error("没有找到可播放的音源，可在音乐接口里换一个音源");
+    return mu0(t);
+  };
+  const ml0 = muLyric;
+  muLyric = async function (t, my) {
+    if (t.gd && gdCfg().on !== 0) {
+      try {
+        const j = await gdGet({ types: "lyric", source: t.gd.s, id: t.gd.lid || t.gd.id }), l = muLrc(j && j.lyric);
+        if (l.length) { if (my == MU.seq) { MU.lrc = l; muPaint(); } return; }
+      } catch (e) {}
+    }
+    return ml0.call(this, t, my);
+  };
+}
+function muApi() {
+  const g = gdCfg();
+  actSheet("音乐接口", [
+    { t: "音源：" + gdName() + "（点击切换）", f: () => setTimeout(() => actSheet("切换音源", GD_SRC.map(([k, n]) => ({ t: (g.src == k ? "✓ " : "") + n, f: () => { g.src = k; muSave(); gtoast("已切换到 " + n); if (cur == "music") muTab(); } })), "搜索时优先用这个音源，找不到会自动试其他音源"), 260) },
+    { t: g.url ? "接口：自定义 " + g.url.replace(/^https?:\/\//, "").slice(0, 28) : "接口：默认（GD 音乐台，免费）", f: () => setTimeout(() => editSheet("音乐接口地址", g.url, (v) => { v = v.trim(); if (v && !/^https?:\/\/[^\s/]+/.test(v)) return gtoast("地址需要以 http:// 或 https:// 开头"); g.url = v; muSave(); gtoast(v ? "已保存，点「测试连接」确认" : "已恢复默认接口"); }, "留空=默认。兼容 GD 音乐台协议：地址?types=search&source=netease&name=关键词"), 260) },
+    { t: "完整音源：" + (g.on === 0 ? "关（只用内置 30 秒试听）" : "开"), f: () => { g.on = g.on === 0 ? 1 : 0; muSave(); gtoast(g.on === 0 ? "已关闭，只播放 30 秒试听" : "已开启完整音源"); setTimeout(muApi, 260); } },
+    { t: "测试连接", f: async () => { gtoast("测试中…", 1500); try { const j = await gdGet({ types: "search", source: g.src, name: "周杰伦", count: 1, pages: 1 }, 1); gtoast(Array.isArray(j) && j.length ? "连接正常：" + j[0].name : "连接成功，但没有返回结果", 2600); } catch (e) { try { const j = await gdGet({ types: "search", source: g.src, name: "周杰伦", count: 1, pages: 1 }); gtoast(Array.isArray(j) && j.length ? "直连被浏览器拦截，已通过代理连通" : "代理连通，但没有结果", 3200); } catch (x) { gtoast("连接失败：" + muErr(e), 3600); } } } },
+    { t: "恢复默认接口与音源", dg: 1, f: () => { MU.gd = {}; muSave(); gtoast("已恢复默认"); if (cur == "music") muTab(); } }
+  ], "当前：" + (g.url ? "自定义接口" : "GD 音乐台（免费）") + " · " + gdName());
+}
+function muAcct() {
+  const it = [{ t: "音乐接口与音源", f: () => setTimeout(muApi, 260) }, { t: "链接导入歌单", f: muLink }];
+  if (MU.user) it.push({ t: "退出旧账号", dg: 1, f: () => { MU.user = null; MU.cookie = ""; muSave(); muTab(); gtoast("已退出"); } });
+  actSheet("音乐", it, "接口：" + (gdCfg().url ? "自定义" : "GD 音乐台（免费）") + " · 音源：" + gdName());
+}
+function muHome() {
+  const L = MU.lists;
+  return `<div class="muc"><div class="muac"><div class="muah"><span class="muic">${ic("music")}</span><div><b>音乐</b><i class="mubd ok">${esc(gdName())}</i></div></div><p>${gdCfg().on === 0 ? "完整音源已关闭，只播放 30 秒试听" : "免费聚合音源，搜到就能完整播放，也有歌词"}</p><div class="mubt"><button class="p" data-mu="api">接口与音源</button><button data-mu="link">链接导入歌单</button></div></div>
+ ${MU.recent.length ? `<h3>最近播放</h3><div class="muh">${MU.recent.slice(0, 12).map((t, i) => `<button data-mu="rec1" data-i="${i}">${t.pic ? `<span class="mucv big" style="background-image:url('${esc(muPic(t.pic, 300))}')"></span>` : `<span class="mucv big">${ic("music")}</span>`}<b>${esc(t.n)}</b><s>${esc(t.ar)}</s></button>`).join("")}</div>` : ""}
+ ${L.length ? `<h3>我的歌单</h3>${muGrid(L, "pl")}` : ""}${!L.length && !MU.recent.length ? '<p class="muem">还没有音乐<br>到「搜索」里找一首歌，或到「广播」听热门单曲</p>' : ""}</div>`;
+}
+
+//XEND
+</script>
+<script type="text/plain" class="mp">
+// ===== 生图独立 API（自由 URL / 拉取模型 / 多协议）=====
+const igEnd = (b, p) => {
+  b = String(b || "").trim().replace(/\/+$/, "");
+  if (new RegExp("/" + p.replace("/", "\\/") + "$").test(b)) return [b];
+  if (/\/v\d+$/.test(b)) return [b + "/" + p];
+  let path = ""; try { path = new URL(b).pathname.replace(/\/+$/, ""); } catch (e) {}
+  return path ? [b + "/" + p, b + "/v1/" + p] : [b + "/v1/" + p, b + "/" + p];
+};
+const igHdr = () => Object.assign({ "Content-Type": "application/json" }, IGC.key ? { Authorization: "Bearer " + IGC.key } : {});
+async function igPost(url, body) {
+  const ac = new AbortController(), tm = setTimeout(() => ac.abort(), 150000);
+  try {
+    const r = await fetch(url, { method: "POST", signal: ac.signal, headers: igHdr(), body: JSON.stringify(body) });
+    const tx = await r.text(); let j = null; try { j = JSON.parse(tx); } catch (e) {}
+    if (!r.ok) { const m = j && (j.error && (j.error.message || j.error) || j.message) || tx.slice(0, 90); const er = new Error("HTTP " + r.status + (m ? "：" + String(m).slice(0, 80) : "")); er.st = r.status; throw er; }
+    if (!j) throw new Error("返回的不是 JSON");
+    return j;
+  } catch (e) { if (e && e.name == "AbortError") throw new Error("生成超时（150 秒）"); if (e instanceof TypeError) throw new Error("无法连接（地址错误或被浏览器跨域拦截）"); throw e; }
+  finally { clearTimeout(tm); }
+}
+function igFind(j) {
+  const d = j && j.data && j.data[0];
+  if (d) { if (d.b64_json) return "data:image/png;base64," + d.b64_json; if (d.url) return d.url; }
+  if (j && Array.isArray(j.images) && j.images[0]) { const x = j.images[0]; return typeof x == "string" ? (/^https?:|^data:/.test(x) ? x : "data:image/png;base64," + x) : x.url || (x.b64_json ? "data:image/png;base64," + x.b64_json : ""); }
+  if (j && Array.isArray(j.output) && j.output[0]) { const x = j.output[0]; return typeof x == "string" ? x : x.url || ""; }
+  const m = j && j.choices && j.choices[0] && j.choices[0].message;
+  if (m) {
+    if (Array.isArray(m.images) && m.images[0]) { const x = m.images[0]; return (x.image_url && x.image_url.url) || x.url || (typeof x == "string" ? x : ""); }
+    const c = m.content;
+    if (Array.isArray(c)) for (const p of c) { if (p && p.image_url) return p.image_url.url || p.image_url; if (p && p.inline_data) return "data:" + (p.inline_data.mime_type || "image/png") + ";base64," + p.inline_data.data; if (p && typeof p.text == "string") { const f = igFindText(p.text); if (f) return f; } }
+    if (typeof c == "string") return igFindText(c);
+  }
+  return "";
+}
+function igFindText(s) {
+  s = String(s || "");
+  let m = s.match(/!\[[^\]]*\]\(\s*(data:image\/[a-z+]+;base64,[A-Za-z0-9+/=]+|https?:\/\/[^\s)]+)\s*\)/i); if (m) return m[1];
+  m = s.match(/(data:image\/[a-z+]+;base64,[A-Za-z0-9+/=]{100,})/i); if (m) return m[1];
+  m = s.match(/(https?:\/\/[^\s)"'<>]+\.(?:png|jpe?g|webp|gif)[^\s)"'<>]*)/i); if (m) return m[1];
+  m = s.match(/(https?:\/\/[^\s)"'<>]+)/i); return m ? m[1] : "";
+}
+async function igViaImages(prompt) {
+  let last;
+  for (const u of igEnd(IGC.url, "images/generations")) {
+    for (const withSize of [1, 0]) {
+      try {
+        const body = { model: IGC.model, prompt, n: 1 }; if (withSize) body.size = IGC.size || "1024x1024";
+        const src = igFind(await igPost(u, body)); if (!src) throw new Error("没有返回图片");
+        return src;
+      } catch (e) { last = e; if (!(e && e.st == 400 && withSize)) break; }
+    }
+    if (!(last && (last.st == 404 || last.st == 405))) break;
+  }
+  throw last || new Error("失败");
+}
+async function igViaChat(prompt) {
+  let last;
+  for (const u of igEnd(IGC.url, "chat/completions")) {
+    try {
+      const src = igFind(await igPost(u, { model: IGC.model, messages: [{ role: "user", content: prompt }], stream: false, modalities: ["image", "text"] }));
+      if (!src) throw new Error("对话接口没有返回图片");
+      return src;
+    } catch (e) { last = e; if (!(e && (e.st == 404 || e.st == 405))) break; }
+  }
+  throw last || new Error("失败");
+}
+igFetch = async function (prompt) {
+  if (!igOn()) throw new Error("未配置生图接口");
+  const full = (IGC.style ? IGC.style + "，" : "") + prompt, mode = IGC.mode || "auto";
+  let src;
+  if (mode == "images") src = await igViaImages(full);
+  else if (mode == "chat") src = await igViaChat(full);
+  else { try { src = await igViaImages(full); } catch (e) { if (e && (e.st == 401 || e.st == 403)) throw e; try { src = await igViaChat(full); } catch (e2) { throw new Error((e.message || "") + "；对话方式也失败：" + (e2.message || "")); } } }
+  return await igShrink(src);
+};
+igRead = function () {
+  const g = (id) => ((document.getElementById(id) || {}).value || "").trim();
+  Object.assign(IGC, { url: g("ae_u"), key: g("ae_k"), model: g("ae_m"), mode: g("ig_mode") || "auto", size: g("ig_size") || "1024x1024", style: g("ig_style") });
+  try { store("igcfg", IGC); } catch (e) {}
+};
+igSet = function () {
+  apiEditor({
+    title: "生图接口", sub: "角色发「生图」时用它画 CG。地址可自由填写，不用改成 /v1；也可以填完整的 images/generations 地址",
+    A: { type: "openai", url: IGC.url, key: IGC.key, model: IGC.model }, temp: false, modelLabel: "生图模型", types: [["openai", "OpenAI 兼容"]],
+    extra: '<div class="fd"><small>生成方式</small>' + sel('id="ig_mode"', [["auto", "自动（先图片接口，不行再用对话接口）"], ["images", "图片接口 /images/generations"], ["chat", "对话接口 /chat/completions（Gemini、GPT 图像等）"]], IGC.mode || "auto") + '</div><div class="fd"><small>尺寸</small><input id="ig_size" value="' + esc(IGC.size || "1024x1024") + '" autocomplete="off" placeholder="1024x1024"></div><div class="fd"><small>固定画风词（可选）</small><input id="ig_style" value="' + esc(IGC.style || "") + '" autocomplete="off" placeholder="如：日系插画，柔光"></div><div class="xa-btns"><button class="cb" data-ig="test">测试生成</button></div><div id="igt" class="igt"></div>',
+    onSave: () => { igRead(); gtoast("已保存", 1500); },
+    onReset: () => { Object.assign(IGC, { url: "", key: "", model: "", mode: "auto", size: "1024x1024", style: "" }); try { store("igcfg", IGC); } catch (x) {} gtoast("已清除", 1500); },
+    resetLabel: "清除配置"
+  });
+};
+{
+  const rs2 = rSet;
+  rSet = function (keep) {
+    rs2.apply(this, arguments);
+    try {
+      if (ST.tab != 3) return;
+      const sc = document.querySelector("#st .sc"); if (!sc || sc.querySelector("#ig_card")) return;
+      const d = document.createElement("div"); d.className = "card"; d.id = "ig_card";
+      d.innerHTML = '<h3>生图接口</h3><div class="lr"><div><b>独立生图 API</b><small>' + (igOn() ? esc(IGC.model) + " · " + esc(String(IGC.url).replace(/^https?:\/\//, "").slice(0, 26)) : "未配置，角色发「生图」时只显示文字描述") + '</small></div><button class="cb" data-igopen="1">设置</button></div>';
+      const ka = sc.querySelector("#air_card") || sc.querySelector("#ka_card"); if (ka) sc.insertBefore(d, ka); else sc.appendChild(d);
+    } catch (e) {}
+  };
+  document.addEventListener("click", (e) => { const b = e.target.closest && e.target.closest("[data-igopen]"); if (b) { e.stopPropagation(); igSet(); } }, true);
 }
 
 //XEND
