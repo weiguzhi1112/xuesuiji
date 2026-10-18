@@ -2337,7 +2337,7 @@ const parseLine0 = (t) => {
   }
   const f = String(t).match(/^[\[【](转账|红包)[\]】]\s*(\d+(?:\.\d{1,2})?)\s*(.*)$/);
   if (f && +f[2] > 0) {
-    const k = f[1] == "红包" ? "hb" : "tf", a = Math.min(2e3, Math.round(+f[2] * 100) / 100), n = f[3].trim().slice(0, 30);
+    const k = f[1] == "红包" ? "hb" : "tf", a = Math.min(1e8, Math.round(+f[2] * 100) / 100), n = f[3].trim().slice(0, 30);
     return { t: "[" + f[1] + "] ¥" + a.toFixed(2) + (n ? " " + n : ""), tf: { k, a, n, st: 0 } };
   }
   const m = String(t).match(/^[\[【]语音[\]】]\s*(.*)$/);
@@ -7035,7 +7035,7 @@ regApp("app:wal", "钱包", () => {
   WL.tx = Array.isArray(s) ? s.filter((x) => isObj(x) && isFinite(x.a) && x.ts).slice(-1e3) : [];
 });
 const wlSave = () => store("app:wal", WL.tx);
-const money = (v) => (v < 0 ? "-" : "") + "¥" + Math.abs(v).toFixed(2);
+const money = (v) => (v < 0 ? "-" : "") + "¥" + Math.abs(v).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const WLC = [["餐饮", /餐|饭|吃|奶茶|咖啡|外卖|早餐|午饭|晚饭|零食|火锅|烧烤/], ["交通", /打车|地铁|公交|滴滴|油费|停车|高铁|机票|车票|出行/], ["购物", /购|买|淘宝|京东|超市|衣|鞋|快递/], ["话费", /话费|充值|营业厅|流量|套餐/], ["红包转账", /微信|红包|转账|退还|过期退回/], ["娱乐", /电影|游戏|会员|音乐|旅游|门票|KTV/], ["居家", /房租|水电|燃气|物业|宽带|日用/], ["医疗", /医|药|挂号|体检/]];
 const wlCat = (x) => x.c || (x.a > 0 ? "收入" : (WLC.find((r) => r[1].test(x.n || "")) || ["其他"])[0]);
 WL.m = 0; WL.f = ""; WL.q = ""; WL.b = 0;
@@ -9651,7 +9651,7 @@ function walPay(a, n) {
   walAdd(-a, n);
   return true;
 }
-const TFRULE = "\n- 如果对方给你转账或发红包：想收下就单独一行写「[收款]」，想婉拒（比如金额太大、关系还没到那一步、或者你在闹别扭）就单独一行写「[退还]」，然后按你的人设自然地说话；不写默认收下。很少的时候你也可以主动给对方转账/发红包：单独一行，写成「[转账]金额 备注」或「[红包]金额 备注」，金额合理（红包几元到几十元，转账几十到几百元），不要频繁。";
+const TFRULE = "\n- 如果对方给你转账或发红包：想收下就单独一行写「[收款]」，想婉拒（比如金额太大、关系还没到那一步、或者你在闹别扭）就单独一行写「[退还]」，然后按你的人设自然地说话；不写默认收下。很少的时候你也可以主动给对方转账/发红包：单独一行，写成「[转账]金额 备注」或「[红包]金额 备注」，金额按你的人设、财力和你们的关系来定（可以很大，上万、上百万甚至上千万都行，但要符合身份），想连发几笔就连写几行；平时不要太频繁。";
 const tfHist = (m) => {
   const t = m.tf, w = t.k == "hb" ? "红包" : "转账", n = t.n ? "，备注：" + t.n : "";
   return m.me ? "（我给你" + (t.k == "hb" ? "发了红包" : "转账") + " ¥" + t.a.toFixed(2) + n + "，你" + (t.st == 1 ? "已收下" : t.st == 2 ? "已退还" : t.st == 3 ? "没有收，已过期退回" : "还没收") + "）" : "[" + w + "] ¥" + t.a.toFixed(2) + n + (t.st == 1 ? "（对方已收下）" : t.st == 2 ? "（对方已退还）" : t.st == 3 ? "（对方没收，已过期）" : "");
@@ -14096,8 +14096,8 @@ function tfTap(i) {
 function tfSend(k) {
   const id = WX.cur, c = WX.cons.find((x) => x.id == id);
   if (!c) return;
-  const hb = k == "hb", w = hb ? "红包" : "转账", chips = hb ? [6.66, 8.88, 18.8, 52, 66.6, 88.8, 200] : [10, 52, 66, 100, 520, 1314, 2e3];
-  shOpen(w + "给 " + nm(c), "钱包余额 " + money(walBal()), `<div class="tfp"><div class="tfa"><span>¥</span><input id="tf_a" inputmode="decimal" placeholder="0.00" autocomplete="off"></div><div class="tfq">${chips.map((x) => `<button data-tfq="${x}">${x}</button>`).join("")}</div><div class="fd"><small>${hb ? "祝福语（可选）" : "转账说明（可选）"}</small><input id="tf_n" maxlength="30" placeholder="${hb ? "恭喜发财，大吉大利" : "转账给你"}" autocomplete="off"></div><p class="stt">${hb ? "单个红包最多 200 元" : "单笔最多 50000 元"}，未被领取的 24 小时后自动退回钱包</p><button class="pb" data-tfs="go">${hb ? "塞钱进红包" : "确认转账"}</button></div>`);
+  const hb = k == "hb", w = hb ? "红包" : "转账", chips = hb ? [6.66, 8.88, 18.8, 52, 66.6, 88.8, 200, 2e3, 2e4] : [10, 52, 66, 100, 520, 1314, 2e3, 5e4, 1e6, 1e7];
+  shOpen(w + "给 " + nm(c), "钱包余额 " + money(walBal()), `<div class="tfp"><div class="tfa"><span>¥</span><input id="tf_a" inputmode="decimal" placeholder="0.00" autocomplete="off"></div><div class="tfq">${chips.map((x) => `<button data-tfq="${x}">${x}</button>`).join("")}</div><div class="fd"><small>${hb ? "祝福语（可选）" : "转账说明（可选）"}</small><input id="tf_n" maxlength="30" placeholder="${hb ? "恭喜发财，大吉大利" : "转账给你"}" autocomplete="off"></div><div class="fd"><small>连发笔数（1-10，每笔都是上面的金额）</small><input id="tf_c" inputmode="numeric" maxlength="2" value="1" autocomplete="off"></div>${!hb && typeof cwOK == "function" && cwOK(c) ? `<div class="fd"><small>资金来源</small><select id="tf_src" class="aaw"><option value="me">我的钱包</option><option value="card">用 ${esc(nm(c))} 的银行卡转给自己</option></select></div>` : ""}<p class="stt">${hb ? "单个红包最多 20000 元" : "单笔最多 1 亿元"}，未被领取的 24 小时后自动退回钱包</p><button class="pb" data-tfs="go">${hb ? "塞钱进红包" : "确认转账"}</button></div>`);
   const sh = $("#sh");
   sh._tfk = k;
   sh._tf = 1;
@@ -14124,11 +14124,13 @@ $("#sh").addEventListener("click", (e) => {
     const tk = sh._tfk, hb = tk == "hb", v = ($("#tf_a") || {}).value || "";
     if (!/^\d+(\.\d{1,2})?$/.test(v.trim()) || !(+v > 0)) return gtoast("请输入正确的金额，最多两位小数");
     const a = Math.round(+v * 100) / 100;
-    if (a > (hb ? 200 : 5e4)) return gtoast(hb ? "单个红包最多 200 元" : "单笔转账最多 50000 元");
+    if (a > (hb ? 2e4 : 1e8)) return gtoast(hb ? "单个红包最多 20000 元" : "单笔转账最多 1 亿元");
+    const cnt = Math.max(1, Math.min(10, parseInt((($("#tf_c") || {}).value) || "1") || 1)), src = (($("#tf_src") || {}).value) || "me";
+    if (src == "card" && !hb) { const n0 = (($("#tf_n") || {}).value || "").trim().slice(0, 30); sh._tf = 0; shClose(); return cwSelf(c, a, cnt, n0); }
     const w = hb ? "红包" : "转账";
-    if (!walPay(a, "微信" + w + " · " + nm(c))) return;
+    if (!walPay(Math.round(a * cnt * 100) / 100, "微信" + w + " · " + nm(c) + (cnt > 1 ? " ×" + cnt : ""))) return;
     const n = (($("#tf_n") || {}).value || "").trim().slice(0, 30), L = (_b = (_a = WX.msgs)[id]) != null ? _b : _a[id] = [];
-    L.push({ me: 1, t: "[" + w + "] ¥" + a.toFixed(2) + (n ? " " + n : ""), tf: { k: tk, a, n, st: 0 }, h: hm(), ts: Date.now() });
+    for (let q = 0; q < cnt; q++) L.push({ me: 1, t: "[" + w + "] ¥" + a.toFixed(2) + (n ? " " + n : ""), tf: { k: tk, a, n, st: 0 }, h: hm(), ts: Date.now() + q });
     sh._tf = 0;
     shClose();
     wsave();
@@ -16566,8 +16568,8 @@ async function lkGen(c, o) {
   d.busy = 1;
   try {
     const plot = L.plot ? "\n\n【剧情提示（让这次消息围绕它）】" + L.plot : "", hint = o.hint ? "\n\n【这次的要求】" + o.hint : "";
-    const fl = d.fr.map((x) => x.id + " " + (x.rm || x.n) + "（" + x.g + "）").join("\n");
-    const j = pxJson(await lkChat(c, [{ role: "user", content: pxCtx(c) + "\n\nTA 的好友：\n" + fl + (fid ? "\n\n这次只让好友 " + fid + " 发消息。" : "") + plot + hint + `\n\n请生成 ${fid ? n : Math.max(n, 4)} 条好友发给 TA 的新消息，自然、口语、符合关系和各自生活。只输出 JSON：{"inbox":[{"f":"好友id","t":"内容"}]}` }], "只输出 JSON，不要解释。"));
+    const fl = d.fr.map((x) => x.id + " " + (x.rm || x.n) + "（" + x.g + "）" + (x.p ? "：" + x.p.slice(0, 140) : "") + "\n   最近聊天：" + x.m.slice(-4).map((y) => (y.me ? "TA" : "对方") + "：" + String(y.t || "").slice(0, 30)).join(" / ")).join("\n");
+    const j = pxJson(await lkChat(c, [{ role: "user", content: pxCtx(c) + "\n\nTA 的好友：\n" + fl + (fid ? "\n\n这次只让好友 " + fid + " 发消息。" : "") + plot + hint + "\n\n【避免重复】每位好友「最近聊天」里已经出现过的话题、句式、开头都不要再用；不同好友口吻、关心的事要不同，要承接各自的人物资料和与 TA 的往事，给出新的信息（新进展、新问题、新八卦）。" + `\n\n请生成 ${fid ? n : Math.max(n, 4)} 条好友发给 TA 的新消息，自然、口语、符合关系和各自生活。只输出 JSON：{"inbox":[{"f":"好友id","t":"内容"}]}` }], "只输出 JSON，不要解释。"));
     const arr = ((j && j.inbox) || []).filter((x) => isObj(x) && x.t && d.fr.some((f) => f.id == (fid || x.f))).map((x) => ({ f: fid || x.f, t: pxS(x.t, 100) }));
     while (got < n && arr.length) { const it = arr.shift(); lkDeliver(c, pxFr(d, it.f), it.t, o.quiet); got++; }
     if (!fid) d.inbox = d.inbox.concat(arr).slice(0, 12);
@@ -16608,7 +16610,7 @@ async function pxEarlier(c) {
   f.busy = 1;
   gtoast("正在翻更早的记录…", 1600);
   try {
-    const j = pxJson(await chat([{ role: "user", content: pxCtx(c) + `\n\nTA 和好友「${f.rm || f.n}」（${f.g}，签名：${f.sig || "无"}）已有的聊天（从旧到新）：\n${f.m.slice(0, 6).map((y) => (y.me ? "TA：" : "对方：") + y.t).join("\n")}\n\n请补充这段对话之前更早的 8 到 10 条聊天，时间更早、话题自然衔接、不与已有内容矛盾。只输出 JSON：{"m":[{"me":0或1,"t":"内容"}]}` }], "只输出 JSON，不要解释。"));
+    const j = pxJson(await chat([{ role: "user", content: pxCtx(c) + `\n\nTA 和好友「${f.rm || f.n}」（${f.g}，签名：${f.sig || "无"}）${f.p ? "\n【" + (f.rm || f.n) + "的人物资料】" + f.p + "\n" : ""}已有的聊天（从旧到新）：\n${f.m.slice(0, 6).map((y) => (y.me ? "TA：" : "对方：") + y.t).join("\n")}\n\n请补充这段对话之前更早的 8 到 10 条聊天，时间更早、话题自然衔接、不与已有内容矛盾。只输出 JSON：{"m":[{"me":0或1,"t":"内容"}]}` }], "只输出 JSON，不要解释。"));
     const m = ((j && j.m) || []).filter((y) => isObj(y) && y.t).slice(0, 12).map((y) => ({ me: y.me ? 1 : 0, t: pxS(y.t, 120) }));
     if (m.length) { f.m = m.concat(f.m).slice(0, 60); f.more = (f.more || 0) + 1; pxSave(); }
   } catch (e) { gtoast("没有翻到更多", 1600); }
@@ -16626,7 +16628,7 @@ async function pxSend(c) {
   if (!CFG.a.url || !CFG.a.model) return;
   const fid = f.id;
   try {
-    const j = pxJson(await chat([{ role: "user", content: pxCtx(c) + `\n\n好友「${f.rm || f.n}」（${f.g}，签名：${f.sig || "无"}）正在和 ${nm(c)} 微信聊天。最近的聊天：\n${f.m.slice(-10).map((y) => (y.me ? nm(c) + "：" : f.n + "：") + y.t).join("\n")}\n\n请以这位好友的身份回复 ${nm(c)} 最后那句话，口语自然，1 到 2 条，注意你并不知道是谁在代发。只输出 JSON：{"r":["回复"]}` }], "只输出 JSON，不要解释。"));
+    const j = pxJson(await chat([{ role: "user", content: pxCtx(c) + `\n\n好友「${f.rm || f.n}」（${f.g}，签名：${f.sig || "无"}）${f.p ? "\n【" + (f.rm || f.n) + "的人物资料】" + f.p + "\n" : ""}正在和 ${nm(c)} 微信聊天。最近的聊天：\n${f.m.slice(-10).map((y) => (y.me ? nm(c) + "：" : f.n + "：") + y.t).join("\n")}\n\n请以这位好友的身份回复 ${nm(c)} 最后那句话，口语自然，1 到 2 条，注意你并不知道是谁在代发。只输出 JSON：{"r":["回复"]}` }], "只输出 JSON，不要解释。"));
     const r = ((j && j.r) || []).filter((x) => typeof x == "string" && x.trim()).slice(0, 2);
     r.forEach((x) => f.m.push({ me: 0, t: pxS(x, 120) }));
     if (r.length) { f.ts = Date.now(); f.last = f2(new Date().getHours()) + ":" + f2(new Date().getMinutes()); if (!($("#pxv") && PXS.f == fid)) f.un = (f.un || 0) + r.length; pxSave(); if ($("#pxv") && PXS.f == fid) pxPaint(); }
@@ -16842,7 +16844,7 @@ function pxSwapIn(c, mode, fid) {
     L.forEach((m, i) => { if (!m.ts) { m.ts = base - (L.length - i) * 9e4; m.h = new Date(m.ts).toTimeString().slice(0, 5); } });
     WX.msgs[id] = L;
     return { id, name: f.n, remark: f.rm || "", wid: "wxid_" + f.id + String(c.id).slice(-4), grp: f.g || "朋友", sig: f.sig || "", chat: 1, px: 1, fid: f.id, unread: f.un || 0, av: "",
-      persona: "你是「" + f.n + "」，" + nm(c) + "的" + (f.g || "朋友") + (f.sig ? "，个性签名：" + f.sig : "") + "。按已有聊天的口吻自然回复。" };
+      persona: "你是「" + f.n + "」，" + nm(c) + "的" + (f.g || "朋友") + (f.sig ? "，个性签名：" + f.sig : "") + "。" + (f.p ? "\n人物资料：" + f.p + "\n" : "") + "按已有聊天的口吻自然回复。" };
   };
   const cons = d.fr.map(mkc);
   const meId = "px_me";
@@ -16906,7 +16908,7 @@ wxReply = async function (id, hint) {
   L.push(pend);
   if (WX.cur == id) ml();
   try {
-    const j = pxJson(await lkChat(c, [{ role: "user", content: pxCtx(c) + `\n\n好友「${f.rm || f.n}」（${f.g}，签名：${f.sig || "无"}）正在和 ${nm(c)} 微信聊天。最近的聊天：\n${L.filter((y) => !y.p && !y.s).slice(-10).map((y) => (y.me ? nm(c) : f.n) + "：" + (y.t || "")).join("\n")}\n\n请以这位好友的身份回复 ${nm(c)} 最后那句话，口语自然，1 到 2 条，注意你并不知道是谁在使用这个账号。只输出 JSON：{"r":["回复1","回复2"]}` }], "你扮演虚构角色的微信好友，只输出 JSON。"));
+    const j = pxJson(await lkChat(c, [{ role: "user", content: pxCtx(c) + `\n\n好友「${f.rm || f.n}」（${f.g}，签名：${f.sig || "无"}）${f.p ? "\n【" + (f.rm || f.n) + "的人物资料】" + f.p + "\n" : ""}正在和 ${nm(c)} 微信聊天。最近的聊天：\n${L.filter((y) => !y.p && !y.s).slice(-10).map((y) => (y.me ? nm(c) : f.n) + "：" + (y.t || "")).join("\n")}\n\n请以这位好友的身份回复 ${nm(c)} 最后那句话，口语自然，1 到 2 条，注意你并不知道是谁在使用这个账号。只输出 JSON：{"r":["回复1","回复2"]}` }], "你扮演虚构角色的微信好友，只输出 JSON。"));
     const r = ((j && j.r) || []).filter((x) => typeof x == "string" && x.trim()).slice(0, 2);
     const wait = (dl[0] + Math.random() * Math.max(0, dl[1] - dl[0])) * 1e3 - (Date.now() - t00);
     if (wait > 0) await new Promise((ok) => setTimeout(ok, Math.min(wait, 6e4)));
@@ -17962,8 +17964,8 @@ async function lkAutoReply(c, fid) {
   f.arb = last.ts;
   d.busy = 1;
   try {
-    const j = pxJson(await lkChat(c, [{ role: "user", content: pxCtx(c) + `\n\n好友「${f.rm || f.n}」（${f.g}，签名：${f.sig || "无"}）刚给 ${nm(c)} 发了微信，${nm(c)} 现在自己看到了。最近的聊天：\n${f.m.slice(-10).map((y) => (y.me ? nm(c) : f.n) + "：" + (y.t || "")).join("\n")}\n\n请以 ${nm(c)} 本人的身份、按人设和与这位好友的关系，回复好友最后那句话，口语自然，1 到 2 条。只输出 JSON：{"r":["回复内容"]}` }], "只输出 JSON，不要解释。"));
-    const r = ((j && j.r) || []).filter((x) => typeof x == "string" && x.trim()).slice(0, 2);
+    const j = pxJson(await lkChat(c, [{ role: "user", content: pxCtx(c) + `\n\n好友「${f.rm || f.n}」（${f.g}，签名：${f.sig || "无"}）${f.p ? "\n【" + (f.rm || f.n) + "的人物资料】" + f.p + "\n" : ""}刚给 ${nm(c)} 发了微信，${nm(c)} 现在自己看到了。最近的聊天：\n${f.m.slice(-10).map((y) => (y.me ? nm(c) : f.n) + "：" + (y.t || "")).join("\n")}\n\n你最近回复这位好友的话（不要重复相同的内容、句式和口头禅）：${f.m.filter((y) => y.me).slice(-6).map((y) => y.t).join(" / ") || "无"}\n\n请以 ${nm(c)} 本人的身份、按人设和与这位好友的关系，回复好友最后那句话，口语自然，1 到 2 条。只输出 JSON：{"r":["回复内容"]}` }], "只输出 JSON，不要解释。"));
+    const r = ((j && j.r) || []).filter((x) => typeof x == "string" && x.trim()).slice(0, 2).filter((x, i, a) => !pxDup(f.m.filter((y) => y.me).slice(-8).map((y) => y.t), x));
     const t = Date.now();
     r.forEach((x, i) => f.m.push({ me: 1, t: pxS(x, 120), ts: t + i }));
     if (r.length) {
@@ -21467,6 +21469,567 @@ igSet = function () {
     } catch (e) {}
   };
   document.addEventListener("click", (e) => { const b = e.target.closest && e.target.closest("[data-igopen]"); if (b) { e.stopPropagation(); igSet(); } }, true);
+}
+
+//XEND
+</script>
+<script type="text/plain" class="mp">
+// ===== block 22: 转账增强 + 角色钱包 =====
+let CW = rd("cw"); if (!isObj(CW)) CW = {};
+const cwSave = () => store("cw", CW);
+const CWBANK = ["招商银行", "工商银行", "建设银行", "中国银行", "交通银行", "平安银行", "浦发银行", "民生银行"];
+function cwGet(c) {
+  let w = CW[c.id];
+  if (!w) {
+    let no = "6" + (2 + Math.floor(Math.random() * 3)); while (no.length < 16) no += Math.floor(Math.random() * 10);
+    w = CW[c.id] = { bal: 0, no, bank: CWBANK[Math.floor(Math.random() * CWBANK.length)], tx: [], ok: -1, gen: { on: 0, iv: 360, last: 0 }, init: 0 };
+    cwSave();
+  }
+  return w;
+}
+const cwTail = (w) => w.no.slice(-4);
+const cwMoney = (v) => (v < 0 ? "-" : "") + "¥" + Math.abs(v).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const CW_REL = /(?<!前)(恋人|情侣|对象|男朋友|女朋友|男友|女友|老公|老婆|丈夫|妻子|夫妻|伴侣|未婚夫|未婚妻|爱人|热恋|恋爱中)/;
+const CW_KW = /(银行卡|副卡|亲属卡|工资卡|卡给你|你的卡|我的卡|随便刷|随便花|零花钱|拿我的卡|刷我的卡)/;
+function cwOK(c) {
+  if (!c) return false;
+  const w = CW[c.id];
+  if (w && w.ok === 1) return true;
+  if (w && w.ok === 0) return false;
+  if (CW_REL.test((c.persona || "") + " " + (c.rel || "") + " " + (c.rn || ""))) return true;
+  return (WX.msgs[c.id] || []).slice(-80).some((m) => m && !m.s && !m.p && CW_KW.test(String(m.t || "")));
+}
+function cwPay(c, total) {
+  const w = cwGet(c);
+  if (w.bal + 1e-6 < total) { gtoast("「" + nm(c) + "」的银行卡余额不足（现有 " + cwMoney(w.bal) + "），可在「角色钱包」里修改余额或生成流水", 3000); return false; }
+  w.bal = Math.round((w.bal - total) * 100) / 100;
+  w.tx.push({ id: xkId(), ts: Date.now(), a: -total, n: "转账给「" + ((WX.acc && (WX.acc.nick || WX.acc.name)) || "你") + "」" });
+  cwSave();
+  return true;
+}
+function cwSelf(c, a, cnt, n) {
+  const total = Math.round(a * cnt * 100) / 100, w = cwGet(c);
+  if (!cwPay(c, total)) return;
+  walAdd(total, "银行卡转账 · 来自" + nm(c) + "的卡（尾号" + cwTail(w) + "）" + (n ? " " + n : ""));
+  const id = c.id, L = WX.msgs[id] || (WX.msgs[id] = []);
+  L.push({ s: 1, t: "你使用「" + nm(c) + "」的银行卡（尾号" + cwTail(w) + "）向自己转账 ¥" + a.toFixed(2) + (cnt > 1 ? " × " + cnt + " 笔" : ""), h: hm(), ts: Date.now() });
+  wsave(); ml(); wxTouch();
+  gtoast("已转入我的钱包 " + cwMoney(total), 2200);
+  try { wxReply(id, "（我刚才用你的银行卡（尾号" + cwTail(w) + "）给自己转了 " + cwMoney(total) + (cnt > 1 ? "，分了 " + cnt + " 笔" : "") + "，你收到了银行的扣款提醒。请按你的性格和我们的关系自然地反应：是默许、调侃、心疼还是在意，都可以，不要出戏。）"); } catch (e) {}
+}
+// 金额编辑同步到转账卡
+{
+  const th = tfHtml;
+  tfHtml = function (m, i) {
+    try {
+      const t = m.tf, r = String(m.t || "").match(/^[\[【](转账|红包)[\]】]\s*[¥￥]?\s*([\d,]+(?:\.\d+)?)\s*(.*)$/);
+      if (t && r) {
+        const na = Math.round(parseFloat(r[2].replace(/,/g, "")) * 100) / 100, nn = r[3].trim().slice(0, 30);
+        if (na > 0 && Math.abs(na - t.a) > 1e-9) {
+          const d = Math.round((na - t.a) * 100) / 100;
+          if (m.me && t.st != 2 && t.st != 3) walAdd(-d, "微信" + (t.k == "hb" ? "红包" : "转账") + "金额修改补差");
+          else if (!m.me && t.st == 1) walAdd(d, "微信" + (t.k == "hb" ? "红包" : "转账") + "金额修改补差");
+          t.a = na;
+        }
+        if (nn != (t.n || "")) t.n = nn;
+        m.t = "[" + r[1] + "] ¥" + t.a.toFixed(2) + (t.n ? " " + t.n : "");
+        wsave();
+      }
+    } catch (e) {}
+    return th(m, i);
+  };
+}
+async function cwGen(c, o) {
+  o = o || {};
+  const w = cwGet(c);
+  if (!CFG.a.url && !(typeof lkApi == "function" && lkApi(c))) { if (!o.quiet) gtoast("请先在「设置」中配置接口"); return 0; }
+  if (w.busy) return 0;
+  w.busy = 1;
+  let got = 0;
+  try {
+    const n = o.n || 6, rec = w.tx.slice(-10).map((x) => new Date(x.ts).toLocaleDateString() + " " + (x.a > 0 ? "+" : "") + x.a.toFixed(2) + " " + x.n).join("\n");
+    const me = (WX.acc && (WX.acc.nick || WX.acc.name)) || "我";
+    const q = pxCtx(c) + `\n\n这是 TA 的钱包 / 银行卡账号（${w.bank}，尾号${cwTail(w)}）。当前余额：${w.init ? cwMoney(w.bal) : "（还没有初始化）"}。${rec ? "\n最近的流水：\n" + rec : ""}\n\n请生成 ${n} 笔 TA 的账户流水。${w.init ? "这是最近几个小时内新发生的，d 都填 0。" : "这是过去一两个月的流水，d 在 0 到 45 之间；同时给出 bal（TA 现在的卡内余额）。"}\n要求：金额和消费贴合人设、职业、财力与世界设定（富人可以是几十万、上千万，普通人就是几十几百）；有工资 / 转账 / 外卖 / 打车 / 房租 / 红包 / 给「${me}」买东西等多种来源，数字带零头，备注要具体像真的；不要和已有流水重复。\n只输出 JSON：{"bal":数字,"tx":[{"a":带符号数字（收入为正，支出为负）,"n":"备注","d":几天前,"h":0到23}]}`;
+    const j = pxJson(await lkChat(c, [{ role: "user", content: q }], "你为虚构角色设计TA的钱包账单。只输出 JSON，不要解释，不要代码块。"));
+    const arr = ((j && j.tx) || []).filter((x) => isObj(x) && isFinite(+x.a) && +x.a != 0 && x.n).slice(0, 30);
+    const now = Date.now();
+    arr.forEach((x) => { const d = Math.max(0, Math.min(60, Math.round(+x.d || 0))), h = Math.max(0, Math.min(23, Math.round(+x.h || 12))); const dt = new Date(now - d * 864e5); dt.setHours(h, Math.floor(Math.random() * 60)); let ts = dt.getTime(); if (ts > now) ts = now - Math.random() * 36e5; w.tx.push({ id: xkId(), ts, a: Math.round(+x.a * 100) / 100, n: String(x.n).slice(0, 40) }); got++; });
+    if (!w.init) { if (j && isFinite(+j.bal)) w.bal = Math.round(+j.bal * 100) / 100; w.init = 1; }
+    else w.bal = Math.round((w.bal + arr.reduce((s, x) => s + (+x.a), 0)) * 100) / 100;
+    w.tx.sort((a, b) => a.ts - b.ts); w.tx = w.tx.slice(-300);
+    cwSave();
+  } catch (e) { if (!o.quiet) gtoast("生成失败：" + String(e && e.message || e).slice(0, 40)); }
+  w.busy = 0;
+  return got;
+}
+const CWS = { id: null };
+async function cwTick() {
+  if (typeof qhOn == "function" && qhOn()) return;
+  for (const c of WX.cons) {
+    const w = CW[c.id]; if (!w || !w.gen || !w.gen.on || w.busy) continue;
+    if (Date.now() - (w.gen.last || 0) < w.gen.iv * 6e4) continue;
+    w.gen.last = Date.now(); cwSave();
+    await cwGen(c, { n: 1 + Math.floor(Math.random() * 3), quiet: 1 });
+    if (cur == "cw" && CWS.id == c.id) cwR();
+  }
+}
+setInterval(cwTick, 6e4); setTimeout(cwTick, 12e3);
+function cwHome() {
+  CWS.id = null;
+  const L = WX.cons.filter((c) => !c.fid);
+  $("#app").innerHTML = xkHead("角色钱包") + `<div class="sc"><p class="stt" style="margin:4px 22px 8px">登录角色的钱包账号，查看 TA 的余额、银行卡与流水；可以让 AI 生成流水，也可以定时生成。</p>` + (L.length ? L.map((c) => { const w = CW[c.id]; return `<div class="xkc" role="button" tabindex="0" data-cw="in" data-id="${c.id}" style="cursor:pointer"><small>${esc(nm(c))}${w ? " · " + w.bank + " 尾号" + cwTail(w) : " · 未登录过"}</small><b style="font-size:22px">${w && w.init ? cwMoney(w.bal) : "点击登录"}</b></div>`; }).join("") : `<div class="xkc"><small>通讯录里还没有角色</small></div>`) + `</div>`;
+  try { a11y(); } catch (e) {}
+}
+function cwR() {
+  const c = WX.cons.find((x) => x.id == CWS.id); if (!c) return cwHome();
+  const w = cwGet(c), T = [...w.tx].sort((a, b) => b.ts - a.ts).slice(0, 120), ok = cwOK(c);
+  const inc = w.tx.filter((x) => x.a > 0).reduce((s, x) => s + x.a, 0), out = -w.tx.filter((x) => x.a < 0).reduce((s, x) => s + x.a, 0);
+  const sched = w.gen.on ? "每 " + (w.gen.iv >= 1440 ? "天" : w.gen.iv / 60 + " 小时") + "自动生成" : "未开启";
+  const rows = T.map((x) => { const d = new Date(x.ts); return `<div class="xa-row" style="padding:10px 0"><div><b style="font-size:14px">${esc(x.n)}</b><small style="color:var(--t4);font-size:12px">${d.getMonth() + 1}月${d.getDate()}日 ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}</small></div><b style="flex:none;font-size:15px;color:${x.a > 0 ? "#d9822b" : "var(--ink)"}">${x.a > 0 ? "+" : ""}${cwMoney(x.a)}</b></div>`; }).join("");
+  $("#app").innerHTML = xkHead(esc(nm(c)) + " 的钱包", `<button class="wlex" data-cw="back" aria-label="返回">${ic("back")}</button>`) + `<div class="sc">
+<div class="xkc" style="background:linear-gradient(135deg,#2c3e50,#4a6785);color:#fff"><small style="color:rgba(255,255,255,.7)">${w.bank} 储蓄卡 · 尾号 ${cwTail(w)}</small><b style="font-size:32px;color:#fff;display:block;margin:6px 0">${w.init ? cwMoney(w.bal) : "—"}</b><small style="color:rgba(255,255,255,.7)">${w.no.replace(/(\d{4})(?=\d)/g, "$1 ")}</small></div>
+<div class="xkg2"><div class="xkc"><small>累计收入</small><b style="font-size:20px">${cwMoney(inc)}</b></div><div class="xkc"><small>累计支出</small><b style="font-size:20px">${cwMoney(out)}</b></div></div>
+<div class="xkb"><button data-cw="gen">${w.busy ? "生成中…" : w.init ? "生成新流水" : "初始化账户"}</button><button data-cw="sch">定时生成</button></div>
+<div class="xkb"><button data-cw="perm">银行卡权限：${ok ? "允许" : "未授权"}</button><button data-cw="more">更多</button></div>
+<p class="stt" style="margin:2px 22px 6px">定时生成：${sched}${ok ? "。你已被允许使用 TA 的银行卡，可在聊天转账里选「用 TA 的银行卡转给自己」" : ""}</p>
+<div class="xkc" style="padding:6px 18px">${rows || `<small style="padding:12px 0">还没有流水，点「初始化账户」生成</small>`}</div></div>`;
+  try { a11y(); } catch (e) {}
+}
+$("#app").addEventListener("click", (e) => {
+  if (cur != "cw") return;
+  const t = e.target.closest("[data-cw]"); if (!t) return;
+  e.stopPropagation();
+  const a = t.dataset.cw, c = WX.cons.find((x) => x.id == (t.dataset.id || CWS.id));
+  if (a == "back") return cwHome();
+  if (a == "in" && c) return confirmSheet("登录「" + nm(c) + "」的钱包账号？", "登录", () => { CWS.id = c.id; cwGet(c); cwR(); });
+  if (!c) return;
+  const w = cwGet(c);
+  if (a == "gen") {
+    if (w.busy) return;
+    const go = async (n) => { gtoast("正在生成…", 1500); const g = await cwGen(c, { n }); if (cur == "cw") cwR(); if (g) gtoast("新增 " + g + " 笔流水"); };
+    if (!w.init) go(12); else editSheet("生成几笔新流水？（1-20）", "4", (v) => go(Math.max(1, Math.min(20, parseInt(v) || 4))));
+  } else if (a == "sch") {
+    const set = (on, iv) => { w.gen.on = on; if (iv) w.gen.iv = iv; w.gen.last = Date.now(); cwSave(); cwR(); };
+    actSheet("定时生成流水", [{ t: "关闭", f: () => set(0) }, { t: "每 1 小时", f: () => set(1, 60) }, { t: "每 3 小时", f: () => set(1, 180) }, { t: "每 6 小时", f: () => set(1, 360) }, { t: "每 12 小时", f: () => set(1, 720) }, { t: "每天", f: () => set(1, 1440) }], "页面开着或在后台运行时，到点会自动给 TA 生成几笔新流水");
+  } else if (a == "perm") {
+    actSheet("使用 TA 的银行卡给自己转账", [{ t: "自动判断（关系是恋人 / 聊天里提到过）", f: () => { w.ok = -1; cwSave(); cwR(); } }, { t: "始终允许", f: () => { w.ok = 1; cwSave(); cwR(); } }, { t: "始终禁止", f: () => { w.ok = 0; cwSave(); cwR(); } }], "当前：" + (cwOK(c) ? "允许" : "未授权"));
+  } else if (a == "more") {
+    actSheet("更多", [
+      { t: "修改余额", f: () => editSheet("卡内余额（元）", String(w.bal), (v) => { const n = parseFloat(String(v).replace(/,/g, "")); if (!isFinite(n)) return gtoast("请输入数字"); w.bal = Math.round(n * 100) / 100; w.init = 1; cwSave(); cwR(); }) },
+      { t: "手动记一笔", f: () => editSheet("金额 备注（支出用负数）", "", (v) => { const m = String(v).trim().match(/^([+\-]?\d+(?:\.\d+)?)\s*(.*)$/); if (!m) return gtoast("格式：-35.5 奶茶"); const n = Math.round(+m[1] * 100) / 100; w.tx.push({ id: xkId(), ts: Date.now(), a: n, n: m[2] || "手动记账" }); w.bal = Math.round((w.bal + n) * 100) / 100; w.init = 1; cwSave(); cwR(); }) },
+      { t: "清空流水", dg: 1, f: () => confirmSheet("清空 TA 的全部流水？", "清空", () => { w.tx = []; cwSave(); cwR(); }) }
+    ]);
+  }
+});
+xaAdd("cw", "角色钱包", "M3 7h18v12H3zM3 7l3-3h12l3 3M16 13h3", { el: "#app", open: () => cwHome() }, "生活", "登录角色的钱包账号，看余额与流水，定时生成");
+
+//XEND
+</script>
+<script type="text/plain" class="mp">
+// ===== block 23: 角色账号 —— 好友完整人设 + 去重 =====
+const PXENR = {};
+const pxNorm = (s) => String(s || "").replace(/[\s，。！？!?,.~…、：:；;"“”'‘’（）()]/g, "");
+const pxBig = (s) => { const o = new Set(); for (let i = 0; i < s.length - 1; i++) o.add(s.slice(i, i + 2)); return o; };
+function pxSim(a, b) {
+  if (!a || !b) return 0;
+  const A = pxBig(a), B = pxBig(b); if (!A.size || !B.size) return a == b ? 1 : 0;
+  let n = 0; A.forEach((x) => { if (B.has(x)) n++; });
+  return n / (A.size + B.size - n);
+}
+function pxDup(list, text) {
+  const n = pxNorm(text); if (!n) return false;
+  return list.some((r) => { r = pxNorm(r); return r && (r == n || (n.length >= 6 && r.length >= 6 && (r.includes(n) || n.includes(r))) || pxSim(r, n) > 0.7); });
+}
+{
+  const d0 = lkDeliver;
+  lkDeliver = function (c, f, text) {
+    try { if (f && pxDup((f.m || []).slice(-24).filter((m) => !m.me).map((m) => m.t), text)) return; } catch (e) {}
+    return d0.apply(this, arguments);
+  };
+}
+// 好友完整人设（批量补全）
+async function pxEnrich(c, st) {
+  const d = PX[c.id]; if (!d || PXENR[c.id]) return 0;
+  const todo = d.fr.filter((f) => !f.p);
+  if (!todo.length) return 0;
+  if (!CFG.a.url && !lkApi(c)) return 0;
+  PXENR[c.id] = 1; let got = 0;
+  try {
+    for (let i = 0; i < todo.length; i += 3) {
+      const part = todo.slice(i, i + 3);
+      st && st("正在完善好友人设 " + Math.min(i + 3, todo.length) + "/" + todo.length + "…");
+      const desc = part.map((f) => f.id + "：昵称「" + f.n + "」" + (f.rm ? "，TA 给的备注「" + f.rm + "」" : "") + "，分组" + f.g + (f.sig ? "，签名「" + f.sig + "」" : "") + "\n  已有聊天：" + f.m.slice(-8).map((y) => (y.me ? "TA" : "对方") + "：" + (y.t || "").slice(0, 40)).join(" / ")).join("\n");
+      const q = pxCtx(c) + "\n\n下面这几位是 TA 的微信好友，请为每个人写出完整、像真人的人设资料，要和 TA 的人设、世界设定、已有聊天完全一致且互不雷同：\n" + desc + "\n\n每人输出：p（一整段 250 到 450 字的人物资料：姓名与年龄、职业与工作状态、居住地、家庭与感情状况、性格与价值观、说话风格与口头禅、爱好与生活习惯、和 TA 认识的经过与相处模式、两三件共同经历的具体往事、最近正在烦恼或高兴的事）、wxid（微信号，像真的）、area（地区，如 上海 浦东）。\n只输出 JSON：{\"r\":[{\"id\":\"f1\",\"p\":\"…\",\"wxid\":\"…\",\"area\":\"…\"}]}";
+      let j = null;
+      try { j = pxJson(await lkChat(c, [{ role: "user", content: q }], "你为虚构角色的朋友圈子写详细人设。只输出 JSON，不要解释，不要代码块。内容具体、有细节、有矛盾和生活感，不要空泛套话。")); } catch (e) {}
+      ((j && j.r) || []).forEach((x) => { const f = isObj(x) && pxFr(d, x.id); if (f && x.p && String(x.p).length > 40) { f.p = pxS(x.p, 900); f.wxid = pxS(x.wxid, 30); f.area = pxS(x.area, 20); got++; } });
+      pxSave();
+    }
+  } catch (e) {}
+  PXENR[c.id] = 0;
+  return got;
+}
+const PXENF = {};
+{
+  const g0 = pxGen;
+  pxGen = async function (c, st) {
+    const r = await g0.apply(this, arguments);
+    try { await pxEnrich(c, st); } catch (e) {}
+    return r;
+  };
+  const t0 = pxTick;
+  pxTick = async function () {
+    try { await t0.apply(this, arguments); } catch (e) {}
+    try {
+      for (const c of (PXW.on ? PXW.s.cons : WX.cons)) {
+        const d = c.link && PX[c.id]; if (!d || PXENR[c.id] || PXW.on || (PXENF[c.id] || 0) > Date.now()) continue;
+        if (d.fr.some((f) => !f.p)) { const g = await pxEnrich(c); if (!g) PXENF[c.id] = Date.now() + 6e5; break; }
+      }
+    } catch (e) {}
+  };
+}
+
+{
+  const s = document.createElement("style"); s.id = "gmfix";
+  s.textContent = ".gmc{max-height:42%;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;box-sizing:border-box}.gmc::-webkit-scrollbar{display:none}.gmc.gmls{max-height:42%}.gmv{min-height:210px}.gmc>.gmh:first-child{position:sticky;top:-12px;z-index:2;background:var(--card);margin:-12px -14px 4px;padding:12px 14px 6px}.gmc .gmh b,.gmc .gmh s{overflow-wrap:anywhere}.gmw{padding-bottom:calc(20px + env(safe-area-inset-bottom,0px))}";
+  document.head.appendChild(s);
+}
+
+//XEND
+</script>
+<script type="text/plain" class="mp">
+// ===== block 24: 桌面自由摆放 / 小组件拖拽缩放 / 替换图标样式 =====
+let FREE = rd("free"); if (!isObj(FREE)) FREE = {};
+if (FREE.on === undefined) FREE.on = 1;
+if (!isObj(FREE.xy)) FREE.xy = {};
+const frSave = () => { try { store("free", FREE); } catch (e) {} };
+const frH = () => parseFloat(phone.style.height) || 844;
+const frClamp = (x, y) => [Math.round(Math.max(6, Math.min(PW - W - 6, x))), Math.round(Math.max(52, Math.min(frH() - (FREE.nodock ? 100 : 175), y)))];
+function frSlot(pg) {
+  const occ = new Set(Object.keys(pos).filter((j) => !pos[j].d && pos[j].p === pg).map((j) => pos[j].s));
+  for (let s = pg == 0 ? 8 : 0; s < 60; s++) if (!occ.has(s)) return s;
+  return 8;
+}
+{
+  const p0 = put;
+  put = function (k) {
+    p0.apply(this, arguments);
+    const p = pos[k], f = FREE.on && FREE.xy[k], e = els[k];
+    if (p && e && !p.d && f && f[2] === p.p) { e.style.left = f[0] + "px"; e.style.top = f[1] + "px"; }
+  };
+  const d0 = drop;
+  drop = function (c, d) {
+    const k = c.dataset.k, l = parseFloat(c.style.left), t = parseFloat(c.style.top);
+    if (!FREE.on || t + 30 >= frH() - 122) {
+      if (FREE.xy[k]) { delete FREE.xy[k]; frSave(); }
+      return d0.apply(this, arguments);
+    }
+    const o = d.o, pg = page;
+    let [x, y] = frClamp(l, t);
+    for (const j in pos) {
+      if (j == k || pos[j].d || pos[j].p !== pg || !els[j]) continue;
+      const jl = parseFloat(els[j].style.left), jt = parseFloat(els[j].style.top);
+      if (Math.abs(jl - x) < 38 && Math.abs(jt - y) < 38) { x = Math.min(PW - W - 6, jl + 46); }
+    }
+    FREE.xy[k] = [x, y, pg];
+    const slot = !o.d && o.p == pg ? o.s : frSlot(pg);
+    place(k, { p: pg, s: slot });
+    go(pg);
+    frSave();
+    CFG.pam = {};
+    try { savePrefs(); } catch (e) {}
+    store("lay", pos);
+  };
+}
+// ---- 小组件位置 / 大小 ----
+function wgBase() { return { x: 24, y: 96, w: PW - 48, h: 178 }; }
+function wgApply() {
+  const r = FREE.wg;
+  [pgs[0].querySelector(".wg"), document.getElementById("wgz")].forEach((e) => {
+    if (!e) return;
+    if (r) { e.style.left = r.x + "px"; e.style.top = r.y + "px"; e.style.width = r.w + "px"; e.style.height = r.h + "px"; }
+    else ["left", "top", "width", "height"].forEach((p) => { e.style[p] = ""; });
+  });
+  const h = document.getElementById("wgh");
+  if (h) { const R = r || wgBase(); h.style.left = R.x + R.w - 26 + "px"; h.style.top = R.y + R.h - 26 + "px"; }
+}
+{
+  const w0 = wzApply;
+  wzApply = function () { const r = w0.apply(this, arguments); try { wgApply(); } catch (e) {} return r; };
+}
+const frCss = document.createElement("style");
+frCss.id = "frcss";
+frCss.textContent = `#wgh{position:absolute;width:26px;height:26px;border-radius:50%;background:var(--ink);color:var(--phone,#fff);display:none;place-items:center;z-index:7;touch-action:none;box-shadow:0 2px 8px rgba(0,0,0,.25);font-size:12px;line-height:1;opacity:.85}body.edit #wgh{display:grid}body.edit .wg,body.edit #wgz{touch-action:none;outline:1.5px dashed rgba(128,128,128,.5);outline-offset:3px;cursor:grab}#frb{position:absolute;left:50%;transform:translateX(-50%);bottom:134px;display:none;gap:2px;z-index:60;padding:5px;border-radius:22px;background:rgba(var(--wc),.82);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 0 0 .5px rgba(0,0,0,.08),0 10px 28px rgba(0,0,0,.14);white-space:nowrap}body.edit #frb{display:flex}#frb button{border:0;background:none;font:inherit;font-size:12px;padding:7px 11px;border-radius:16px;color:var(--ink);cursor:pointer}#frb button.on{background:var(--ink);color:var(--phone,#fff)}
+.ic i.cu{position:relative;box-shadow:0 0 0 .5px rgba(0,0,0,.1),0 10px 22px rgba(0,0,0,.16),0 2px 5px rgba(0,0,0,.08)}.ic i.cu img{width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit;pointer-events:none;-webkit-user-drag:none}.ic i.cu::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 .5px rgba(255,255,255,.38),inset 0 1.5px 0 rgba(255,255,255,.35),inset 0 -8px 14px rgba(0,0,0,.06)}body.icpad .ic i.cu{background:rgba(var(--wc),.9)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}body.icpad .ic i.cu img{width:70%;height:70%;margin:15%;object-fit:contain;border-radius:20%}.wg{overflow:hidden}.ic.drag{transform:scale(1.1) rotate(-2deg);filter:drop-shadow(0 14px 18px rgba(0,0,0,.25));transition:transform .15s}`;
+document.head.appendChild(frCss);
+{
+  const h = document.createElement("i"); h.id = "wgh"; h.textContent = "↘"; h.setAttribute("aria-label", "拖动调整小组件大小");
+  pgs[0].appendChild(h);
+  const bar = document.createElement("div"); bar.id = "frb";
+  home.appendChild(bar);
+  const paint = () => {
+    bar.innerHTML = `<button data-fr="mode" class="${FREE.on ? "on" : ""}">自由摆放</button><button data-fr="pad" class="${FREE.pad ? "on" : ""}">图标内嵌</button><button data-fr="reset">还原布局</button>`;
+    document.body.classList.toggle("icpad", !!FREE.pad);
+  };
+  paint();
+  ["pointerdown", "pointerup", "click"].forEach((ev) => bar.addEventListener(ev, (e) => e.stopPropagation()));
+  bar.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-fr]"); if (!b) return;
+    const a = b.dataset.fr;
+    if (a == "mode") { FREE.on = FREE.on ? 0 : 1; if (!FREE.on) FREE.xy = {}; Object.keys(pos).forEach(put); gtoast(FREE.on ? "自由摆放：拖到哪就停在哪" : "已改为对齐网格", 1600); }
+    else if (a == "pad") { FREE.pad = FREE.pad ? 0 : 1; gtoast(FREE.pad ? "替换图标：内嵌在底板里" : "替换图标：铺满图标", 1500); }
+    else if (a == "reset") { FREE.xy = {}; FREE.wg = null; Object.keys(pos).forEach(put); wgApply(); gtoast("已还原布局", 1400); }
+    frSave(); paint();
+  });
+  // 小组件拖动 / 缩放（编辑模式）
+  let wd = null, moved = 0;
+  home.addEventListener("pointerdown", (e) => {
+    if (!editing) return;
+    const rz = e.target.closest("#wgh"), wgt = !rz && !e.target.closest(".ic") && e.target.closest(".wg,#wgz");
+    if (!rz && !wgt) return;
+    e.stopPropagation(); e.preventDefault();
+    const [px, py] = pt(e), R = Object.assign({}, FREE.wg || wgBase());
+    wd = { rz: !!rz, px, py, R, id: e.pointerId }; moved = 0;
+    try { home.setPointerCapture(e.pointerId); } catch (x) {}
+  }, true);
+  home.addEventListener("pointermove", (e) => {
+    if (!wd) return;
+    const [px, py] = pt(e), dx = px - wd.px, dy = py - wd.py;
+    if (Math.abs(dx) + Math.abs(dy) > 4) moved = 1;
+    const R = Object.assign({}, wd.R);
+    if (wd.rz) { R.w = Math.round(Math.max(150, Math.min(PW - R.x - 6, R.w + dx))); R.h = Math.round(Math.max(96, Math.min(380, R.h + dy))); }
+    else { R.x = Math.round(Math.max(0, Math.min(PW - R.w, R.x + dx))); R.y = Math.round(Math.max(40, Math.min(frH() - 220, R.y + dy))); }
+    FREE.wg = R; wgApply();
+  });
+  const end = () => { if (!wd) return; wd = null; frSave(); setTimeout(() => { moved = 0; }, 50); };
+  home.addEventListener("pointerup", end); home.addEventListener("pointercancel", end);
+  home.addEventListener("click", (e) => { if (moved && e.target.closest(".wg,#wgz,#wgh")) { e.stopPropagation(); e.preventDefault(); } }, true);
+  setTimeout(() => { try { Object.keys(pos).forEach(put); wgApply(); document.body.classList.toggle("icpad", !!FREE.pad); } catch (e) {} }, 400);
+}
+
+//XEND
+</script>
+<script type="text/plain" class="mp">
+// ===== block 25: 表情包链接/文件导入 · 酒馆世界书导入 · 删除角色朋友圈 · 关闭 Dock =====
+// ---------- 朋友圈：所有动态都可删除 ----------
+{
+  const m0 = momItem;
+  momItem = function (p) {
+    let h = m0.apply(this, arguments);
+    if (p && p.w != "me") h = h.replace('<div class="mft">', '<div class="mft"><button class="mdl" data-mom="del">删除</button>');
+    return h;
+  };
+}
+document.addEventListener("click", (e) => {
+  const m = e.target.closest && e.target.closest(".pxm");
+  if (!m || e.target.closest("button,a,input")) return;
+  const c = PXW.on ? PXW.c : WX.cons.find((x) => x.id == PXS.cid), d = c && PX[c.id];
+  if (!d || !Array.isArray(d.mom)) return;
+  const i = [...m.parentNode.querySelectorAll(".pxm")].indexOf(m);
+  if (i < 0 || !d.mom[i]) return;
+  e.stopPropagation();
+  actSheet("这条朋友圈", [{ t: "删除这条朋友圈", dg: 1, f: () => { d.mom.splice(i, 1); pxSave(); try { PXW.on && wsave(); } catch (x) {} try { pxPaint(); } catch (x) {} } }]);
+}, true);
+
+// ---------- 世界书：导入酒馆 JSON ----------
+function wbFromTavern(j) {
+  let raw = null;
+  if (!j) return [];
+  if (Array.isArray(j)) raw = j;
+  else if (j.entries) raw = j.entries;
+  else if (j.data && j.data.character_book && j.data.character_book.entries) raw = j.data.character_book.entries;
+  else if (j.character_book && j.character_book.entries) raw = j.character_book.entries;
+  else if (Array.isArray(j.e)) raw = j.e;
+  else if (j.lorebook && j.lorebook.entries) raw = j.lorebook.entries;
+  if (!raw) return [];
+  const arr = Array.isArray(raw) ? raw : Object.values(raw);
+  const L = ["and_any", "not_all", "not_any", "and_all"], ks = (v) => Array.isArray(v) ? v : String(v || "").split(/[,，]/);
+  const out = [];
+  arr.forEach((x) => {
+    if (!isObj(x)) return;
+    const ex = isObj(x.extensions) ? x.extensions : {}, d = wbDef();
+    const keys = ks(x.key || x.keys), keys2 = ks(x.keysecondary || x.secondary_keys);
+    let pos = x.position, ps = "before";
+    if (typeof pos == "string") ps = /after/.test(pos) ? "after" : "before";
+    else if (pos === 1 || pos === 3 || pos === 6) ps = "after";
+    else if (pos === 4) ps = "depth";
+    if (ex.position === 4) ps = "depth";
+    else if (ex.position === 1 || ex.position === 3) ps = "after";
+    const rl = x.role != null ? x.role : ex.role, role = rl === 1 || rl === "user" ? "user" : rl === 2 || rl === "assistant" ? "assistant" : "system";
+    const sl = x.selectiveLogic != null ? x.selectiveLogic : ex.selectiveLogic;
+    const en = x.disable != null ? !x.disable : x.enabled != null ? !!x.enabled : true;
+    const content = String(x.content || "");
+    if (!content && !keys.length) return;
+    out.push({
+      id: d.id + out.length, on: en ? 1 : 0, memo: String(x.comment || x.name || x.memo || ""),
+      keys: keys.map((s) => String(s).trim()).filter(Boolean), keys2: x.selective === false ? [] : keys2.map((s) => String(s).trim()).filter(Boolean),
+      logic: L[sl] || "and_any", const: x.constant ? 1 : 0,
+      prob: x.probability != null ? x.probability : ex.probability != null ? ex.probability : 100,
+      pos: ps, depth: x.depth != null ? x.depth : ex.depth != null ? ex.depth : 4, role,
+      scan: x.scanDepth != null ? x.scanDepth : ex.scan_depth != null ? ex.scan_depth : 4,
+      norec: x.excludeRecursion || ex.exclude_recursion ? 1 : 0,
+      order: x.order != null ? x.order : x.insertion_order != null ? x.insertion_order : 100,
+      grp: String(x.group || ex.group || ""), chars: [], vec: 0, content
+    });
+  });
+  return normWb(out).slice(0, 3000);
+}
+{
+  const r0 = wbRender;
+  wbRender = function () {
+    const r = r0.apply(this, arguments);
+    try {
+      if (WB.v == "l") {
+        const sc = document.querySelector("#app .sc");
+        if (sc && !sc.querySelector("[data-wbi]")) {
+          const d = document.createElement("div");
+          d.className = "ls"; d.style.marginTop = "12px";
+          d.innerHTML = `<div class="lr btn" role="button" tabindex="0" data-wbi="imp"><div><b>导入酒馆世界书</b><small>选择 SillyTavern 导出的 .json（世界书 / 角色卡内置世界书）</small></div>${ic("chev").replace('class="ico"', 'class="ico ch"')}</div><div class="lr btn" role="button" tabindex="0" data-wbi="exp"><div><b>导出全部条目</b><small>导出为酒馆可读的 JSON</small></div>${ic("chev").replace('class="ico"', 'class="ico ch"')}</div><input id="wb_imp" type="file" accept=".json,application/json" hidden>`;
+          sc.insertBefore(d, sc.firstChild.nextSibling || null);
+        }
+      }
+    } catch (e) {}
+    return r;
+  };
+}
+document.addEventListener("click", (e) => {
+  const b = e.target.closest && e.target.closest("[data-wbi]");
+  if (!b || cur != "app:wb" && cur != "wb") return;
+  e.stopPropagation();
+  if (b.dataset.wbi == "imp") { const f = $("#wb_imp"); if (f) f.click(); }
+  else {
+    const ent = {};
+    WB.e.forEach((x, i) => { ent[i] = { uid: i, key: x.keys, keysecondary: x.keys2, comment: x.memo, content: x.content, constant: !!x.const, selective: x.keys2.length > 0, selectiveLogic: Math.max(0, ["and_any", "not_all", "not_any", "and_all"].indexOf(x.logic)), order: x.order, position: x.pos == "after" ? 1 : x.pos == "depth" ? 4 : 0, disable: !x.on, probability: x.prob, depth: x.depth, role: x.role == "user" ? 1 : x.role == "assistant" ? 2 : 0, scanDepth: x.scan, group: x.grp, excludeRecursion: !!x.norec }; });
+    const u = URL.createObjectURL(new Blob([JSON.stringify({ entries: ent }, null, 2)], { type: "application/json" })), a = document.createElement("a");
+    a.href = u; a.download = "世界书.json"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 3e3);
+  }
+}, true);
+document.addEventListener("change", async (e) => {
+  const t = e.target;
+  if (!t || t.id != "wb_imp") return;
+  const f = t.files[0]; t.value = "";
+  if (!f) return;
+  try {
+    const j = JSON.parse((await f.text()).replace(/^﻿/, "")), L = wbFromTavern(j);
+    if (!L.length) return gtoast("没有识别到世界书条目，请确认是酒馆导出的 JSON", 3000);
+    WB.e = WB.e.concat(L);
+    wbSave(); wbRender();
+    gtoast("已导入 " + L.length + " 个条目", 2400);
+  } catch (x) { gtoast("导入失败：不是有效的 JSON 文件", 3000); }
+});
+
+// ---------- 表情包：链接 / 文件导入 ----------
+{
+  const s0 = stkSheet;
+  stkSheet = function () {
+    s0.apply(this, arguments);
+    try { const r = document.querySelector("#sh .r2"); if (r && !r.querySelector("[data-stku]")) { const b = document.createElement("button"); b.className = "cb"; b.dataset.stku = "1"; b.textContent = "链接/文件"; r.insertBefore(b, r.lastElementChild); const i = document.createElement("input"); i.id = "stk_j"; i.type = "file"; i.accept = ".json,.txt,text/plain,application/json"; i.hidden = true; r.parentNode.appendChild(i); } } catch (e) {}
+  };
+}
+async function stkFromUrl(url, name) {
+  url = String(url).trim();
+  if (!/^(https?:|data:image)/i.test(url)) return 0;
+  try {
+    const r = await fetch(url, { mode: "cors" }), bl = await r.blob();
+    if (!/^image\//.test(bl.type)) throw 0;
+    const f = new File([bl], (name || "表情") + ".png", { type: bl.type }), p = await stkPrep(f);
+    return stkAdd(p.u, name || "表情", p.x) ? 1 : 0;
+  } catch (e) {
+    if (/^data:image/i.test(url) || url.length < 2000) return stkAdd(url, name || "表情") ? 1 : 0;
+    return 0;
+  }
+}
+async function stkBulk(lines) {
+  let n = 0;
+  for (const ln of lines) {
+    const s = String(ln).trim(); if (!s) continue;
+    let name = "", u = s;
+    const m = s.match(/^(.{1,12}?)\s*[|｜,，\t]\s*((?:https?:|data:image).+)$/);
+    if (m) { name = m[1]; u = m[2]; }
+    else if (!name) { const q = u.split("?")[0].split("/").pop().replace(/\.[^.]+$/, ""); name = decodeURIComponent(q || "").slice(0, 8) || "表情"; }
+    n += await stkFromUrl(u, name);
+  }
+  return n;
+}
+document.addEventListener("click", (e) => {
+  const b = e.target.closest && e.target.closest("[data-stku]");
+  if (!b) return;
+  e.stopPropagation();
+  const sh = $("#sh"); sh._stk = 0;
+  actSheet("导入表情包", [
+    { t: "粘贴图片链接（一行一个，可写 名称|链接）", f: () => setTimeout(() => editSheet("图片链接", "", async (v) => { gtoast("正在导入…", 1500); const n = await stkBulk(v.split(/\n+/)); gtoast(n ? "已导入 " + n + " 个" : "没有导入成功，请检查链接", 2400); stkSheet(0); }, "每行一个：猫猫哭|https://…/a.png"), 260) },
+    { t: "导入文件（.json / .txt 链接列表）", f: () => { const i = $("#stk_j"); if (i) i.click(); else gtoast("请重新打开表情包面板"); } },
+    { t: "导出全部表情包（.json）", f: () => { const o = stkAll().map((x) => ({ name: x.n, url: x.u, desc: x.d || "" })), u = URL.createObjectURL(new Blob([JSON.stringify(o)], { type: "application/json" })), a = document.createElement("a"); a.href = u; a.download = "表情包.json"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 3e3); stkSheet(0); } }
+  ], "图片会自动压缩保存；网站不允许跨域时会直接保存链接");
+}, true);
+document.addEventListener("change", async (e) => {
+  const t = e.target;
+  if (!t || t.id != "stk_j") return;
+  const f = t.files[0]; t.value = "";
+  if (!f) return;
+  gtoast("正在导入…", 1500);
+  let n = 0;
+  try {
+    const txt = (await f.text()).replace(/^﻿/, "");
+    let j = null; try { j = JSON.parse(txt); } catch (x) {}
+    if (j) {
+      const arr = Array.isArray(j) ? j : Array.isArray(j.stickers) ? j.stickers : Array.isArray(j.emojis) ? j.emojis : isObj(j) ? Object.entries(j).map(([k, v]) => typeof v == "string" ? { name: k, url: v } : v) : [];
+      for (const x of arr) {
+        if (typeof x == "string") n += await stkFromUrl(x, "");
+        else if (isObj(x)) { const u = x.url || x.u || x.src || x.image || ""; if (u) { const m = await stkFromUrl(u, String(x.name || x.n || x.title || "表情").slice(0, 8)); if (m && x.desc) { const s = stkAll().slice(-1)[0]; if (s) s.d = String(x.desc).slice(0, 60); } n += m; } }
+      }
+      stkSave();
+    } else n = await stkBulk(txt.split(/\r?\n/));
+  } catch (x) {}
+  gtoast(n ? "已导入 " + n + " 个" : "没有识别到可导入的表情", 2600);
+  stkSheet(0);
+});
+
+// ---------- 关闭底部 Dock ----------
+const dkCss = document.createElement("style");
+dkCss.textContent = "body.nodock #dock{display:none}body.nodock #frb{bottom:46px}";
+document.head.appendChild(dkCss);
+function dkSlot() {
+  for (const pg of [0, 1]) {
+    const occ = new Set(Object.keys(pos).filter((j) => !pos[j].d && pos[j].p === pg).map((j) => pos[j].s));
+    for (let s = pg == 0 ? 8 : 0; s < rowsNow() * 4; s++) if (!occ.has(s)) return { p: pg, s };
+  }
+  return { p: 1, s: 0 };
+}
+function dkFix() {
+  const k = Object.keys(pos).filter((j) => pos[j].d).sort((a, b) => pos[a].s - pos[b].s);
+  if (!k.length) return;
+  FREE.dk = Array.from(new Set((FREE.dk || []).concat(k)));
+  k.forEach((j) => place(j, dkSlot()));
+}
+function dkSet(off) {
+  FREE.nodock = off ? 1 : 0;
+  if (off) dkFix();
+  else if (FREE.dk) { FREE.dk.forEach((j, i) => { if (pos[j]) { delete FREE.xy[j]; place(j, { d: 1, s: i }); } }); FREE.dk = null; }
+  document.body.classList.toggle("nodock", !!off);
+  frSave(); store("lay", pos);
+}
+{
+  const r0 = rowsNow;
+  rowsNow = function () { const v = r0.apply(this, arguments); return FREE.nodock ? Math.min(9, v + 1) : v; };
+  const d0 = drop;
+  drop = function (c, d) {
+    if (FREE.nodock) { const t = parseFloat(c.style.top); if (t + 30 >= frH() - 122) c.style.top = Math.max(0, frH() - 160) + "px"; }
+    return d0.apply(this, arguments);
+  };
+  const bar = document.getElementById("frb");
+  if (bar) {
+    const h0 = bar.innerHTML;
+    new MutationObserver(() => { if (!bar.querySelector("[data-fr=dock]")) { const b = document.createElement("button"); b.dataset.fr = "dock"; b.className = FREE.nodock ? "on" : ""; b.textContent = FREE.nodock ? "Dock：关" : "Dock：开"; bar.insertBefore(b, bar.lastElementChild); } }).observe(bar, { childList: true });
+    bar.innerHTML = h0;
+    bar.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-fr=dock]"); if (!b) return;
+      dkSet(!FREE.nodock);
+      b.className = FREE.nodock ? "on" : ""; b.textContent = FREE.nodock ? "Dock：关" : "Dock：开";
+      gtoast(FREE.nodock ? "已关闭 Dock，原来的应用移到了桌面" : "已恢复 Dock", 1800);
+    });
+  }
+  setTimeout(() => { if (FREE.nodock) { document.body.classList.add("nodock"); dkFix(); } }, 600);
 }
 
 //XEND
