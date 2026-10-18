@@ -339,7 +339,7 @@ input:focus-visible,textarea:focus-visible,select:focus-visible{outline:none}
 #vcall .cvself{position:absolute;top:104px;right:16px;width:96px;height:132px;border-radius:18px;overflow:hidden;background:#2a2a2e;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:rgba(255,255,255,.7);font-size:10.5px;z-index:2;box-shadow:0 8px 24px rgba(0,0,0,.35)}#vcall .cvself video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}#vcall .cvself video.bk{transform:none}.cvfl{position:absolute;right:6px;bottom:6px;width:28px;height:28px;border-radius:50%;border:0;background:rgba(0,0,0,.38);color:#fff;display:grid;place-items:center;padding:0;cursor:pointer;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}.cvfl .ico{width:15px;height:15px}#vcall .cvself .av{border-radius:50%!important}
 #vcall.vid .clog{position:relative;z-index:2;margin:0 0 12px;max-height:46%}#vcall.vid .cin,#vcall.vid .cbt{position:relative;z-index:2}
 #vcall.vid .cq{background:rgba(20,20,22,.55);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}#vcall.vid .cq.me{background:#f2f2f2;color:#111}
-#vcall .cq.nar{align-self:center;background:rgba(0,0,0,.38)!important;color:rgba(255,255,255,.85);font-size:12.5px;text-align:center;padding:6px 12px;border-radius:14px;max-width:88%}
+#vcall .cq.nar{align-self:center;background:rgba(0,0,0,.34)!important;color:rgba(255,255,255,.88);font-size:12.5px;line-height:1.75;text-align:left;padding:9px 14px;border-radius:16px;max-width:92%;font-style:italic;letter-spacing:.2px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 #cball{position:absolute;z-index:56;width:60px;height:60px;border-radius:50%;box-shadow:0 8px 24px rgba(0,0,0,.28),0 0 0 2.5px #30d158;cursor:grab;touch-action:none;-webkit-user-select:none;user-select:none;transition:left .28s cubic-bezier(.2,.9,.3,1),top .28s}#cball.drag{transition:none;cursor:grabbing;transform:scale(1.06)}#cball .av{width:60px!important;height:60px!important;border-radius:50%!important;pointer-events:none}
 #cball small{position:absolute;left:50%;bottom:-9px;transform:translateX(-50%);background:#30d158;color:#fff;padding:1px 8px;border-radius:9px;font-size:10.5px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap;pointer-events:none}
 #cball::after{content:"";position:absolute;inset:-2px;border-radius:50%;border:2px solid #30d158;opacity:.5;animation:cbp 1.8s ease-out infinite;pointer-events:none}@keyframes cbp{0%{transform:scale(1);opacity:.55}100%{transform:scale(1.35);opacity:0}}
@@ -1290,7 +1290,7 @@ const APPS = {
   mcp: ["MCP", "plug"],
   mem: ["记忆", "mem"]
 };
-const DOCK = ["chat", "sms", "phone", "set"], P1 = ["con", "wb", "th", "photo", "web", "music", "cal", "memo", "calc", "cam", "wea", "clk", "map", "hl", "wal", "car"], P2 = ["store", "file", "mcp", "mem"];
+const DOCK = ["chat", "sms", "phone", "set"], P1 = ["con", "wb", "photo", "music", "cal", "wea", "map", "wal"], P2 = ["th", "web", "memo", "calc", "cam", "clk", "hl", "car", "store", "file", "mcp", "mem"];
 let PW = 390;
 const X = 24, Y = 96, W = 85.5, H = 94, S = { wifi: 1, bt: 1, air: 0, dnd: 0, torch: 0, glass: 0, timer: 0, _pre: null }, pos = {}, els = {}, N = [], ISL = { u: 0, t: 0 };
 let page = 0, editing = 0, locked = 1, seen = 0, tEnd = 0;
@@ -6389,11 +6389,11 @@ function callSendUi() {
   callSay(false);
 }
 const callSys0 = (c, dir, vid, cam) => `你是「${c.name}」，人设：${c.persona || "普通朋友"}。现在是${nowStr()}。你们正在进行微信${vid ? "视频" : "语音"}通话${dir == "in" ? "，是你打给对方的" : "，是对方打给你的"}。
-` + humanOf(c) + (vid ? "\n【通话规则】这是视频通话：可以先用（）括起来写一句很短的动作、表情或环境旁白（例如（笑着挥了挥手）），再写你说出口的话。旁白只会显示在画面上，不会被朗读，所以不要把要说的话放进括号里。说的话每次一两句，不分条，不发表情符号。" + (cam ? "对方开着摄像头，对方此刻的画面会随消息附上，你可以自然地提到你看到的内容；看不清就如实说。" : "对方没有开摄像头，你看不到对方的样子。") : "\n【通话规则】这是电话：只说你会说出口的话，每次说一两句；不要发表情符号、不写动作和旁白；不要分条，一次只输出一段话。");
+` + humanOf(c) + (vid ? "\n【通话规则】这是视频通话：每次回复都要先用（）括起来写一段画面旁白，像电影镜头的描写，60 到 150 字：写出你的神态与眼神、嘴角和眉眼的变化、手上的小动作、身体的姿势和位置，以及镜头里的环境（房间、光线、背景里的物品、窗外的景色、周围的声响、屏幕的画质和晃动），还有情绪是怎样从外表流露出来的。旁白要随通话推进有细微的变化，每次都和之前不同，不要重复同样的动作和描写。写完旁白再写你说出口的话，也可以在话中间再插一小句（动作）。旁白只会显示在画面上，不会被朗读，所以不要把要说的话放进括号里。说的话每次一两句，不分条，不发表情符号。" + (cam ? "对方开着摄像头，对方此刻的画面会随消息附上，你可以自然地提到你看到的内容；看不清就如实说。" : "对方没有开摄像头，你看不到对方的样子。") : "\n【通话规则】这是电话：只说你会说出口的话，每次说一两句；不要发表情符号、不写动作和旁白；不要分条，一次只输出一段话。");
 function callSplit(t) {
   t = String(t || "");
   const ns = [];
-  let d = t.replace(/[（(]([^）)]{1,80})[）)]|\*([^*\n]{1,80})\*|【([^】]{1,80})】/g, (m, a, b, c) => {
+  let d = t.replace(/[（(]([^）)]{1,400})[）)]|\*([^*\n]{1,400})\*|【([^】]{1,400})】/g, (m, a, b, c) => {
     ns.push((a || b || c).trim());
     return " ";
   });
@@ -6502,7 +6502,7 @@ async function callSay(first) {
   callLog();
   const id = CALL.id, L = WX.msgs[id] || [];
   const base = mergeH(L.filter((m) => !m.s && !m.p).slice(-(+c.ctx || 500)).map((m) => ({ role: m.me ? "user" : "assistant", content: histOf(m) })));
-  const live = CALL.log.map((l) => ({ role: l.me ? "user" : "assistant", content: l.t }));
+  const live = CALL.log.map((l) => ({ role: l.me ? "user" : "assistant", content: (!l.me && l.n ? "（" + l.n + "）" : "") + l.t }));
   let hist = mergeH(base.concat(first ? [{ role: "user", content: CALL.dir == "in" ? "（我接起了你打来的电话）" : "（电话接通了）" }] : [], live));
   if (!hist.length || hist[hist.length - 1].role != "user") hist.push({ role: "user", content: "（继续通话）" });
   {
@@ -18984,7 +18984,7 @@ const anonCallSys = (c) => `你是「${c.name}」，人设：${c.persona || "普
     if (!CFG.a.url || !CFG.a.model) return cs0.apply(this, arguments);
     CALL.busy = 1; callLog();
     const id = CALL.id;
-    const live = CALL.log.map((l) => ({ role: l.me ? "user" : "assistant", content: l.t }));
+    const live = CALL.log.map((l) => ({ role: l.me ? "user" : "assistant", content: (!l.me && l.n ? "（" + l.n + "）" : "") + l.t }));
     let hist = mergeH((first ? [{ role: "user", content: "（电话接通了，对方还没出声）" }] : []).concat(live));
     if (!hist.length || hist[hist.length - 1].role != "user") hist.push({ role: "user", content: "（对方沉默了一会儿）" });
     CALL.note = "";
@@ -21997,6 +21997,7 @@ function dkSlot() {
   return { p: 1, s: 0 };
 }
 function dkFix() {
+  return;
   const k = Object.keys(pos).filter((j) => pos[j].d).sort((a, b) => pos[a].s - pos[b].s);
   if (!k.length) return;
   FREE.dk = Array.from(new Set((FREE.dk || []).concat(k)));
@@ -22031,6 +22032,418 @@ function dkSet(off) {
   }
   setTimeout(() => { if (FREE.nodock) { document.body.classList.add("nodock"); dkFix(); } }, 600);
 }
+
+//XEND
+</script>
+<script type="text/plain" class="mp">
+// ===== block 26: 吸附网格 / 整理桌面 =====
+if (FREE.snap === undefined) FREE.snap = 1;
+function frSnap(k, l, t) {
+  const pg = page, cw = (PW - 48) / 4, rows = rowsNow(), R = FREE.wg, wr = pg == 0 ? (R || { x: 24, y: 96, w: PW - 48, h: 178 }) : null;
+  const others = Object.keys(pos).filter((j) => j != k && !pos[j].d && pos[j].p === pg && els[j]).map((j) => [parseFloat(els[j].style.left), parseFloat(els[j].style.top)]);
+  let best = null, bd = 1e9;
+  for (let r = 0; r < rows; r++) for (let c = 0; c < 4; c++) {
+    const x = X + c * cw + (cw - W) / 2, y = Y + r * H;
+    if (wr && x < wr.x + wr.w && x + W > wr.x && y < wr.y + wr.h - 4 && y + 72 > wr.y) continue;
+    if (others.some((o) => Math.abs(o[0] - x) < 20 && Math.abs(o[1] - y) < 20)) continue;
+    const d = Math.hypot(l - x, t - y);
+    if (d < bd) { bd = d; best = [x, y]; }
+  }
+  if (best && bd < 44) return best;
+  let x = l, y = t;
+  others.forEach((o) => { if (Math.abs(o[0] - x) < 9) x = o[0]; if (Math.abs(o[1] - y) < 9) y = o[1]; });
+  return [x, y];
+}
+{
+  const d0 = drop;
+  drop = function (c, d) {
+    try {
+      const t = parseFloat(c.style.top);
+      if (FREE.on && FREE.snap !== 0 && t + 30 < frH() - (FREE.nodock ? 60 : 122)) {
+        const [nx, ny] = frSnap(c.dataset.k, parseFloat(c.style.left), t);
+        c.style.left = nx + "px"; c.style.top = ny + "px";
+      }
+    } catch (e) {}
+    return d0.apply(this, arguments);
+  };
+}
+function frArrange() {
+  const all = Object.keys(pos), first = P1.filter((k) => pos[k]), rest = P2.filter((k) => pos[k] && !first.includes(k));
+  all.forEach((k) => { if (!first.includes(k) && !rest.includes(k) && !pos[k].d) rest.push(k); });
+  if (FREE.nodock) all.forEach((k) => { if (pos[k].d && !first.includes(k) && !rest.includes(k)) first.push(k); });
+  FREE.xy = {}; FREE.wg = null;
+  let s0 = 8, s1 = 0;
+  first.forEach((k) => place(k, { p: 0, s: s0++ }));
+  rest.forEach((k) => place(k, { p: 1, s: s1++ }));
+  Object.keys(pos).forEach(put);
+  wgApply(); go(0); frSave(); store("lay", pos);
+}
+{
+  const st = document.createElement("style");
+  st.textContent = "#frb{flex-wrap:wrap;justify-content:center;width:max-content;max-width:calc(100% - 28px)}";
+  document.head.appendChild(st);
+  const bar = document.getElementById("frb");
+  const add = () => {
+    if (!bar.querySelector("[data-fr=snap]")) {
+      const a = document.createElement("button"); a.dataset.fr = "snap"; a.className = FREE.snap ? "on" : ""; a.textContent = "吸附网格";
+      const b = document.createElement("button"); b.dataset.fr = "arr"; b.textContent = "整理桌面";
+      const rs = bar.querySelector("[data-fr=reset]");
+      bar.insertBefore(a, rs); bar.insertBefore(b, rs);
+    }
+  };
+  new MutationObserver(add).observe(bar, { childList: true });
+  add();
+  bar.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-fr=snap],[data-fr=arr]"); if (!b) return;
+    if (b.dataset.fr == "snap") { FREE.snap = FREE.snap ? 0 : 1; frSave(); b.className = FREE.snap ? "on" : ""; gtoast(FREE.snap ? "吸附网格：靠近格子或其他图标时自动对齐" : "吸附已关闭，完全自由摆放", 1800); }
+    else confirmSheet("整理桌面？", "整理", () => { frArrange(); gtoast("已整理为默认的精简桌面", 1800); });
+  });
+}
+
+//XEND
+</script>
+<script type="text/plain" class="mp">
+// ===== block 27: 文件传输助手 + 角色自主生活（歌单 / 视频弹幕 / 购物 / 外卖 / 备忘录） =====
+const FTHAV = "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#3d9b6e"/><path d="M26 34h16l6 7h26v27a4 4 0 0 1-4 4H30a4 4 0 0 1-4-4z" fill="#fff"/></svg>');
+function fthEnsure() {
+  if (!WX.acc || PXW.on) return;
+  let c = WX.cons.find((x) => x.fth);
+  if (!c) {
+    c = { id: "fth", name: "文件传输助手", persona: "", fth: 1, fid: "fth", auto: 0, chat: 1, wid: "filehelper", av: FTHAV, nomom: 1, noimg: 1, novc: 1, pin: 1, rn: "" };
+    WX.cons.push(c);
+    if (!WX.msgs.fth) WX.msgs.fth = [{ s: 1, t: "这里是文件传输助手：自己和自己聊天，可以记笔记、传文件、存链接。输入 /help 查看调试指令", ts: Date.now() }];
+    wsave();
+  }
+}
+{
+  const r0 = wxReply;
+  wxReply = async function (id) { if (id === "fth") return; return r0.apply(this, arguments); };
+  const s0 = send;
+  send = function () {
+    if (WX.cur === "fth") {
+      const i = $("#mi"), t = i && i.value.trim();
+      if (t && t[0] == "/") {
+        const L = WX.msgs.fth || (WX.msgs.fth = []);
+        L.push({ me: 1, t, h: hm(), ts: Date.now() });
+        let out = "";
+        if (/^\/help/.test(t)) out = "可用指令：\n/info 查看环境与存储信息\n/export 导出这个窗口的内容\n/clear 清空这个窗口\n/state 查看当前数据概况";
+        else if (/^\/info/.test(t)) { let sz = 0; try { for (let k = 0; k < localStorage.length; k++) sz += (localStorage.getItem(localStorage.key(k)) || "").length; } catch (e) {} out = "UA：" + navigator.userAgent.slice(0, 90) + "\n屏幕：" + innerWidth + "×" + innerHeight + " @" + devicePixelRatio + "\n在线：" + navigator.onLine + "\n本地存储约：" + (sz / 1024).toFixed(0) + " KB\n时间：" + new Date().toLocaleString(); }
+        else if (/^\/state/.test(t)) out = "角色 " + WX.cons.filter((c) => !c.fid).length + " 个；消息 " + Object.values(WX.msgs).reduce((a, b) => a + b.length, 0) + " 条；朋友圈 " + (WX.mom || []).length + " 条；世界书条目 " + ((typeof WB != "undefined" && WB.e) ? WB.e.length : 0) + " 条；表情包 " + (typeof stkAll == "function" ? stkAll().length : 0) + " 个";
+        else if (/^\/export/.test(t)) { const txt = L.filter((m) => !m.s).map((m) => new Date(m.ts || 0).toLocaleString() + "  " + (m.t || "")).join("\n"), u = URL.createObjectURL(new Blob([txt], { type: "text/plain" })), a = document.createElement("a"); a.href = u; a.download = "文件传输助手.txt"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 3e3); out = "已导出"; }
+        else if (/^\/clear/.test(t)) { WX.msgs.fth = []; out = ""; }
+        else out = "未知指令，输入 /help 查看";
+        if (out) WX.msgs.fth.push({ s: 1, t: out, ts: Date.now() });
+        i.value = ""; i.style.height = "";
+        wsave(); ml(); const e = $("#ml"); if (e) e.scrollTop = 1e9;
+        return;
+      }
+    }
+    return s0.apply(this, arguments);
+  };
+  const rc0 = rChat;
+  rChat = function (id) {
+    const r = rc0.apply(this, arguments);
+    try {
+      if (id === "fth") {
+        const pm = $("#pmn");
+        if (pm) {
+          [...pm.querySelectorAll("button")].forEach((b) => { if (!["img"].includes(b.dataset.k)) b.remove(); });
+          const f = document.createElement("button"); f.dataset.a = "fthf"; f.innerHTML = ic("plus") + "<span>发送文件</span>"; pm.appendChild(f);
+          const n = document.createElement("button"); n.dataset.a = "fthl"; n.innerHTML = ic("star") + "<span>存链接</span>"; pm.appendChild(n);
+        }
+        const mi = $("#mi"); if (mi) mi.placeholder = "记点什么，或粘贴链接";
+      }
+    } catch (e) {}
+    return r;
+  };
+}
+{
+  const inp = document.createElement("input"); inp.type = "file"; inp.id = "fth_f"; inp.hidden = true; inp.multiple = true; document.body.appendChild(inp);
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest && e.target.closest("[data-a=fthf],[data-a=fthl]");
+    if (!b || WX.cur !== "fth") return;
+    e.stopPropagation();
+    if (b.dataset.a == "fthf") inp.click();
+    else editSheet("存一个链接", "", (v) => { v = v.trim(); if (!v) return; (WX.msgs.fth = WX.msgs.fth || []).push({ me: 1, t: v, h: hm(), ts: Date.now() }); wsave(); ml(); const m = $("#ml"); if (m) m.scrollTop = 1e9; }, "https://…");
+    try { const p = $("#pmn"); if (p) p.classList.remove("on"); } catch (x) {}
+  }, true);
+  inp.addEventListener("change", async () => {
+    const fs = [...inp.files]; inp.value = "";
+    const L = WX.msgs.fth || (WX.msgs.fth = []);
+    for (const f of fs) {
+      const rd1 = () => new Promise((res) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = () => res(""); r.readAsDataURL(f); });
+      if (/^image\//.test(f.type)) { try { L.push({ me: 1, img: await imgData(f, 1400, 0.82), t: "[图片]", h: hm(), ts: Date.now() }); } catch (e) {} continue; }
+      const u = f.size <= 3e6 ? await rd1() : "";
+      L.push({ me: 1, t: "[文件] " + f.name, fl: { n: f.name, sz: f.size, u, mt: f.type }, h: hm(), ts: Date.now() });
+      if (!u) gtoast("文件超过 3MB，只记录了文件名", 2600);
+    }
+    wsave(); ml(); const m = $("#ml"); if (m) m.scrollTop = 1e9;
+  });
+}
+const acEsc = (s) => esc(String(s == null ? "" : s));
+const acSz = (n) => n > 1048576 ? (n / 1048576).toFixed(1) + " MB" : n > 1024 ? (n / 1024).toFixed(0) + " KB" : n + " B";
+function acLink(t) { return acEsc(t).replace(/(https?:\/\/[^\s<]+)/g, '<a class="aclk" data-ac="url" data-u="$1">$1</a>'); }
+// ---------- 卡片 ----------
+function acMuHtml(m) {
+  const x = m.mu;
+  return `<div class="acc acmu"><div class="acth"><i>${ic("music")}</i><div><b>${acEsc(x.name)}</b><small>${acEsc(x.mood || "TA 的歌单")} · ${x.songs.length} 首</small></div></div>${x.songs.map((s, i) => `<div class="acsg" role="button" tabindex="0" data-ac="song" data-q="${acEsc(s.t + " " + (s.a || ""))}"><em>${i + 1}</em><div><b>${acEsc(s.t)}</b><small>${acEsc(s.a || "")}${s.why ? " · " + acEsc(s.why) : ""}</small></div><u>${ic("play")}</u></div>`).join("")}</div>`;
+}
+function acVdHtml(m) {
+  const x = m.vd, dm = x.dm || [];
+  return `<div class="acc acvd"><div class="acvc"><span class="acvt">${acEsc(x.cat || "视频")}</span><b>${acEsc(x.title)}</b>${dm.slice(0, 6).map((d, i) => `<s style="top:${10 + i * 15}%;animation-delay:${-i * 1.7}s;animation-duration:${7 + (i % 3) * 2}s">${acEsc(d.t)}</s>`).join("")}<em>${acEsc(x.len || "")}</em></div><div class="acvm"><b>${acEsc(x.up || "UP主")}</b><small>${acEsc(x.views || "")}</small></div><div class="acdl"><small>TA 发的弹幕</small>${dm.map((d) => `<div><time>${acEsc(d.at)}</time><span>${acEsc(d.t)}</span></div>`).join("")}</div></div>`;
+}
+function acOdHtml(m) {
+  const x = m.od, sub = x.items.reduce((s, i) => s + i.p * i.q, 0), tot = Math.max(0, sub + (+x.ship || 0) - (+x.disc || 0));
+  return `<div class="acc acod"><div class="acoh"><b>${acEsc(x.status || "待发货")}</b><small>${acEsc(x.time || "")}</small></div><div class="acos">${ic("map")}<span>${acEsc(x.addr || "")}</span></div><div class="acsh">${acEsc(x.shop)}</div>${x.items.map((i) => `<div class="acit"><i></i><div><b>${acEsc(i.n)}</b><small>${acEsc(i.spec || "")}</small></div><span>¥${(+i.p).toFixed(2)}<em>×${i.q}</em></span></div>`).join("")}<div class="acsm"><span>商品总价</span><b>¥${sub.toFixed(2)}</b></div>${+x.ship ? `<div class="acsm"><span>运费</span><b>¥${(+x.ship).toFixed(2)}</b></div>` : ""}${+x.disc ? `<div class="acsm"><span>优惠</span><b>-¥${(+x.disc).toFixed(2)}</b></div>` : ""}<div class="acsm t"><span>实付款</span><b>¥${tot.toFixed(2)}</b></div><div class="acno">订单编号 ${acEsc(x.no)}</div></div>`;
+}
+const ACST = [["已下单，等待商家接单", 0], ["商家已接单", 1], ["骑手已接单，正在赶往商家", 4], ["商家出餐中", 9], ["骑手已取餐，正在配送", 17], ["已送达，祝您用餐愉快", 29]];
+function acFdHtml(m) {
+  const x = m.fd, el = (Date.now() - x.ts) / 6e4 * (x.sp || 1);
+  let k = 0; ACST.forEach((s, i) => { if (el >= s[1] * (x.k || 1)) k = i; });
+  const eta = Math.max(0, Math.round(ACST[5][1] * (x.k || 1) - el)), done = k == 5, tot = x.items.reduce((s, i) => s + i.p * i.q, 0) + (+x.fee || 0);
+  return `<div class="acc acfd"><div class="acoh"><b>${ACST[k][0]}</b><small>${done ? "已完成" : "预计 " + eta + " 分钟送达"}</small></div><div class="acpg">${ACST.map((s, i) => `<i class="${i <= k ? "on" : ""}"></i>`).join("")}</div><div class="acsh">${acEsc(x.shop)}</div>${x.items.map((i) => `<div class="acit"><i></i><div><b>${acEsc(i.n)}</b></div><span>¥${(+i.p).toFixed(2)}<em>×${i.q}</em></span></div>`).join("")}${+x.fee ? `<div class="acsm"><span>配送费</span><b>¥${(+x.fee).toFixed(2)}</b></div>` : ""}<div class="acsm t"><span>实付</span><b>¥${tot.toFixed(2)}</b></div>${x.note ? `<div class="acno">备注：${acEsc(x.note)}</div>` : ""}<div class="acno">骑手 ${acEsc(x.rider || "李师傅")} · 订单 ${acEsc(x.no)}</div></div>`;
+}
+function acFlHtml(m) {
+  const f = m.fl;
+  return `<div class="acc acfl" role="button" tabindex="0" data-ac="file"><i>${ic("down")}</i><div><b>${acEsc(f.n)}</b><small>${acSz(f.sz || 0)} · ${f.u ? "点击保存" : "仅记录文件名"}</small></div></div>`;
+}
+function acPaint() {
+  const c = WX.cons.find((x) => x.id == WX.cur), L = WX.msgs[WX.cur] || [];
+  if (!c) return;
+  document.querySelectorAll("#ml .mr[data-i]").forEach((r) => {
+    const m = L[+r.dataset.i], bb = r.querySelector(".bb");
+    if (!m || !bb) return;
+    let h = "";
+    if (m.mu && m.mu.songs) h = acMuHtml(m); else if (m.vd) h = acVdHtml(m); else if (m.od && m.od.items) h = acOdHtml(m); else if (m.fd && m.fd.items) h = acFdHtml(m); else if (m.fl) h = acFlHtml(m);
+    else if (c.fth && m.me && m.t && /https?:\/\//.test(m.t) && !m.img) { bb.innerHTML = acLink(m.t).replace(/\n/g, "<br>"); return; }
+    if (h) { bb.innerHTML = h; bb.classList.add("acx"); }
+  });
+}
+{
+  const m0 = ml;
+  ml = function () { const r = m0.apply(this, arguments); try { acPaint(); } catch (e) {} return r; };
+}
+setInterval(() => { try { if (cur == "wx" || document.querySelector("#ml .acfd")) { const L = WX.msgs[WX.cur] || []; document.querySelectorAll("#ml .mr[data-i]").forEach((r) => { const m = L[+r.dataset.i]; if (m && m.fd && m.fd.items) { const bb = r.querySelector(".bb"); if (bb) bb.innerHTML = acFdHtml(m); } }); } } catch (e) {} }, 30000);
+document.addEventListener("click", (e) => {
+  const b = e.target.closest && e.target.closest("[data-ac]");
+  if (!b || !b.closest("#ml")) return;
+  e.stopPropagation(); e.preventDefault();
+  const a = b.dataset.ac;
+  if (a == "url") window.open(b.dataset.u, "_blank", "noopener");
+  else if (a == "song") { try { openApp("music"); setTimeout(() => muSearch(b.dataset.q, 1), 350); } catch (x) {} }
+  else if (a == "file") {
+    const i = +b.closest(".mr").dataset.i, m = (WX.msgs[WX.cur] || [])[i];
+    if (!m || !m.fl || !m.fl.u) return gtoast("这个文件没有保存内容", 2000);
+    const a2 = document.createElement("a"); a2.href = m.fl.u; a2.download = m.fl.n; document.body.appendChild(a2); a2.click(); a2.remove();
+  }
+}, true);
+// ---------- 角色自主生活 ----------
+const ACK = {
+  mu: { n: "听歌 · 分享歌单", iv: 8 }, vd: { n: "看视频 · 发弹幕", iv: 10 }, sh: { n: "购物 · 发订单截图", iv: 30 }, fd: { n: "点外卖 · 发外卖进度", iv: 14 }, mm: { n: "写备忘录（可偷看）", iv: 12 }
+};
+const ACG = rd("acg") || { on: 1 };
+const acSave = () => store("acg", ACG);
+function acC(c) { const a = c.ac = c.ac || {}; a.on = a.on || {}; a.iv = a.iv || {}; a.nx = a.nx || {}; a.memos = a.memos || []; return a; }
+const acRnd = (n) => String(Math.floor(Math.random() * 10 ** n)).padStart(n, "0");
+const acSys = "你为虚构角色生成TA自己生活里的一个真实片段。只输出 JSON，不要解释，不要代码块。内容要具体、有细节，完全符合人设、世界设定和此刻的时间与心情，不要空泛，不要重复TA之前做过的事。";
+const acNum = (v, d) => isFinite(+v) ? +v : d;
+async function acAsk(c, q) {
+  const j = pxJson(await lkChat(c, [{ role: "user", content: pxCtx(c) + "\n" + q }], acSys));
+  return j;
+}
+function acPush(c, list, notifyTxt) {
+  const L = WX.msgs[c.id] || (WX.msgs[c.id] = []), t0 = Date.now();
+  list.forEach((o, i) => L.push(Object.assign({ me: 0, h: new Date(t0).toTimeString().slice(0, 5), ts: t0 + i }, o)));
+  c.chat = 1;
+  if (WX.cur != c.id || document.hidden) c.unread = (c.unread || 0) + 1;
+  try { wsave(); wxTouch(); if (WX.cur == c.id) { ml(); const e = $("#ml"); if (e) e.scrollTop = 1e9; } } catch (e) {}
+  try { notify("chat", nm(c), String(notifyTxt || list[0].t).slice(0, 40)); } catch (e) {}
+}
+const acMe = () => (WX.acc && (WX.acc.nick || WX.acc.name)) || "我";
+const ACGEN = {
+  async mu(c) {
+    const j = await acAsk(c, `\n${nm(c)} 此刻自己在听歌，整理了一份歌单想分享给「${acMe()}」。请用真实存在的歌曲（华语 / 外语都可以，符合人设和此刻的心情、时间），6 到 8 首。\n只输出 JSON：{"name":"歌单名","mood":"一句话说此刻的心情","songs":[{"t":"歌名","a":"歌手","why":"为什么放进来，一句话"}],"say":"TA 发给我的话，口语，1 到 2 句"}`);
+    const s = ((j && j.songs) || []).filter((x) => isObj(x) && x.t).slice(0, 10).map((x) => ({ t: String(x.t).slice(0, 30), a: String(x.a || "").slice(0, 20), why: String(x.why || "").slice(0, 40) }));
+    if (s.length < 3) return 0;
+    const mu = { name: String(j.name || "TA 的歌单").slice(0, 20), mood: String(j.mood || "").slice(0, 40), songs: s };
+    const out = []; if (j.say) out.push({ t: String(j.say).slice(0, 120) });
+    out.push({ t: "[歌单分享]《" + mu.name + "》" + s.map((x) => x.t + " - " + x.a).join("、"), mu });
+    acPush(c, out, j.say || "给你分享了一份歌单"); return 1;
+  },
+  async vd(c) {
+    const j = await acAsk(c, `\n${nm(c)} 此刻自己在刷视频网站，看到一个视频，边看边发了弹幕，想分享给「${acMe()}」。视频是虚构的，标题和内容要符合 TA 的兴趣；弹幕是 TA 本人发的（口语、玩梗、吐槽，贴合性格）。\n只输出 JSON：{"title":"视频标题","up":"UP主名","cat":"分区","len":"时长如 12:34","views":"播放量如 18.6万","dm":[{"at":"00:23","t":"弹幕内容"}（8 到 12 条）],"say":"TA 发给我的话，口语，1 到 2 句"}`);
+    if (!j || !j.title) return 0;
+    const dm = (j.dm || []).filter((x) => isObj(x) && x.t).slice(0, 14).map((x) => ({ at: String(x.at || "00:00").slice(0, 8), t: String(x.t).slice(0, 30) }));
+    if (dm.length < 3) return 0;
+    const vd = { title: String(j.title).slice(0, 40), up: String(j.up || "").slice(0, 16), cat: String(j.cat || "").slice(0, 6), len: String(j.len || "").slice(0, 8), views: String(j.views || "").slice(0, 10) + " 播放", dm };
+    const out = []; if (j.say) out.push({ t: String(j.say).slice(0, 120) });
+    out.push({ t: "[视频分享]《" + vd.title + "》UP主" + vd.up + "；TA 发的弹幕：" + dm.slice(0, 6).map((d) => d.t).join(" / "), vd });
+    acPush(c, out, j.say || "给你分享了一个视频"); return 1;
+  },
+  async sh(c) {
+    const j = await acAsk(c, `\n${nm(c)} 刚在网上买了东西，截了订单图发给「${acMe()}」看（可以是炫耀、吐槽、想要对方给意见，或者顺便给我也买了点什么）。商品、价格要真实合理，符合 TA 的财力和生活。\n只输出 JSON：{"shop":"店铺名","items":[{"n":"商品名","spec":"规格","p":单价数字,"q":数量}],"ship":运费数字,"disc":优惠金额数字,"status":"订单状态如 待发货/运输中/已签收","addr":"收货地址（模糊到小区）","say":"TA 发给我的话，口语，1 到 2 句"}`);
+    const it = ((j && j.items) || []).filter((x) => isObj(x) && x.n && acNum(x.p, 0) > 0).slice(0, 5).map((x) => ({ n: String(x.n).slice(0, 40), spec: String(x.spec || "").slice(0, 24), p: +x.p, q: Math.max(1, Math.min(99, Math.round(acNum(x.q, 1)))) }));
+    if (!it.length) return 0;
+    const od = { shop: String(j.shop || "旗舰店").slice(0, 20), items: it, ship: Math.max(0, acNum(j.ship, 0)), disc: Math.max(0, acNum(j.disc, 0)), status: String(j.status || "待发货").slice(0, 10), addr: String(j.addr || "").slice(0, 30), no: acRnd(16), time: new Date().toLocaleString("zh-CN", { hour12: false }) };
+    const tot = it.reduce((s, x) => s + x.p * x.q, 0) + od.ship - od.disc;
+    const out = []; if (j.say) out.push({ t: String(j.say).slice(0, 120) });
+    out.push({ t: "[订单截图] " + od.shop + "：" + it.map((x) => x.n + "×" + x.q).join("、") + "，实付 ¥" + tot.toFixed(2) + "，" + od.status, od });
+    acPush(c, out, j.say || "给你发了一张订单截图"); return 1;
+  },
+  async fd(c) {
+    const j = await acAsk(c, `\n${nm(c)} 刚点了外卖（按现在的时间、TA 的口味和生活状态来），把订单发给「${acMe()}」看。\n只输出 JSON：{"shop":"店名","items":[{"n":"菜品","p":单价数字,"q":数量}],"fee":配送费数字,"note":"给商家的备注，可空","say":"TA 发给我的话，口语，1 到 2 句"}`);
+    const it = ((j && j.items) || []).filter((x) => isObj(x) && x.n && acNum(x.p, 0) > 0).slice(0, 5).map((x) => ({ n: String(x.n).slice(0, 30), p: +x.p, q: Math.max(1, Math.min(20, Math.round(acNum(x.q, 1)))) }));
+    if (!it.length) return 0;
+    const riders = ["李师傅", "王师傅", "张师傅", "陈师傅", "刘师傅"];
+    const fd = { shop: String(j.shop || "小店").slice(0, 20), items: it, fee: Math.max(0, acNum(j.fee, 3)), note: String(j.note || "").slice(0, 30), ts: Date.now(), k: 0.8 + Math.random() * 0.5, rider: riders[Math.floor(Math.random() * 5)], no: acRnd(14), fin: 0 };
+    const out = []; if (j.say) out.push({ t: String(j.say).slice(0, 120) });
+    out.push({ t: "[外卖订单] " + fd.shop + "：" + it.map((x) => x.n + "×" + x.q).join("、") + "，预计约 " + Math.round(29 * fd.k) + " 分钟送达", fd });
+    acPush(c, out, j.say || "点了外卖，发你看看"); return 1;
+  },
+  async mm(c) {
+    const old = acC(c).memos.slice(-4).map((x) => "《" + x.title + "》").join("、");
+    const j = await acAsk(c, `\n${nm(c)} 此刻在自己手机的备忘录里随手写了一条（这是 TA 的私人备忘录，不会主动给「${acMe()}」看，可以有真实的小心思、待办、情绪、对我的碎碎念、秘密、灵感、购物清单等，像真人随手记，不要写成对我说话）。${old ? "TA 之前写过：" + old + "，这次要写别的。" : ""}\n只输出 JSON：{"title":"备忘录标题","body":"内容，80 到 300 字，可以分行"}`);
+    if (!j || !j.body) return 0;
+    const a = acC(c);
+    a.memos.push({ id: xkId(), title: String(j.title || "无标题").slice(0, 24), body: String(j.body).slice(0, 800), ts: Date.now(), seen: 0 });
+    a.memos = a.memos.slice(-60);
+    wsave(); return 1;
+  }
+};
+async function acRun(c, k, manual) {
+  if (!ACGEN[k]) return 0;
+  const a = acC(c);
+  if (a.busy) return 0;
+  if (!CFG.a.url && !(typeof lkApi == "function" && lkApi(c))) { if (manual) gtoast("请先在「设置」中配置接口"); return 0; }
+  a.busy = 1; let ok = 0;
+  try { ok = await ACGEN[k](c); } catch (e) {}
+  a.busy = 0;
+  a.nx[k] = Date.now() + (a.iv[k] || ACK[k].iv) * 3.6e6 * (0.7 + Math.random() * 0.6);
+  wsave();
+  return ok;
+}
+async function acTick() {
+  if (!ACG.on || (typeof qhOn == "function" && qhOn())) return;
+  const hr = new Date().getHours();
+  for (const c of WX.cons) {
+    if (c.fid || c.off == 1) continue;
+    const a = c.ac; if (!a || !a.on) continue;
+    for (const k in ACK) {
+      if (!a.on[k]) continue;
+      if (!a.nx[k]) { a.nx[k] = Date.now() + (a.iv[k] || ACK[k].iv) * 3.6e6 * Math.random(); continue; }
+      if (Date.now() < a.nx[k]) continue;
+      if (k != "mm" && hr < 7) continue;
+      await acRun(c, k);
+      return;
+    }
+  }
+  // 外卖送达后追一句
+  for (const c of WX.cons) for (const m of (WX.msgs[c.id] || [])) if (m.fd && !m.fd.fin && Date.now() - m.fd.ts > 30 * 6e4 * m.fd.k) { m.fd.fin = 1; wsave(); if (!c.fid) acPush(c, [{ t: ["外卖到了，我先去吃了～", "到啦到啦，开吃", "外卖终于送到了"][Math.floor(Math.random() * 3)] }], "外卖到了"); return; }
+}
+setInterval(acTick, 6e4); setTimeout(acTick, 15e3);
+// ---------- 角色生活 App ----------
+const LF = { id: null, v: "l", memo: null };
+function lfR() {
+  const e = $("#app");
+  if (LF.v == "m") return lfMemo();
+  const c = WX.cons.find((x) => x.id == LF.id);
+  if (!c) {
+    const L = WX.cons.filter((x) => !x.fid);
+    e.innerHTML = xkHead("角色生活", `<button class="wlex" data-lf="gs" aria-label="总开关">${ACG.on ? "已开启" : "已关闭"}</button>`) + `<div class="sc"><p class="stt" style="margin:4px 22px 8px">让角色自己过日子：听歌、看视频、购物、点外卖、写备忘录，并时不时分享给你。</p>` + (L.length ? L.map((x) => { const n = Object.keys(ACK).filter((k) => acC(x).on[k]).length; return `<div class="xkc" role="button" tabindex="0" data-lf="pick" data-id="${x.id}" style="cursor:pointer"><small>${n ? "已开启 " + n + " 项" : "未开启"}</small><b style="font-size:20px">${esc(nm(x))}</b></div>`; }).join("") : `<div class="xkc"><small>通讯录里还没有角色</small></div>`) + `</div>`;
+  } else {
+    const a = acC(c);
+    e.innerHTML = xkHead(esc(nm(c)) + " 的生活", `<button class="wlex" data-lf="back" aria-label="返回">${ic("back")}</button>`) + `<div class="sc">` + Object.keys(ACK).map((k) => `<div class="xkc"><div style="display:flex;align-items:center;gap:10px"><div style="flex:1"><b style="font-size:16px;font-weight:500">${ACK[k].n}</b><small style="display:block">约每 ${a.iv[k] || ACK[k].iv} 小时${a.nx[k] ? "，下次约 " + new Date(a.nx[k]).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" }) : ""}</small></div><button class="sw${a.on[k] ? " on" : ""}" role="switch" aria-checked="${!!a.on[k]}" data-lf="sw" data-k="${k}"><i></i></button></div><div class="xkb" style="margin:10px 0 0"><button data-lf="now" data-k="${k}">${a.busy ? "生成中…" : "现在就来一次"}</button><button data-lf="iv" data-k="${k}">间隔</button>${k == "mm" ? '<button data-lf="peek">偷看备忘录（' + a.memos.length + '）</button>' : ""}</div></div>`).join("") + `<p class="stt" style="margin:6px 22px">歌单、视频、订单、外卖进度会以卡片形式发到和 TA 的聊天里；备忘录是 TA 的私人内容，只有你「偷看」才能看到，也可能被发现。</p></div>`;
+  }
+  try { a11y(); } catch (x) {}
+}
+function lfMemo() {
+  const c = WX.cons.find((x) => x.id == LF.id), a = c && acC(c), e = $("#app");
+  if (!c) { LF.v = "l"; return lfR(); }
+  if (LF.memo) {
+    const m = a.memos.find((x) => x.id == LF.memo);
+    if (!m) { LF.memo = null; return lfMemo(); }
+    e.innerHTML = xkHead(esc(m.title), `<button class="wlex" data-lf="mback" aria-label="返回">${ic("back")}</button>`) + `<div class="sc"><div class="xkc"><small>${new Date(m.ts).toLocaleString("zh-CN", { hour12: false })}${m.seen ? " · 你偷看过" : ""}</small><div style="white-space:pre-wrap;line-height:1.8;margin-top:8px;font-size:15px">${esc(m.body)}</div></div><div class="xkb"><button data-lf="mdel">删除这条</button></div></div>`;
+  } else {
+    e.innerHTML = xkHead(esc(nm(c)) + " 的备忘录", `<button class="wlex" data-lf="mexit" aria-label="返回">${ic("back")}</button>`) + `<div class="sc"><div class="xkb"><button data-lf="now" data-k="mm">${a.busy ? "生成中…" : "让 TA 写一条"}</button></div>` + (a.memos.length ? [...a.memos].reverse().map((m) => `<div class="xkc" role="button" tabindex="0" data-lf="mopen" data-id="${m.id}" style="cursor:pointer"><small>🔒 ${new Date(m.ts).toLocaleDateString("zh-CN")}${m.seen ? " · 偷看过" : ""}</small><b style="font-size:16px;font-weight:500">${esc(m.title)}</b></div>`).join("") : `<div class="xkc"><small>TA 还没有写过备忘录</small></div>`) + `</div>`;
+  }
+  try { a11y(); } catch (x) {}
+}
+$("#app").addEventListener("click", (e) => {
+  if (cur != "life") return;
+  const t = e.target.closest("[data-lf]"); if (!t) return;
+  e.stopPropagation();
+  const a = t.dataset.lf, c = WX.cons.find((x) => x.id == LF.id);
+  if (a == "gs") { ACG.on = ACG.on ? 0 : 1; acSave(); lfR(); }
+  else if (a == "pick") { LF.id = WX.cons.find((x) => String(x.id) == t.dataset.id).id; LF.v = "l"; lfR(); }
+  else if (a == "back") { LF.id = null; lfR(); }
+  else if (!c) return;
+  else if (a == "sw") { const A = acC(c); A.on[t.dataset.k] = A.on[t.dataset.k] ? 0 : 1; if (A.on[t.dataset.k]) A.nx[t.dataset.k] = Date.now() + 6e4 * (1 + Math.random() * 3); wsave(); lfR(); if (A.on[t.dataset.k]) gtoast("已开启：TA 稍后会自己去做", 1800); }
+  else if (a == "now") { const k = t.dataset.k; gtoast("TA 正在做…", 1500); acRun(c, k, 1).then((ok) => { if (cur == "life") lfR(); gtoast(ok ? "完成了" + (k == "mm" ? "，TA 写了一条备忘录" : "，去聊天里看看") : "这次没有生成成功，请重试", 2200); }); }
+  else if (a == "iv") editSheet("大约多少小时一次？", String(acC(c).iv[t.dataset.k] || ACK[t.dataset.k].iv), (v) => { const n = Math.max(0.5, Math.min(168, parseFloat(v) || ACK[t.dataset.k].iv)); acC(c).iv[t.dataset.k] = n; delete acC(c).nx[t.dataset.k]; wsave(); lfR(); }, "0.5 到 168");
+  else if (a == "peek") confirmSheet("偷看 " + nm(c) + " 的备忘录？", "偷看", () => { LF.v = "m"; LF.memo = null; lfR(); });
+  else if (a == "mexit") { LF.v = "l"; lfR(); }
+  else if (a == "mback") { LF.memo = null; lfR(); }
+  else if (a == "mopen") {
+    const A = acC(c), m = A.memos.find((x) => x.id == t.dataset.id); if (!m) return;
+    LF.memo = m.id; const risk = A.risk == null ? 0.3 : A.risk, caught = Math.random() < risk; m.seen = 1; wsave(); lfR();
+    if (caught && c.auto !== 0) setTimeout(() => { try { wxReply(c.id, "（你察觉到我刚刚偷看了你手机备忘录里《" + m.title + "》那一条，内容是：" + m.body.slice(0, 120) + "。请按你的性格和我们的关系自然地反应：可以是害羞、生气、调侃或装作不在意，不要出戏，也不要太长。）"); } catch (x) {} }, 3500);
+  }
+  else if (a == "mdel") { const A = acC(c); A.memos = A.memos.filter((x) => x.id != LF.memo); LF.memo = null; wsave(); lfR(); }
+});
+const ACCSS = document.createElement("style");
+ACCSS.textContent = `.bb.acx{padding:0!important;background:none!important;box-shadow:none!important;border:0!important;max-width:100%}.bb.acx::before,.bb.acx::after{display:none!important}
+.acc{width:min(268px,72vw);border-radius:18px;background:var(--card);color:var(--ink);box-shadow:0 0 0 1px var(--line2),0 6px 18px rgba(0,0,0,.06);overflow:hidden;text-align:left;font-size:13px}.acc small{display:block;color:var(--t4);font-size:11.5px}.acc b{font-weight:500}
+.acth{display:flex;gap:10px;align-items:center;padding:12px 14px;background:linear-gradient(135deg,rgba(var(--wc),.9),var(--soft))}.acth i{width:34px;height:34px;border-radius:10px;background:var(--ink);color:var(--phone,#fff);display:grid;place-items:center;flex:none}.acth i .ico{width:18px;height:18px}.acth b{font-size:14.5px}
+.acsg{display:flex;gap:10px;align-items:center;padding:8px 14px;border-top:1px solid var(--line2);cursor:pointer}.acsg em{font-style:normal;width:16px;color:var(--t4);font-size:12px;text-align:center}.acsg div{flex:1;min-width:0}.acsg b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.acsg small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.acsg u{text-decoration:none;color:var(--t3)}.acsg u .ico{width:16px;height:16px}
+.acvc{position:relative;height:132px;background:linear-gradient(135deg,#46506b,#8a6f9c 60%,#d99a8a);overflow:hidden;color:#fff;padding:12px}.acvc b{position:absolute;left:12px;right:12px;bottom:26px;font-size:14px;line-height:1.35;text-shadow:0 1px 4px rgba(0,0,0,.35)}.acvt{position:absolute;left:10px;top:10px;font-size:10.5px;background:rgba(0,0,0,.35);padding:2px 7px;border-radius:9px}.acvc em{position:absolute;right:10px;bottom:8px;font-style:normal;font-size:11px;background:rgba(0,0,0,.4);padding:1px 6px;border-radius:8px}.acvc s{position:absolute;left:100%;white-space:nowrap;font-size:12px;text-decoration:none;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.6);animation:acdm 8s linear infinite}@keyframes acdm{to{transform:translateX(-340px);left:100%}}
+.acvm{padding:10px 14px 4px}.acvm b{display:block}.acdl{padding:4px 14px 12px}.acdl small{margin:4px 0}.acdl div{display:flex;gap:8px;padding:3px 0}.acdl time{color:var(--t4);font-size:11.5px;flex:none;font-variant-numeric:tabular-nums}.acdl span{flex:1;min-width:0}
+.acoh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:12px 14px 6px}.acoh b{font-size:15px;color:#d9622b}.acos{display:flex;gap:6px;align-items:center;padding:2px 14px 8px;color:var(--t3);font-size:12px}.acos .ico{width:14px;height:14px;flex:none}.acsh{padding:6px 14px;font-weight:500;border-top:1px solid var(--line2)}.acit{display:flex;gap:10px;align-items:center;padding:6px 14px}.acit i{width:42px;height:42px;border-radius:9px;background:linear-gradient(135deg,var(--soft),rgba(var(--wc),.9));flex:none}.acit div{flex:1;min-width:0}.acit b{display:block;line-height:1.35}.acit span{flex:none;text-align:right}.acit em{display:block;font-style:normal;color:var(--t4);font-size:11.5px}.acsm{display:flex;justify-content:space-between;padding:3px 14px;color:var(--t3)}.acsm.t{color:var(--ink);padding-top:6px}.acsm.t b{font-size:16px;color:#d9622b}.acno{padding:6px 14px 12px;color:var(--t4);font-size:11.5px}
+.acpg{display:flex;gap:4px;padding:0 14px 8px}.acpg i{flex:1;height:4px;border-radius:2px;background:var(--line)}.acpg i.on{background:#e8913a}
+.acc.acfl{width:min(240px,64vw)}.acfl{display:flex;gap:10px;align-items:center;padding:12px 14px;cursor:pointer}.acfl i{width:38px;height:38px;border-radius:10px;background:var(--soft);display:grid;place-items:center;flex:none}.acfl div{flex:1;min-width:0}.acfl b{display:block;overflow-wrap:anywhere}.aclk{color:#2b6fd6;text-decoration:underline;word-break:break-all;cursor:pointer}`;
+document.head.appendChild(ACCSS);
+xaAdd("life", "角色生活", "M12 3a6 6 0 0 1 6 6c0 4-3 5-3 8h-6c0-3-3-4-3-8a6 6 0 0 1 6-6zM9 20h6", { el: "#app", open: () => { LF.id = null; LF.v = "l"; LF.memo = null; lfR(); } }, "生活", "角色自己听歌、看视频、购物、点外卖、写备忘录并分享给你");
+setTimeout(fthEnsure, 600);
+{ const w0 = typeof wxOpen == "function" ? wxOpen : null; }
+setInterval(() => { try { fthEnsure(); } catch (e) {} }, 5000);
+
+//XEND
+</script>
+<script type="text/plain" class="mp">
+// ===== block 28: 恢复音乐 App 的网易云登录 / 同步歌单 =====
+function muNApi() {
+  editSheet("网易云接口地址（登录、同步歌单用）", MU.api, (v) => {
+    v = v.trim().replace(/\/+$/, "");
+    if (v && !/^https?:\/\/[^\s/]+/.test(v)) return gtoast("地址需要以 http:// 或 https:// 开头");
+    MU.api = v;
+    MU.rec = null;
+    MU.hot = null;
+    muSave();
+    gtoast(v ? "已保存接口地址" : "已清除接口地址");
+    if (cur == "music") muTab();
+    if (MU.md) muLogin(MU.lt);
+  }, "登录要用到你自己部署的网易云接口，搜歌播放不需要");
+}
+function muHome() {
+  const u = MU.user, L = MU.lists;
+  return `<div class="muc"><div class="muac"><div class="muah"><span class="muic">${ic("music")}</span><div><b>网易云音乐</b><i class="mubd${u ? " ok" : ""}">${u ? "已登录" : "未登录"}</i></div></div><p>${u ? esc(u.name) + " · 已连接" : "登录VIP账号，同步你的网易云歌单"}　·　搜歌音源：${esc(gdName())}</p><div class="mubt">${u ? `<button class="p" data-mu="imp">同步我的歌单</button>` : `<button class="p" data-mu="login">登录网易云</button><button data-mu="imp">导入我的歌单</button>`}<button data-mu="link">链接导入歌单</button><button data-mu="gd">音源 / 接口</button></div></div>
+ ${MU.recent.length ? `<h3>最近播放</h3><div class="muh">${MU.recent.slice(0, 12).map((t, i) => `<button data-mu="rec1" data-i="${i}">${t.pic ? `<span class="mucv big" style="background-image:url('${esc(muPic(t.pic, 300))}')"></span>` : `<span class="mucv big">${ic("music")}</span>`}<b>${esc(t.n)}</b><s>${esc(t.ar)}</s></button>`).join("")}</div>` : ""}
+ ${L.length ? `<h3>我的歌单</h3>${muGrid(L, "pl")}` : ""}${!L.length && !MU.recent.length ? '<p class="muem">还没有音乐<br>登录网易云、链接导入歌单，或到搜索里找歌</p>' : ""}</div>`;
+}
+function muAcct() {
+  const u = MU.user, it = [];
+  if (u) it.push({ t: "同步我的歌单", f: muImp });
+  else it.push({ t: "登录网易云", f: () => { if (!MU.api) { gtoast("登录需要先填网易云接口地址", 2200); return setTimeout(muNApi, 300); } muLogin(0); } });
+  it.push({ t: "音源与搜索接口（免费 GD 音乐台）", f: () => setTimeout(muApi, 260) }, { t: "网易云接口地址（登录用）", f: () => setTimeout(muNApi, 260) }, { t: "链接导入歌单", f: muLink });
+  if (u) it.push({ t: "退出登录", dg: 1, f: () => { MU.user = null; MU.cookie = ""; muSave(); muTab(); gtoast("已退出登录"); } });
+  actSheet(u ? u.name : "音乐", it, "搜歌音源：" + gdName() + (MU.api ? " · 网易云接口：" + MU.api : " · 登录需要网易云接口地址"));
+}
+document.addEventListener("click", (e) => {
+  const l = e.target.closest && e.target.closest("[data-mu=login]");
+  if (l && cur == "music" && !MU.api) { e.stopPropagation(); gtoast("登录需要先填网易云接口地址", 2200); return setTimeout(muNApi, 300); }
+  const b = e.target.closest && e.target.closest("[data-mu=gd]");
+  if (!b || cur != "music") return;
+  e.stopPropagation(); muApi();
+}, true);
 
 //XEND
 </script>
