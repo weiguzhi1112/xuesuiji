@@ -2391,7 +2391,7 @@ function ofPaint() {
 async function ofReply(id, hint) {
   const c = WX.cons.find((x) => x.id == id), L = ofL(id);
   if (!c || OF.busy[id]) return;
-  if (!CFG.a.url || !CFG.a.model) {
+  if ((!CFG.a.url || !CFG.a.model) && !capiOn(c)) {
     gtoast("请先在「设置」中配置接口与模型");
     return;
   }
@@ -2726,7 +2726,7 @@ function rChat(id) {
   }
   const u = wxUnread();
   $("#vk").innerHTML = `<div class="hd26"><button class="gz bk" data-a="home" aria-label="返回">${ic("back")}${u ? `<i class="bn">${u > 99 ? "99+" : u}</i>` : ""}</button><div class="cn" role="button" tabindex="0" data-a="cmore" aria-label="聊天设置">${av(c, 56)}<div class="np gz"><b>${esc(nm(c))}</b>${ic("chev")}</div></div><button class="gz rt" data-a="cmore" aria-label="聊天设置">${ic("more")}</button></div><div class="ms" id="ml"></div>
-<div class="ib" id="ib"><div class="pmn gz" id="pmn">${[["img", "发送图片", "photo"], ["vm", "发送语音条", "mic"], ["vc", "语音通话", "phone"], ["vv", "视频通话", "cam"], ["tf", "转账", "wallet"], ["hb", "红包", "wallet"], ["lc", "位置", "map"], ["stk", "表情包", "smile"], ["pat", "拍一拍", "spark"], ["of", "线下剧情", "book"], ["shot", "TA 截图聊天记录", "photo"], ["sys", "插入系统提示", "edit"], ["set", "聊天设置", "gear"]].map((x) => `<button data-a="pi" data-k="${x[0]}">${ic(x[2])}<span>${x[1]}</span></button>`).join("")}</div>${emoPanel()}<div class="qbar" id="qbar"></div><div class="ibr"><button class="gz pl" data-a="plus" aria-label="更多">${ic("plus")}</button><div class="tw gz"><textarea id="mi" rows="1" placeholder="iMessage" autocomplete="off"></textarea><button class="emb" data-a="emt" aria-label="表情">${ic("smile")}</button><button class="sd" data-a="send" aria-label="发送">${ic("up")}</button></div></div><input type="file" id="mf" accept="image/*" hidden></div>`;
+<div class="ib" id="ib"><div class="pmn gz" id="pmn">${[["img", "发送图片", "photo"], ["vm", "发送语音条", "mic"], ["vc", "语音通话", "phone"], ["vv", "视频通话", "cam"], ["tf", "转账", "wallet"], ["hb", "红包", "wallet"], ["lc", "位置", "map"], ["stk", "表情包", "smile"], ["pat", "拍一拍", "spark"], ["of", "线下剧情", "book"], ["shot", "TA 截图聊天记录", "photo"], ["sys", "插入系统提示", "edit"], ["set", "聊天设置", "gear"]].map((x) => `<button data-a="pi" data-k="${x[0]}">${ic(x[2])}<span>${x[1]}</span></button>`).join("")}</div>${emoPanel()}<div class="qbar" id="qbar"></div><div class="ibr"><button class="gz pl" data-a="plus" aria-label="更多">${ic("plus")}</button><div class="tw gz"><textarea id="mi" rows="1" placeholder="iMessage" autocomplete="off"></textarea><button class="emb" data-a="emt" aria-label="表情">${ic("smile")}</button><button class="sd" data-a="send" aria-label="发送">${ic("up")}</button></div></div><input type="file" id="mf" accept="image/*" multiple hidden></div>`;
   ml();
   view("k");
   {
@@ -2856,7 +2856,7 @@ ${H("基本")}<div class="ls">${rw("cprof", "查看资料与人设")}${sw("pin",
 ${H("回复方式")}<div class="ls">${sg("sty", "回复风格", "影响对方每次回复的长短", [["short", "简短"], ["norm", "自然"], ["long", "详细"]], "norm")}${sg("rp", "每次回复几条", "不固定时由 TA 按情境自己决定", [["", "自然"], ["one", "一条为主"], ["few", "一到三条"], ["many", "可以多条"]], "")}${cxh}</div>
 <div class="ls">${sg("pro", "主动联系", "页面开着时，对方会在你很久没说话后主动找你，并想起以前聊过的事", [[0, "关闭"], [2, "2 小时"], [5, "5 小时"], [12, "12 小时"]], 0)}${sg("pcall", "主动来电", "主动联系时，有一定几率直接打电话或视频过来（页面开着时）", [[0, "关闭"], [1, "语音"], [2, "视频"], [3, "都可以"]], 0)}</div>
 <div class="ls">${sg("xs", "心声", "长按任意消息可生成 TA 的内心独白；也可以让 TA 每次回复都自动附上", [["man", "手动"], ["tap", "自动·点开"], ["show", "自动·显示"], ["off", "关闭"]], "man")}${rw("cxsl", "心声记录")}</div>
-${H("声音与素材")}<div class="ls">${rw("cvoice", "TA 的声音" + (c.tts && (c.tts.vidc || c.tts.vid || c.tts.wv) ? "：" + esc(c.tts.vidc || c.tts.vid || c.tts.wv) : "（跟随全局）"))}${sw("novc", "不让 TA 发语音条", "开启后，TA 只用文字回复")}${rw("csnd2", "专属提示音" + (c.snd ? "（" + sndName(c.snd) + "）" : "（跟随全局）"))}${rw("cvp", "视频通话画面" + (c.vpic ? "（已设置）" : "（使用头像）"))}${rw("cvis", "TA 的识图设置")}</div>
+${H("声音与素材")}<div class="ls">${rw("cvoice", "TA 的声音" + (c.tts && (c.tts.vidc || c.tts.vid || c.tts.wv) ? "：" + esc(c.tts.vidc || c.tts.vid || c.tts.wv) : "（跟随全局）"))}${sw("novc", "不让 TA 发语音条", "开启后，TA 只用文字回复")}${rw("csnd2", "专属提示音" + (c.snd ? "（" + sndName(c.snd) + "）" : "（跟随全局）"))}${rw("cvp", "视频通话画面" + (c.vpic ? "（已设置）" : "（使用头像）"))}${rw("capi", "TA 的独立 API" + (typeof capiOn == "function" && capiOn(c) ? "：已设置" : "（跟随全局）"))}${rw("cvis", "TA 的识图设置")}</div>
 <div class="ls">${sw("noimg", "不让 TA 用我发的图片换头像/背景", "关闭时，TA 可以自己决定把我发的图片设成头像、聊天背景或通话画面")}${rw("crn", "TA 给我的备注（截图里显示）" + (c.rn ? "：" + esc(c.rn) : ""))}${rw("cbg", "聊天背景（聊天界面和截图都会用）" + (c.bg ? c.bg.u ? "：相册图片" : "：纯色" : "：默认"))}${rw("cshot", "让 TA 发来聊天截图")}${sw("nomom", "不让 TA 发朋友圈", "开启后，TA 不再发朋友圈，也不会回应我的动态")}</div>
 ${H("记忆与剧情")}<div class="ls">${sw("nomem", "不使用记忆库", "开启后，这位角色不会再回忆过往的经历")}${rw("cof", "进入线下剧情")}${rw("cos", "线下剧情设置")}</div>
 ${H("工具")}<div class="ls">${rw("cmcp2", "工具调用（MCP）" + (c.mcp === 0 ? "：已关闭" : ""))}${mxs ? `<p class="stt" style="margin:0 0 6px">${mxs}</p>` : ""}</div>
@@ -2910,6 +2910,7 @@ function csDo(a, el) {
   else if (a == "cshot") shotAsk();
   else if (a == "csearch") wxFind(id);
   else if (a == "cvis") visChar(c);
+  else if (a == "capi") capiSet(c);
   else if (a == "ccall") actSheet("对方来电", [{ t: "语音通话", f: () => callOpen(id, "in") }, { t: "视频通话", f: () => callOpen(id, "in", 1) }]);
   else if (a == "cvp") vpPick(c);
   else if (a == "cmcp2") mxChar(c);
@@ -3323,15 +3324,17 @@ $("#wx").addEventListener("change", async (e) => {
   var _a, _b;
   const t = e.target;
   if (t.id == "mf") {
-    const f2 = t.files[0];
+    const fl = [...t.files].slice(0, 12);
     t.value = "";
-    if (!f2 || WX.cur == null) return;
+    if (!fl.length || WX.cur == null) return;
     try {
-      const gif = /gif/i.test(f2.type) && f2.size <= 25e5, u = gif ? await fileData(f2) : await imgData(f2, visCfg().px, 0.82), vf = gif ? await gifFrame(u, visCfg().gif) : "";
-      const id = WX.cur, L = (_b = (_a = WX.msgs)[id]) != null ? _b : _a[id] = [];
-      L.push(Object.assign({ me: 1, img: u, h: hm() }, gif ? { gif: 1, vf } : {}));
+      const id = WX.cur, L = (_b = (_a = WX.msgs)[id]) != null ? _b : _a[id] = [], ig = fl.length > 1 ? newGid() : null, n0 = L.length;
+      for (const f2 of fl) {
+        const gif = /gif/i.test(f2.type) && f2.size <= 25e5, u = gif ? await fileData(f2) : await imgData(f2, visCfg().px, 0.82), vf = gif ? await gifFrame(u, visCfg().gif) : "";
+        L.push(Object.assign({ me: 1, img: u, h: hm(), ts: Date.now() }, gif ? { gif: 1, vf } : {}, ig ? { ig } : {}));
+      }
       if (!wsave()) {
-        L.pop();
+        L.length = n0;
         gtoast("空间不足，图片未发送");
         return;
       }
@@ -3955,7 +3958,7 @@ async function wxReply(id, hint) {
   var _a, _b;
   const c = WX.cons.find((x) => x.id == id), L = (_b = (_a = WX.msgs)[id]) != null ? _b : _a[id] = [];
   if (!c) return;
-  if (!CFG.a.url || !CFG.a.model) {
+  if ((!CFG.a.url || !CFG.a.model) && !capiOn(c)) {
     if (!WX.hint[id]) {
       WX.hint[id] = 1;
       L.push({ s: 1, t: "请先在「设置」中配置接口与模型" });
@@ -4453,7 +4456,7 @@ async function smsReply(k) {
   const paint = () => {
     if (SO.v == "t" && SO.k == k && $("#sm").classList.contains("open")) smPaint();
   };
-  if (!CFG.a.url || !CFG.a.model) {
+  if ((!CFG.a.url || !CFG.a.model) && !capiOn(c)) {
     if (!SO.h[k]) {
       SO.h[k] = 1;
       L.push({ s: 1, t: "请先在「设置」中配置接口与模型，对方才能回复" });
@@ -6491,7 +6494,7 @@ async function callCam(on) {
 async function callSay(first) {
   const c = WX.cons.find((x) => x.id == CALL.id);
   if (!c || !CALL.on) return;
-  if (!CFG.a.url || !CFG.a.model) {
+  if ((!CFG.a.url || !CFG.a.model) && !capiOn(c)) {
     if (first) {
       CALL.log.push({ me: 0, t: "（请先在「设置」中配置接口与模型，对方才能说话）" });
       callLog();
@@ -13163,7 +13166,7 @@ const xsClean = (t) => String(t || "").replace(/^\s*[\[【（(]?心声[\]】）)
 async function xsGen(i, hint, cid) {
   const id = cid != null ? cid : WX.cur, c = WX.cons.find((x) => x.id == id), L = WX.msgs[id] || [], m = L[i];
   if (!c || !m || m.xp) return;
-  if (!CFG.a.url || !CFG.a.model) return gtoast("请先在「设置」中配置接口与模型");
+  if ((!CFG.a.url || !CFG.a.model) && !capiOn(c)) return gtoast("请先在「设置」中配置接口与模型");
   m.xp = 1;
   if (WX.cur == id) ml();
   try {
@@ -22444,6 +22447,222 @@ document.addEventListener("click", (e) => {
   if (!b || cur != "music") return;
   e.stopPropagation(); muApi();
 }, true);
+
+//XEND
+</script>
+<script type="text/plain" class="mp">
+// ===== block 29: iMessage 式图片堆叠 + 离开聊天时的系统通知 =====
+// ---- 图片堆叠 ----
+function imGroups(L) {
+  const out = [];
+  let i = 0;
+  while (i < L.length) {
+    const m = L[i];
+    if (m && m.img && !m.shot && !m.s && !m.p && !m.q) {
+      let j = i;
+      while (j + 1 < L.length) {
+        const n = L[j + 1], p = L[j];
+        if (!(n && n.img && !n.shot && !n.s && !n.p && !n.q && !!n.me == !!m.me)) break;
+        const same = (m.ig && n.ig == m.ig) || (!m.ig && !n.ig && n.ts && p.ts && Math.abs(n.ts - p.ts) < 9e4);
+        if (!same) break;
+        j++;
+      }
+      if (j > i) out.push([i, j]);
+      i = j + 1;
+    } else i++;
+  }
+  return out;
+}
+function imPos(st) {
+  const n = +st.dataset.n, cur = +st.dataset.cur;
+  const set = (c, tr, o, z) => { c.style.transition = ""; c.style.transform = tr; c.style.opacity = o; c.style.zIndex = z; };
+  st.querySelectorAll(".imc").forEach((c) => {
+    const k = +c.dataset.k, rel = (k - cur + n) % n;
+    if (rel == 0) set(c, "translate(0,0) rotate(0) scale(1)", 1, 5);
+    else if (rel == 1) set(c, "translate(10px,-4px) rotate(4deg) scale(.95)", 1, 4);
+    else if (rel == 2) set(c, "translate(-8px,-6px) rotate(-5deg) scale(.9)", 1, 3);
+    else set(c, "translate(0,0) rotate(0) scale(.85)", 0, 1);
+  });
+  const t = st.querySelector(".imct"); if (t) t.textContent = cur + 1 + " / " + n;
+  const row = st.closest(".mr");
+  if (row && st._idx) row.dataset.i = st._idx[cur];
+}
+function imGo(st, d) {
+  const n = +st.dataset.n; st.dataset.cur = (+st.dataset.cur + d + n) % n; imPos(st);
+}
+function imBuild() {
+  const c = WX.cons.find((x) => x.id == WX.cur), L = WX.msgs[WX.cur] || [];
+  if (!c) return;
+  imGroups(L).forEach(([a, b]) => {
+    const row = document.querySelector(`#ml .mr[data-i="${a}"]`), bb = row && row.querySelector(".bb");
+    if (!row || !bb || row.dataset.imst) return;
+    row.dataset.imst = 1;
+    const idx = []; for (let k = a; k <= b; k++) idx.push(k);
+    bb.innerHTML = `<div class="imst" data-n="${idx.length}" data-cur="${idx.length - 1}">${idx.map((k, q) => `<div class="imc" data-k="${q}"><img src="${L[k].img}" alt="图片" draggable="false"></div>`).join("")}<span class="imct"></span></div>`;
+    bb.classList.add("acx", "imx");
+    const st = bb.querySelector(".imst"); st._idx = idx;
+    for (let k = a + 1; k <= b; k++) { const r2 = document.querySelector(`#ml .mr[data-i="${k}"]`); if (r2) r2.style.display = "none"; }
+    imPos(st);
+  });
+}
+{
+  const m0 = ml;
+  ml = function () { const r = m0.apply(this, arguments); try { imBuild(); } catch (e) {} return r; };
+}
+// 手势：拖动 / 点按
+{
+  let g = null;
+  document.addEventListener("pointerdown", (e) => {
+    const st = e.target.closest && e.target.closest(".imst"); if (!st) return;
+    g = { st, x: e.clientX, y: e.clientY, dx: 0, t: Date.now(), id: e.pointerId };
+    try { st.setPointerCapture(e.pointerId); } catch (x) {}
+  }, true);
+  document.addEventListener("pointermove", (e) => {
+    if (!g) return;
+    g.dx = e.clientX - g.x;
+    const top = g.st.querySelector(`.imc[data-k="${g.st.dataset.cur}"]`);
+    if (top && Math.abs(g.dx) > 6) { top.style.transition = "none"; top.style.transform = `translate(${g.dx}px,0) rotate(${g.dx / 14}deg)`; }
+  }, true);
+  const end = (e) => {
+    if (!g) return;
+    const { st, dx, t } = g; g = null;
+    if (Math.abs(dx) > 36) imGo(st, dx < 0 ? 1 : -1);
+    else if (Math.abs(dx) <= 6 && Date.now() - t < 400) imView(st);
+    else imPos(st);
+  };
+  document.addEventListener("pointerup", end, true);
+  document.addEventListener("pointercancel", () => { if (g) { const s = g.st; g = null; imPos(s); } }, true);
+}
+function imView(st) {
+  const L = WX.msgs[WX.cur] || [], idx = st._idx || [], n = idx.length;
+  let cur = +st.dataset.cur;
+  let o = document.getElementById("imv");
+  if (o) o.remove();
+  o = document.createElement("div"); o.id = "imv";
+  const paint = () => { o.innerHTML = `<img src="${L[idx[cur]].img}" alt=""><span>${cur + 1} / ${n}</span><button data-iv="p" aria-label="上一张">‹</button><button data-iv="n" aria-label="下一张">›</button><button data-iv="x" aria-label="关闭">×</button>`; };
+  paint();
+  let sx = 0;
+  o.addEventListener("pointerdown", (e) => { sx = e.clientX; });
+  o.addEventListener("pointerup", (e) => {
+    const b = e.target.closest("[data-iv]"), dx = e.clientX - sx;
+    if (Math.abs(dx) > 40) { cur = (cur + (dx < 0 ? 1 : -1) + n) % n; paint(); }
+    else if (b && b.dataset.iv == "p") { cur = (cur - 1 + n) % n; paint(); }
+    else if (b && b.dataset.iv == "n") { cur = (cur + 1) % n; paint(); }
+    else { st.dataset.cur = cur; imPos(st); o.remove(); }
+  });
+  phone.appendChild(o);
+}
+{
+  const s = document.createElement("style");
+  s.textContent = `.imst{position:relative;width:min(212px,56vw);height:min(236px,62vw);margin:8px 8px 14px 4px;touch-action:pan-y;user-select:none;-webkit-user-select:none;cursor:grab}.imc{position:absolute;inset:0;border-radius:20px;overflow:hidden;background:var(--soft);box-shadow:0 0 0 .5px rgba(0,0,0,.12),0 8px 20px rgba(0,0,0,.18);transition:transform .32s cubic-bezier(.2,.8,.2,1),opacity .25s}.imc img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}.imct{position:absolute;right:10px;bottom:-12px;z-index:9;font-size:11px;padding:2px 9px;border-radius:10px;background:rgba(0,0,0,.55);color:#fff;font-variant-numeric:tabular-nums}.mr.me .imst{margin:8px 4px 14px 8px}#imv{position:absolute;inset:0;z-index:300;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;touch-action:pan-y}#imv img{max-width:100%;max-height:82%;object-fit:contain;pointer-events:none}#imv span{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);color:#fff;font-size:13px;background:rgba(255,255,255,.18);padding:3px 12px;border-radius:12px}#imv button{position:absolute;border:0;background:rgba(255,255,255,.16);color:#fff;width:40px;height:40px;border-radius:50%;font-size:24px;line-height:1;cursor:pointer}#imv [data-iv=p]{left:10px;top:50%}#imv [data-iv=n]{right:10px;top:50%}#imv [data-iv=x]{right:14px;top:56px;font-size:22px}`;
+  document.head.appendChild(s);
+}
+// ---- 离开聊天 / 在桌面或其他 App 时走系统通知 ----
+const sysAway = (n) => !!n && (document.hidden || !document.hasFocus() || (n.k && cur != n.k));
+sysNote = function (n, force) {
+  if (!force && (CFG.sys === 0 || S.dnd || qhOn())) return;
+  if (!sysOK() || Notification.permission != "granted") return;
+  if (!force && !sysAway(n)) return;
+  sysShow(n).catch(() => {});
+};
+{
+  const nf1 = notify;
+  notify = function () {
+    const r = nf1.apply(this, arguments);
+    try {
+      const n = N[0];
+      if (n && !document.hidden && sysOK() && Notification.permission == "granted" && CFG.sys !== 0 && !S.dnd && !qhOn() && n.k && cur != n.k) { BQ.length = 0; clearTimeout(bt); bqBusy = 0; hideB(); }
+    } catch (e) {}
+    return r;
+  };
+}
+
+//XEND
+</script>
+<script type="text/plain" class="mp">
+// ===== block 30: 角色独立 API（主/备用）+ 浏览器返回键 + 启动/切回时重新适配全屏 =====
+// ---- 角色独立 API ----
+const CAPI = { id: null };
+const capiOK = (a) => !!(a && a.url && a.model);
+function capiOn(c) { const P = c && c.capi; return !!(P && (capiOK(P.a) || (P.fb && capiOK(P.b)))); }
+{
+  const chat0 = chat;
+  chat = async function (msgs, sys, onD, nb, tl) {
+    const c = CAPI.id != null ? WX.cons.find((x) => x.id == CAPI.id) : null, P = c && c.capi;
+    const chain = [];
+    if (P && capiOK(P.a)) chain.push(P.a);
+    if (P && P.fb && capiOK(P.b)) chain.push(P.b);
+    if (!chain.length) return chat0.apply(this, arguments);
+    let last;
+    for (const x of chain) { try { return await call(x, msgs, sys, onD, 0, nb, tl); } catch (e) { last = e; } }
+    if (P.gl !== 0 && CFG.a.url && CFG.a.model) { try { return await chat0.apply(this, arguments); } catch (e) { last = e; } }
+    throw last;
+  };
+  const wrap = (f0, idOf) => async function () {
+    let id = null; try { id = idOf.apply(this, arguments); } catch (e) {}
+    const p = CAPI.id; CAPI.id = id;
+    try { return await f0.apply(this, arguments); } finally { if (CAPI.id === id) CAPI.id = p; }
+  };
+  wxReply = wrap(wxReply, (id) => id);
+  ofReply = wrap(ofReply, (id) => id);
+  smsReply = wrap(smsReply, (k) => { const c = smsContact(k); return c && c.id; });
+  callSay = wrap(callSay, () => CALL.id);
+  xsGen = wrap(xsGen, (i, h, cid) => cid != null ? cid : WX.cur);
+  momAsk = wrap(momAsk, (c) => c && c.id);
+}
+function capiSet(c) {
+  const P = c.capi = c.capi || {};
+  const re = () => setTimeout(() => capiSet(c), 260), wsv = () => { try { wsave(); } catch (e) {} };
+  const edit = (k, t, sub) => setTimeout(() => apiEditor({
+    title: t, sub, A: P[k] || { type: CFG.a.type }, temp: true,
+    onSave: (A) => { if (A.url || A.model || A.key) P[k] = A; else delete P[k]; wsv(); re(); },
+    onReset: () => { delete P[k]; wsv(); re(); }, resetLabel: "清除这套设置"
+  }), 260);
+  const st = (a) => capiOK(a) ? a.model : a && (a.url || a.model) ? "未填完整" : "未设置";
+  actSheet("TA 的独立 API · " + nm(c), [
+    { t: "主 API：" + st(P.a), f: () => edit("a", "主 API（只用于 " + nm(c) + "）", "填全地址和模型后，和 TA 的聊天、通话、朋友圈等都用这套，可以换成不同的模型") },
+    { t: "备用 API：" + st(P.b), f: () => edit("b", "备用 API（只用于 " + nm(c) + "）", "主 API 出错时自动换这一套") },
+    { t: "启用备用 API：" + (P.fb ? "开" : "关"), f: () => { P.fb = P.fb ? 0 : 1; wsv(); re(); } },
+    { t: "都失败时用全局接口兜底：" + (P.gl === 0 ? "关" : "开"), f: () => { P.gl = P.gl === 0 ? 1 : 0; wsv(); re(); } },
+    { t: "全部清除（跟随全局）", f: () => { delete c.capi; wsv(); gtoast("已恢复跟随全局", 1400); try { rCS(c.id); } catch (e) {} } },
+  ], capiOn(c) ? "当前：" + (capiOK(P.a) ? "主 " + P.a.model : "") + (P.fb && capiOK(P.b) ? " / 备用 " + P.b.model : "") : "当前跟随全局接口。没有设置时不影响其他角色");
+}
+// ---- 浏览器 / 手机返回键 ----
+function bkStep() {
+  if (typeof locked != "undefined" && locked) return 0;
+  const imv = document.getElementById("imv"); if (imv) { imv.remove(); return 1; }
+  const sh = $("#sh"); if (sh && sh.classList.contains("on")) { shClose(); return 1; }
+  const cc_ = $("#cc"); if (cc_ && cc_.classList.contains("open")) { cc(0); return 1; }
+  if (editing) { setEdit(0); return 1; }
+  if (!cur) return 0;
+  const roots = [...phone.querySelectorAll("#wx,#sm,#cr,#st,#app,.open")].filter((e) => e.classList.contains("open") || e.id == "app");
+  const vis = (e) => e.offsetParent !== null || getComputedStyle(e).position == "fixed";
+  const bs = roots.flatMap((r) => [...r.querySelectorAll('[aria-label="返回"],[data-a=back],[data-a=home],[data-a=sback]')]).filter(vis);
+  const b = bs[bs.length - 1];
+  if (b) { b.click(); return 1; }
+  closeApp(); return 1;
+}
+try {
+  history.replaceState({ xs: 0 }, "");
+  history.pushState({ xs: 1 }, "");
+  addEventListener("popstate", () => { let r = 0; try { r = bkStep(); } catch (e) {} if (r) history.pushState({ xs: 1 }, ""); });
+  const oa = openApp;
+  openApp = function () { try { if (history.state && history.state.xs === 0) history.pushState({ xs: 1 }, ""); } catch (e) {} return oa.apply(this, arguments); };
+} catch (e) {}
+// ---- 启动 / 切回后多次重新适配，解决底部黑条 ----
+{
+  const burst = () => { try { KB.base = 0; } catch (e) {} [0, 80, 250, 600, 1200, 2500].forEach((t) => setTimeout(_rf, t)); };
+  addEventListener("pageshow", burst);
+  addEventListener("focus", burst);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) burst(); });
+  addEventListener("load", burst);
+  burst();
+  try {
+    let raf = 0;
+    const ro = new ResizeObserver(() => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => { try { _rf(); } catch (e) {} }); });
+    ro.observe(document.documentElement); ro.observe(document.body);
+  } catch (e) {}
+}
 
 //XEND
 </script>
