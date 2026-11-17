@@ -659,21 +659,23 @@ mark.p{background:rgba(255,204,0,.55)}mark.s{background:rgba(52,199,89,.45)}
 .mxb{font-size:12px;padding:3px 9px;border-radius:10px;background:var(--soft);color:var(--t3);flex:none}.mxb.bad{color:var(--c2)}.mxb.ok{color:var(--c3)}
 .mxfm{padding:2px 0 6px;overflow:auto;min-height:0;flex:1 1 auto;-webkit-overflow-scrolling:touch}#sh .b>.l{flex:none}.mxf{display:block;margin:10px 0}.mxf span{display:flex;justify-content:space-between;font-size:13px;color:var(--t3);margin-bottom:4px}.mxf em{font-style:normal;font-size:11px;color:var(--t4)}.mxf input,.mxf select,.mxf textarea{width:100%;box-sizing:border-box;padding:10px 12px;border:0;border-radius:12px;background:var(--soft);color:var(--ink);font:inherit;font-size:14px}
 .mxo{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--soft);font:12px/1.55 ui-monospace,Menlo,monospace;white-space:pre-wrap;word-break:break-all;max-height:200px;overflow:auto;color:var(--t2)}.mxo[hidden]{display:none}
-#boot{--bg:#fafafa;--fg:#161616;--mu:#8a8a8a;position:fixed;left:0;top:0;right:0;bottom:0;z-index:99999;background:var(--bg);color:var(--fg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;font:14px/1.6 -apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;transition:opacity .6s ease,visibility 0s}
-@media (prefers-color-scheme:dark){#boot:not([data-th="light"]){--bg:#111;--fg:#f2f2f2;--mu:#8a8a8a}}#boot[data-th="dark"]{--bg:#111;--fg:#f2f2f2;--mu:#8a8a8a}
-#boot:not([data-m]) .bw,#boot:not([data-m]) .bl{visibility:hidden}#boot[data-off]:not(.err){display:none}
+#boot{--bg:#f4f5f8;--fg:#14161c;--mu:#7d818c;position:fixed;left:0;top:0;right:0;bottom:0;z-index:99999;background:var(--bg);color:var(--fg);display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:24px 24px 13vh;overflow:hidden;text-align:center;font:14px/1.6 -apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;transition:opacity .6s ease,visibility 0s}
+@media (prefers-color-scheme:dark){#boot:not([data-th="light"]){--bg:#0d0f14;--fg:#eceef4;--mu:#8a8f9c}}#boot[data-th="dark"]{--bg:#0d0f14;--fg:#eceef4;--mu:#8a8f9c}
+#boot:not([data-m]) .bw,#boot:not([data-m]) .bl,#boot:not([data-m]) #boot_cv{visibility:hidden}#boot[data-off]:not(.err){display:none}
 #boot.out{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .6s ease,visibility 0s .6s}
-#boot .bw{display:flex;flex-direction:column;align-items:center;transform:translateY(-4vh)}#boot .bsv{width:min(56vw,216px);height:auto;overflow:visible;animation:bfl 5s ease-in-out infinite}
-#boot[data-m="crown"] .bcr path{stroke-width:.75}#boot[data-m="crown"] .bcr{transform:translate(80px,80px) scale(2.3) translate(-80px,-40px)}#boot[data-m="crown"] .bcat,#boot[data-m="cat"] .bcrown{display:none}
-#boot .bsv path,#boot .bsv circle{fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;animation:bdr 1.4s cubic-bezier(.55,0,.25,1) forwards;animation-delay:var(--d,0s)}
-#boot .bsv .dot{fill:currentColor;stroke:none;stroke-dasharray:none;stroke-dashoffset:0;opacity:0;animation:bfi .6s ease forwards;animation-delay:var(--d,1s)}
-#boot .bsv .tw{stroke-dasharray:none;stroke-dashoffset:0;animation:bfi .8s ease forwards,btw 3s ease-in-out infinite;animation-delay:var(--d,1s),calc(var(--d,1s) + .8s);opacity:0}
-#boot b{display:block;margin-top:34px;font-size:22px;font-weight:300;letter-spacing:12px;text-indent:12px;opacity:0;animation:bup .9s ease forwards .9s}
-#boot em{display:block;margin-top:10px;font-style:normal;font-size:10px;letter-spacing:5px;text-indent:5px;color:var(--mu);opacity:0;animation:bup .9s ease forwards 1.15s}
-#boot .bl{position:absolute;left:50%;bottom:11vh;width:44px;height:1px;margin-left:-22px;background:rgba(128,128,128,.25);overflow:hidden}#boot .bl:after{content:"";position:absolute;left:0;top:0;height:100%;width:16px;background:var(--fg);animation:bsl 1.6s ease-in-out infinite}
-#boot p{margin:18px 0 0;color:var(--mu);max-width:320px;word-break:break-all}#boot p:empty{display:none}#boot .bt{display:none;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:16px}#boot.err .bt{display:flex}#boot.err .bl{display:none}#boot button{border:0;border-radius:18px;height:36px;padding:0 18px;background:var(--fg);color:var(--bg);font:inherit;cursor:pointer}
-@keyframes bdr{to{stroke-dashoffset:0}}@keyframes bfi{to{opacity:1}}@keyframes btw{0%,100%{opacity:1}50%{opacity:.25}}@keyframes bup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}@keyframes bfl{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}@keyframes bsl{0%{transform:translateX(-16px)}100%{transform:translateX(44px)}}
-@media (prefers-reduced-motion:reduce){#boot *{animation-duration:.01s!important;animation-delay:0s!important}}
+#boot #boot_cv{position:absolute;left:0;top:0;width:100%;height:100%;display:block;pointer-events:none}
+#boot .bw{position:absolute;left:0;right:0;top:64%;display:flex;flex-direction:column;align-items:center}
+#boot b{display:block;font-size:22px;font-weight:300;letter-spacing:12px;text-indent:12px;opacity:0;animation:bup .9s ease forwards 1.5s}
+#boot em{display:block;margin-top:8px;font-style:normal;font-size:10px;letter-spacing:5px;text-indent:5px;color:var(--mu);opacity:0;animation:bup .9s ease forwards 1.8s}
+#boot .bl{position:absolute;left:50%;bottom:7vh;width:44px;height:1px;margin-left:-22px;background:rgba(128,128,128,.25);overflow:hidden}#boot .bl:after{content:"";position:absolute;left:0;top:0;height:100%;width:16px;background:var(--fg);animation:bsl 1.6s ease-in-out infinite}
+#boot p{position:relative;z-index:2;margin:18px 0 0;color:var(--mu);max-width:320px;word-break:break-all}#boot p:empty{display:none}#boot .bt{position:relative;z-index:2;display:none;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:16px}#boot.err .bt{display:flex}#boot.err .bl,#boot.err .bw{display:none}#boot button{border:0;border-radius:18px;height:36px;padding:0 18px;background:var(--fg);color:var(--bg);font:inherit;cursor:pointer}
+@keyframes bup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}@keyframes bsl{0%{transform:translateX(-16px)}100%{transform:translateX(44px)}}
+@media (prefers-reduced-motion:reduce){#boot b,#boot em{animation-duration:.01s!important;animation-delay:0s!important}}
+.sy:not(.tm){-webkit-backdrop-filter:none;backdrop-filter:none}
+.sy.xj{position:relative;background:none!important;box-shadow:none!important;padding:8px 12px 2px!important;font-size:11.5px;letter-spacing:.3px;color:var(--t4,#8a8a8a)!important;opacity:.9}
+.sy.xj::before{content:"";position:absolute;left:50%;top:1px;width:5px;height:5px;margin-left:-2.5px;background:currentColor;opacity:.65;transform:rotate(45deg);border-radius:1px}
+.sy.xj.xjc{margin-top:-6px!important}
+.sy.xj.xjc::after{content:"";position:absolute;left:50%;top:-6px;width:1px;height:8px;background:currentColor;opacity:.28}
 html,body{background:#141414}@media (prefers-color-scheme:light){html:not([data-theme="dark"]){background:#e8e8e8}}.gmw{display:flex;flex-direction:column;height:calc(100% - 78px);padding:0 14px 36px;box-sizing:border-box}.gmv{position:relative;flex:1 1 0;min-height:150px;border-radius:22px;overflow:hidden;background:var(--soft);touch-action:none;box-shadow:0 0 0 1px var(--line2)}
 .gmt{position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden}.gmti{position:absolute;left:0;top:0;width:256px;height:256px;max-width:none;user-select:none;-webkit-user-drag:none;pointer-events:none}.gmti.bad{opacity:0}
 :root[data-theme="dark"] .gmti{filter:invert(1) hue-rotate(180deg) brightness(.92) contrast(.9)}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .gmti{filter:invert(1) hue-rotate(180deg) brightness(.92) contrast(.9)}}
@@ -725,15 +727,109 @@ body.full{display:block}body.full #phone{position:absolute;left:50%;top:0;margin
 .cst{margin:26px 4px 8px;font-size:12px;font-weight:500;color:var(--t4);letter-spacing:.08em}
 </style></head>
 <body>
-<div id="boot"><div class="bw"><svg class="bsv" viewBox="0 0 160 160" aria-hidden="true">
-<g class="bcat"><path pathLength="1" style="--d:.1s" d="M42 80 L46 46 L68 62 Q80 58 92 62 L114 46 L118 80 C126 100 112 124 80 124 C48 124 34 100 42 80 Z"/>
-<path pathLength="1" style="--d:.8s" d="M60 93 q6 6 12 0"/><path pathLength="1" style="--d:.9s" d="M88 93 q6 6 12 0"/>
-<path pathLength="1" style="--d:1s" d="M77 101 h6 l-3 4 z"/><path pathLength="1" style="--d:1.05s" d="M80 105 v2 M80 107 q-4 4 -8 1 M80 107 q4 4 8 1"/>
-<path pathLength="1" style="--d:1.1s" d="M50 103 l-14 -3 M50 109 l-14 3 M110 103 l14 -3 M110 109 l14 3"/></g>
-<g class="bcrown"><g class="bcr"><path pathLength="1" style="--d:.5s" d="M62 52 L58 32 L70 42 L80 28 L90 42 L102 32 L98 52 Z"/><path pathLength="1" style="--d:.9s" d="M62 52 H98"/>
-<circle class="dot" style="--d:1.3s" cx="58" cy="30" r="1.8"/><circle class="dot" style="--d:1.4s" cx="80" cy="26" r="1.8"/><circle class="dot" style="--d:1.5s" cx="102" cy="30" r="1.8"/></g></g>
-<path class="tw" style="--d:1.3s" pathLength="1" d="M132 34 v10 M127 39 h10"/><path class="tw" style="--d:1.6s" pathLength="1" d="M26 118 v8 M22 122 h8"/><circle class="dot tw" style="--d:1.9s" cx="136" cy="112" r="1.4"/>
-</svg><b>雪穗机</b><em>XUESUI PHONE</em></div><i class="bl"></i><p id="boot_t"></p><div class="bt"><button id="boot_r">重新加载</button><button id="boot_s">仍然进入</button><button id="boot_c">清除本地数据并重试</button></div></div>
+<div id="boot"><canvas id="boot_cv" aria-hidden="true"></canvas><div class="bw"><b>雪穗机</b><em>XUESUI PHONE</em></div><i class="bl"></i><p id="boot_t"></p><div class="bt"><button id="boot_r">重新加载</button><button id="boot_s">仍然进入</button><button id="boot_c">清除本地数据并重试</button></div></div>
+<script>
+(function(){
+var b=document.getElementById('boot'),cv=document.getElementById('boot_cv'),bw=b&&b.querySelector('.bw');
+if(!b||!cv||!cv.getContext)return;
+var cx=cv.getContext('2d'),W=0,H=0,X=0,Y=0,R=0,fg='#111',bg='#fff',t0=0,raf=0,held=0,reduce=false,stars=[],parts=[];
+try{reduce=matchMedia('(prefers-reduced-motion:reduce)').matches}catch(e){}
+var MAN='角亢氐房心尾箕斗牛女虚危室壁奎娄胃昴毕觜参井鬼柳星张翼轸'.split('');
+var ZOD='♈♉♊♋♌♍♎♏♐♑♒♓'.split('').map(function(z){return z+'\uFE0E'});
+var CONS=[
+{n:'北斗',ax:.07,ay:.07,p:[[0,0],[.1,.04],[.19,.02],[.27,.07],[.3,.19],[.45,.23],[.47,.1]],l:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,3]]},
+{n:'仙后',ax:.58,ay:.06,p:[[0,.05],[.06,0],[.12,.06],[.18,.01],[.25,.07]],l:[[0,1],[1,2],[2,3],[3,4]]},
+{n:'猎户',ax:.68,ay:.74,p:[[0,0],[.14,.02],[.04,.12],[.07,.125],[.1,.13],[0,.24],[.15,.25]],l:[[0,2],[1,4],[2,3],[3,4],[2,5],[4,6]]}
+];
+function rnd(s){return function(){s=(s*16807)%2147483647;return(s-1)/2147483646}}
+function cl(v){return v<0?0:v>1?1:v}
+function ez(v){v=cl(v);return v<.5?2*v*v:1-Math.pow(-2*v+2,2)/2}
+function size(){
+ var D=Math.min(2,window.devicePixelRatio||1);W=window.innerWidth;H=window.innerHeight;
+ cv.width=Math.round(W*D);cv.height=Math.round(H*D);cx.setTransform(D,0,0,D,0,0);
+ X=W/2;Y=H*.4;R=Math.min(170,Math.min(W,H)*.2);
+ if(bw)bw.style.top=Math.round(Y+R*1.95)+'px';
+ var r=rnd(20260);stars=[];parts=[];
+ for(var i=0;i<110;i++)stars.push({x:r()*W,y:r()*H,r:.4+r()*1.1,o:.25+r()*.55,f:.8+r()*2.2,p:r()*6.3,d:r()*1.2});
+ for(var j=0;j<84;j++)parts.push({sx:r()*W,sy:r()*H,a:r()*6.283,rr:R*(1.02+r()*.34),sp:(r()-.5)*.28,d:r()*.7,f:1+r()*2,z:.7+r()*.9});
+}
+function moon(x,y,r,p){
+ var q=((p%1)+1)%1,wax=q<=.5,pp=wax?q:1-q,k=Math.cos(pp*2*Math.PI);
+ cx.save();cx.translate(x,y);
+ cx.fillStyle=fg;cx.beginPath();cx.arc(0,0,r,0,6.2832);cx.fill();
+ if(!wax)cx.scale(-1,1);
+ cx.fillStyle=bg;cx.beginPath();cx.arc(0,0,r,-Math.PI/2,Math.PI/2,false);
+ cx.ellipse(0,0,Math.max(.01,Math.abs(k)*r),r,0,Math.PI/2,-Math.PI/2,k>0);
+ cx.closePath();cx.fill();cx.restore();
+ cx.lineWidth=1;cx.strokeStyle=fg;cx.beginPath();cx.arc(x,y,r,0,6.2832);cx.stroke();
+}
+function draw(t){
+ var m=b.dataset.m||'both',mo=m!=='crown',co=m!=='cat',i,a,e,s;
+ cx.clearRect(0,0,W,H);cx.fillStyle=fg;cx.strokeStyle=fg;
+ for(i=0;i<stars.length;i++){s=stars[i];a=ez((t-s.d)/.9)*s.o*(.65+.35*Math.sin(t*s.f+s.p));cx.globalAlpha=a;cx.fillRect(s.x,s.y,s.r,s.r)}
+ var rot=t*.05;
+ // ring + mansions
+ e=ez((t-.15)/1.3);cx.lineWidth=1;cx.globalAlpha=.32;
+ cx.beginPath();cx.arc(X,Y,R*1.28,-Math.PI/2,-Math.PI/2+6.2832*e);cx.stroke();
+ cx.globalAlpha=.16;cx.setLineDash([2,5]);cx.beginPath();cx.arc(X,Y,R,0,6.2832*ez((t-.1)/1.2));cx.stroke();cx.setLineDash([]);
+ for(i=0;i<28;i++){
+  var an=i/28*6.2832-Math.PI/2+rot,pr=ez((t-.2-i*.03)/.5);if(pr<=0)continue;
+  var c=Math.cos(an),sn=Math.sin(an),l=(i%7===0?.1:.05)*R;
+  cx.globalAlpha=.45*pr;cx.beginPath();cx.moveTo(X+c*R*1.28,Y+sn*R*1.28);cx.lineTo(X+c*(R*1.28+l),Y+sn*(R*1.28+l));cx.stroke();
+  if(co){cx.save();cx.globalAlpha=.55*ez((t-.9-i*.025)/.5);cx.translate(X+c*R*1.5,Y+sn*R*1.5);cx.rotate(an+Math.PI/2);cx.font=Math.round(R*.1)+'px serif';cx.textAlign='center';cx.textBaseline='middle';cx.fillText(MAN[i],0,0);cx.restore()}
+ }
+ if(co){cx.font=Math.round(R*.12)+'px sans-serif';cx.textAlign='center';cx.textBaseline='middle';
+  for(i=0;i<12;i++){var za=i/12*6.2832-Math.PI/2-rot*.6;cx.globalAlpha=.42*ez((t-1.2-i*.05)/.5);cx.fillText(ZOD[i],X+Math.cos(za)*R*1.78,Y+Math.sin(za)*R*1.78)}}
+ // particles
+ for(i=0;i<parts.length;i++){
+  s=parts[i];var pe=ez((t-.1-s.d)/1.4),ang=s.a+t*s.sp,fx=X+Math.cos(ang)*(s.rr+Math.sin(t*s.f)*2.5),fy=Y+Math.sin(ang)*(s.rr+Math.sin(t*s.f)*2.5);
+  s.x=s.sx+(fx-s.sx)*pe;s.y=s.sy+(fy-s.sy)*pe;cx.globalAlpha=.6*Math.min(1,pe+.25);cx.beginPath();cx.arc(s.x,s.y,s.z,0,6.2832);cx.fill();
+ }
+ cx.lineWidth=.6;
+ for(i=0;i<parts.length;i++)for(var j=i+1;j<parts.length;j++){
+  var dx=parts[i].x-parts[j].x,dy=parts[i].y-parts[j].y,d2=dx*dx+dy*dy,lim=R*.3;
+  if(d2<lim*lim){cx.globalAlpha=.2*(1-Math.sqrt(d2)/lim)*ez((t-1)/.8);cx.beginPath();cx.moveTo(parts[i].x,parts[i].y);cx.lineTo(parts[j].x,parts[j].y);cx.stroke()}
+ }
+ // phase moons on track
+ if(mo){
+  for(i=0;i<8;i++){var pa=i/8*6.2832-Math.PI/2-rot*1.4,pe2=ez((t-.5-i*.12)/.6);if(pe2<=0)continue;
+   cx.globalAlpha=pe2;moon(X+Math.cos(pa)*R,Y+Math.sin(pa)*R,R*.13*(.6+.4*pe2),i/8)}
+  var pc=t<2.6?.02+.48*ez((t-.3)/2.3):.5+(t-2.6)*.18;cx.globalAlpha=ez((t-.2)/.7);moon(X,Y,R*.56,pc);
+ }
+ // constellations
+ if(co){
+  var sc=Math.min(W,H)*.55;
+  for(var ci=0;ci<CONS.length;ci++){
+   var C=CONS[ci],ox=C.ax*W,oy=C.ay*H,base=.7+ci*.35;
+   cx.lineWidth=.9;
+   for(i=0;i<C.l.length;i++){
+    var A=C.p[C.l[i][0]],B=C.p[C.l[i][1]],lp=ez((t-base-i*.14)/.35);if(lp<=0)continue;
+    var x1=ox+A[0]*sc,y1=oy+A[1]*sc,x2=ox+B[0]*sc,y2=oy+B[1]*sc;
+    cx.globalAlpha=.5;cx.beginPath();cx.moveTo(x1,y1);cx.lineTo(x1+(x2-x1)*lp,y1+(y2-y1)*lp);cx.stroke();
+   }
+   for(i=0;i<C.p.length;i++){
+    var pp=ez((t-base-i*.1)/.3);if(pp<=0)continue;
+    cx.globalAlpha=pp*(.7+.3*Math.sin(t*2+i+ci));cx.beginPath();cx.arc(ox+C.p[i][0]*sc,oy+C.p[i][1]*sc,1.6+(i%3===0?.8:0),0,6.2832);cx.fill();
+   }
+   cx.globalAlpha=.45*ez((t-base-.9)/.5);cx.font='10px sans-serif';cx.textAlign='left';cx.textBaseline='top';cx.fillText(C.n,ox,oy+C.p[C.p.length-1][1]*sc+14);
+  }
+ }
+ cx.globalAlpha=1;
+}
+function frame(now){
+ if(b.classList.contains('out')||b.style.display==='none'||b.hasAttribute('data-off')&&!b.classList.contains('err')){raf=0;return}
+ raf=requestAnimationFrame(frame);
+ if(!b.dataset.m){t0=now;return}
+ var cs=getComputedStyle(b);fg=cs.color||fg;bg=cs.backgroundColor||bg;
+ draw(reduce?9:(now-t0)/1000);
+}
+function start(){
+ cancelAnimationFrame(raf);size();t0=performance.now();raf=requestAnimationFrame(frame);
+}
+window.__bcv=start;window.addEventListener('resize',function(){if(raf)size()});
+start();
+})();
+</script>
 
 <div id="phone">
   <div id="wall"></div>
@@ -862,7 +958,7 @@ body.full{display:block}body.full #phone{position:absolute;left:50%;top:0;margin
       }, 800);
     };
     if (now || b.dataset.off || navigator.webdriver || b.classList.contains("err")) return run();
-    setTimeout(run, Math.max(0, 2300 - (performance.now() - t0)));
+    setTimeout(run, Math.max(0, 3300 - (performance.now() - t0)));
   };
   window.__bootPlay = () => {
     const b = B();
@@ -874,7 +970,8 @@ body.full{display:block}body.full #phone{position:absolute;left:50%;top:0;margin
     b.classList.remove("err", "out");
     b.removeAttribute("data-off");
     clearTimeout(window.__bpt);
-    window.__bpt = setTimeout(() => window.__bootHide(1), 2600);
+    window.__bpt = setTimeout(() => window.__bootHide(1), 3500);
+    try { window.__bcv && window.__bcv(); } catch (e) {}
   };
   window.__bshow = show;
   window.__errs = [];
@@ -2780,7 +2877,7 @@ function ml() {
         first = 0;
       }
       if (m.ts) prev = m.ts;
-      if (m.s) return tm + `<div class="sy" data-i="${i}" role="button" tabindex="0">${esc(m.t)}</div>`;
+      if (m.s) return tm + `<div class="sy${m.a ? " xj" + (!tm && L[i - 1] && L[i - 1].a ? " xjc" : "") : ""}" data-i="${i}" role="button" tabindex="0">${esc(m.t)}</div>`;
       if (m.pat) return tm + `<div class="sy pat" data-i="${i}">${esc(patTxt(m, c))}</div>`;
       if (m.p) return tm + `<div class="mr"><div class="mc"><div class="bb gf ge typ"><i></i><i></i><i></i></div></div></div>`;
       const g2 = grpCls(L, i), rx = m.rx ? `<i class="rx" aria-label="已回应">${rxh(m.rx)}</i>` : "";
@@ -2858,7 +2955,7 @@ ${H("回复方式")}<div class="ls">${sg("sty", "回复风格", "影响对方每
 <div class="ls">${sg("xs", "心声", "长按任意消息可生成 TA 的内心独白；也可以让 TA 每次回复都自动附上", [["man", "手动"], ["tap", "自动·点开"], ["show", "自动·显示"], ["off", "关闭"]], "man")}${rw("cxsl", "心声记录")}</div>
 ${H("声音与素材")}<div class="ls">${rw("cvoice", "TA 的声音" + (c.tts && (c.tts.vidc || c.tts.vid || c.tts.wv) ? "：" + esc(c.tts.vidc || c.tts.vid || c.tts.wv) : "（跟随全局）"))}${sw("novc", "不让 TA 发语音条", "开启后，TA 只用文字回复")}${rw("csnd2", "专属提示音" + (c.snd ? "（" + sndName(c.snd) + "）" : "（跟随全局）"))}${rw("cvp", "视频通话画面" + (c.vpic ? "（已设置）" : "（使用头像）"))}${rw("capi", "TA 的独立 API" + (typeof capiOn == "function" && capiOn(c) ? "：已设置" : "（跟随全局）"))}${rw("cvis", "TA 的识图设置")}</div>
 <div class="ls">${sw("noimg", "不让 TA 用我发的图片换头像/背景", "关闭时，TA 可以自己决定把我发的图片设成头像、聊天背景或通话画面")}${rw("crn", "TA 给我的备注（截图里显示）" + (c.rn ? "：" + esc(c.rn) : ""))}${rw("cbg", "聊天背景（聊天界面和截图都会用）" + (c.bg ? c.bg.u ? "：相册图片" : "：纯色" : "：默认"))}${rw("cshot", "让 TA 发来聊天截图")}${sw("nomom", "不让 TA 发朋友圈", "开启后，TA 不再发朋友圈，也不会回应我的动态")}</div>
-${H("记忆与剧情")}<div class="ls">${sw("nomem", "不使用记忆库", "开启后，这位角色不会再回忆过往的经历")}${rw("cof", "进入线下剧情")}${rw("cos", "线下剧情设置")}</div>
+${H("记忆与剧情")}<div class="ls">${sw("nomem", "不使用记忆库", "开启后，这位角色不会再回忆过往的经历")}${rw("csch", "TA 今天的日程" + xjSchTag(c))}${rw("cof", "进入线下剧情")}${rw("cos", "线下剧情设置")}</div>
 ${H("工具")}<div class="ls">${rw("cmcp2", "工具调用（MCP）" + (c.mcp === 0 ? "：已关闭" : ""))}${mxs ? `<p class="stt" style="margin:0 0 6px">${mxs}</p>` : ""}</div>
 ${H("提示词")}<div class="ls">${rw("csys", "专属提示词" + (c.sys && c.sys.trim() ? "（已设置）" : "（使用全局）"))}${rw("cprev", "预览提示词")}</div>
 ${H("聊天记录")}<div class="ls">${rw("csearch", "查找聊天记录")}${rw("ccall", "对方来电")}${rw("cins", "插入系统提示")}${rw("cclr", "清空聊天记录", 0, " dg")}</div>
@@ -2877,6 +2974,7 @@ function csDo(a, el) {
       c[k] = c[k] === 0 ? 1 : 0;
       wsave();
       const on = c[k] !== 0;
+      xjTog(id, k, on);
       el.classList.toggle("on", on);
       el.setAttribute("aria-checked", on ? "true" : "false");
       return;
@@ -2885,12 +2983,14 @@ function csDo(a, el) {
     wsave();
     el.classList.toggle("on", !!c[k]);
     el.setAttribute("aria-checked", c[k] ? "true" : "false");
+    xjTog(id, k, !!c[k]);
   } else if (a == "cseg") {
     const k = el.dataset.k, v = el.dataset.v;
     if (k == "rp" && v === "") delete c.rp;
     else c[k] = k == "ctx" ? +v : v;
     wsave();
     [...el.parentNode.children].forEach((b) => b.classList.toggle("on", b == el));
+    xjSeg(id, k, v, el);
     if (k == "ctx") {
       const i = document.querySelector("#vc [data-cx]");
       if (i) i.value = c.ctx;
@@ -2904,8 +3004,10 @@ function csDo(a, el) {
     if (v) c.rn = v;
     else delete c.rn;
     wsave();
+    xjSys(id, v ? "TA 对你的备注改为「" + v + "」" : "已清除 TA 对你的备注", "rn");
     rCS(id);
   }, "TA 手机里对你的备注，例如：笨蛋、小祖宗；留空则用你的微信昵称");
+  else if (a == "csch") xjSchMenu(id);
   else if (a == "cbg") bgPick(c);
   else if (a == "cshot") shotAsk();
   else if (a == "csearch") wxFind(id);
@@ -2921,6 +3023,7 @@ function csDo(a, el) {
   } else if (a == "csys") editSheet("专属提示词（留空使用全局）", c.sys || "", (v) => {
     c.sys = v.trim();
     wsave();
+    xjSys(id, c.sys ? "已为 TA 设置专属提示词" : "已恢复使用全局提示词", "csys");
     rCS(id);
     gtoast(c.sys ? "已保存" : "已清除，使用全局提示词");
   }, "留空则使用全局提示词");
@@ -2928,13 +3031,14 @@ function csDo(a, el) {
   else if (a == "cins") editSheet("插入系统提示", "", (v) => {
     v = v.trim();
     if (!v) return gtoast("内容不能为空");
-    L.push({ s: 1, t: v, h: hm() });
+    L.push({ s: 1, t: v, h: hm(), ts: Date.now() });
     wsave();
     gtoast("已插入，回到聊天查看");
   }, "例如：三天后");
   else if (a == "cclr") confirmSheet("清空聊天记录？", "清空", () => {
     WX.msgs[id] = [];
     c.unread = 0;
+    xjSys(id, "聊天记录已清空");
     wsave();
     gtoast("已清空聊天记录");
   }, "将删除与「" + nm(c) + "」的全部消息和系统提示，无法恢复。");
@@ -3008,6 +3112,7 @@ function msgPop(i, c) {
       if (!v) return gtoast("内容不能为空");
       m.t = v;
       if (m.v) m.v = vSecs(v);
+      xjIn(L, i + 1, "你编辑了一条消息");
       c.sv();
       c.paint();
     });
@@ -3030,6 +3135,7 @@ function msgPop(i, c) {
   } });
   else if (!m.me && c.regen) items.push({ k: "redo", t: "重新生成", i: "redo", f: () => {
     L.splice(grpOf(L, i)[0]);
+    xjIn(L, L.length, "已让对方重新生成回复");
     c.sv();
     c.paint();
     c.regen();
@@ -3044,6 +3150,7 @@ function msgPop(i, c) {
     items.push({ k: "tov", t: m.v ? "转成文字" : "转成语音条", i: "mic", f: () => {
       if (m.v) delete m.v;
       else m.v = vSecs(m.t);
+      xjIn(L, i + 1, m.v ? "已转成语音条" : "已转成文字");
       c.sv();
       c.paint();
     } });
@@ -3053,20 +3160,24 @@ function msgPop(i, c) {
   if (c.cn && m.img && !m.shot) items.push({ k: "stkadd", t: "添加到表情包", i: "smile", f: () => editSheet("表情名称", "", async (v) => {
     try {
       const u = await stkFromUrl(m.img);
-      if (stkAdd(u, v.trim() || "表情")) gtoast("已添加到表情包");
+      if (stkAdd(u, v.trim() || "表情")) {
+        gtoast("已添加到表情包");
+        xjSys(WX.cur, "已添加表情「" + (v.trim() || "表情") + "」");
+      }
     } catch (e) {
       gtoast("这张图片无法添加");
     }
   }, "给它起个名字，角色会按名字发") });
   items.push({ k: "multi", t: "多选", i: "chk", f: () => msStart(c, i) });
   if (i < L.length - 1) items.push({ k: "deln", t: "删除此条及以下", i: "trash", dg: 1, f: () => confirmSheet("删除这条及其后的 " + (L.length - i) + " 条消息？", "删除", () => {
-    L.splice(i);
+    { const _n = L.length - i; L.splice(i); xjIn(L, L.length, "已删除 " + _n + " 条消息"); }
     c.sv();
     c.paint();
     gtoast("已删除");
   }, "无法恢复") });
   items.push({ k: "del", t: "删除", i: "trash", dg: 1, f: () => {
     L.splice(i, 1);
+    xjIn(L, i, "你删除了一条消息");
     c.sv();
     c.paint();
   } });
@@ -3360,7 +3471,7 @@ $("#wx").addEventListener("change", async (e) => {
   v.textContent = "";
   l.querySelector("span").textContent = "更换头像";
 });
-const PREF_KEYS = ["air", "sysm", "ann", "kawl", "todo", "trw", "cst", "pst", "pstd", "hdr", "ccss", "pam", "wzs", "uim", "pcap", "nolock", "lkbg", "lkc", "lkts", "lkdim", "nln", "fold", "lb", "rs", "ico", "icn", "ist", "isz", "wz", "wzd", "shell", "sbar", "isl", "hbar", "tb", "momAuto", "amapKey", "ka", "persona", "rx", "ui", "rad", "hap", "pace", "snd", "theme", "af", "bc", "gl", "sp", "sm", "sn", "sv", "sti", "sys", "qh", "dy", "kg", "kbf"];
+const PREF_KEYS = ["air", "sysm", "ann", "kawl", "todo", "trw", "cst", "pst", "pstd", "hdr", "ccss", "pam", "wzs", "uim", "pcap", "nolock", "lkbg", "lkc", "lkts", "lkdim", "nln", "fold", "lb", "rs", "ico", "icn", "ist", "isz", "wz", "wzd", "shell", "sbar", "isl", "hbar", "tb", "momAuto", "amapKey", "ka", "persona", "rx", "ui", "rad", "hap", "pace", "snd", "theme", "af", "bc", "gl", "sp", "sm", "xjs", "sn", "sv", "sti", "sys", "qh", "dy", "kg", "kbf"];
 const nx = () => ({ type: "openai", url: "", key: "", model: "" });
 const apiDef = () => ({ a: nx(), b: nx(), presets: [], pi: -1, stream: "auto", temp: 0.8, reason: "off", bare: 0, fb: 1, black: [], tok: 0, vis: { on: 1, detail: "high", n: 3, re: "high", desc: 1, px: 1280 }, tts: {}, net: { direct: 1, proxy: "" }, ml: { a: { sig: "", list: [] }, b: { sig: "", list: [] } } });
 const prefDef = () => ({ air: 1, sysm: 0, ann: { items: [], log: {}, opt: {} }, kawl: 0, todo: [], trw: [], cst: {}, pst: [], pstd: 0, hdr: 0, ccss: "", pam: {}, tb: {}, momAuto: 0, amapKey: "", ka: 0, wzs: {}, uim: 0, pcap: 0, nolock: 0, lkbg: "", lkc: "", lkts: 0, lkdim: 12, nln: 0, fold: {}, lb: {}, rs: {}, ico: {}, icn: {}, ist: "", isz: 0, wz: { l: "one", a: "date", b: "clock" }, wzd: {}, shell: 1, sbar: 1, isl: 1, hbar: 1, persona: "", rx: [{ id: 1, name: "隐藏思考内容", find: "<think>[\\s\\S]*?</think>", flags: "gi", rep: "", scope: "ai", where: "both", on: 1 }], ui: 100, dy: 0, kg: 8, kbf: 1, rad: 19, hap: 1, pace: 1, snd: 1, theme: "auto", af: {}, bc: {}, gl: 0, sp: 1, sm: "both", sn: {}, sv: 70, sti: 0, sys: 0, qh: { on: 0, s: 23, e: 7 } });
@@ -3953,7 +4064,7 @@ const smsHist = (k, c) => {
 };
 const nowStr = () => (/* @__PURE__ */ new Date()).toLocaleString("zh-CN", { hour12: false, weekday: "long", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" });
 const wxSys0 = (c) => `你是「${c.name}」，正在和对方用微信聊天。人设：${c.persona || "普通朋友"}。现在是${nowStr()}，请按这个时间点该有的状态说话（比如深夜会困、饭点会提吃的）。
-` + humanOf(c) + RXRULE + timeBlock(WX.msgs[c.id]) + (c.novc ? "" : "\n- 偶尔（不要频繁，大多数时候还是打字）可以发语音：把那一条单独写一行，以「[语音]」开头，后面是你说的话，口语化。") + TFRULE + (typeof gmRule == "function" ? gmRule(c) : "") + (typeof calRule == "function" ? calRule(c) : "") + (typeof shotRule == "function" && c.off != 1 ? shotRule(c) : "") + (typeof xsRule == "function" && c.off != 1 ? xsRule(c) : "") + (typeof imgRule == "function" && c.off != 1 ? imgRule(c) : "") + (typeof momRule == "function" && c.off != 1 ? momRule(c) : "") + (typeof stkRule == "function" && c.off != 1 ? stkRule(c) : "") + (typeof pcRule == "function" && c.off != 1 ? pcRule(c) : "") + ({ one: "\n回复尽量集中在一条消息里，除非确实有不同的话要分开说。", few: "\n一般发一到三条，按内容需要决定，不要凑数。", many: "\n想到什么说什么，可以连着发较多条短消息，但不要为了凑数拆句。" }[c.rp] || "") + ({ short: "\n这次尽量简短，每条不超过 20 个字。", long: "\n这次可以多说一些，想说多少说多少，但仍然是口语，不要写成长篇文章。" }[c.sty] || "") + mcpRule(c);
+` + humanOf(c) + RXRULE + timeBlock(WX.msgs[c.id]) + xjSchRule(c) + (c.novc ? "" : "\n- 偶尔（不要频繁，大多数时候还是打字）可以发语音：把那一条单独写一行，以「[语音]」开头，后面是你说的话，口语化。") + TFRULE + (typeof gmRule == "function" ? gmRule(c) : "") + (typeof calRule == "function" ? calRule(c) : "") + (typeof shotRule == "function" && c.off != 1 ? shotRule(c) : "") + (typeof xsRule == "function" && c.off != 1 ? xsRule(c) : "") + (typeof imgRule == "function" && c.off != 1 ? imgRule(c) : "") + (typeof momRule == "function" && c.off != 1 ? momRule(c) : "") + (typeof stkRule == "function" && c.off != 1 ? stkRule(c) : "") + (typeof pcRule == "function" && c.off != 1 ? pcRule(c) : "") + ({ one: "\n回复尽量集中在一条消息里，除非确实有不同的话要分开说。", few: "\n一般发一到三条，按内容需要决定，不要凑数。", many: "\n想到什么说什么，可以连着发较多条短消息，但不要为了凑数拆句。" }[c.rp] || "") + ({ short: "\n这次尽量简短，每条不超过 20 个字。", long: "\n这次可以多说一些，想说多少说多少，但仍然是口语，不要写成长篇文章。" }[c.sty] || "") + mcpRule(c);
 async function wxReply(id, hint) {
   var _a, _b;
   const c = WX.cons.find((x) => x.id == id), L = (_b = (_a = WX.msgs)[id]) != null ? _b : _a[id] = [];
@@ -3978,7 +4089,7 @@ async function wxReply(id, hint) {
   }
   const hist = wxHist(c);
   if (hint !== void 0) {
-    const dir = { role: "user", content: hint == "__pro" ? "（你们已经有一段时间没有聊天了。请你主动给我发一条或几条消息（几条看你当下的心情，不必固定）：可以自然地想起你们之前聊过的某件事、分享你此刻的状态，或者随口问候一句。要符合你的性格和现在的时间，像真人一样，不要提到“系统”“提示”或“主动”。）" : "（推进剧情" + (hint ? "：" + hint : "") + "——请接着上文继续写，让场景自然往下走一段，不需要等待对方回应。）" }, l = hist[hist.length - 1];
+    const dir = { role: "user", content: typeof hint == "string" && hint.indexOf("__sch:") == 0 ? xjSchDir(hint) : hint == "__pro" ? "（你们已经有一段时间没有聊天了。请你主动给我发一条或几条消息（几条看你当下的心情，不必固定）：可以自然地想起你们之前聊过的某件事、分享你此刻的状态，或者随口问候一句。要符合你的性格和现在的时间，像真人一样，不要提到“系统”“提示”或“主动”。）" : "（推进剧情" + (hint ? "：" + hint : "") + "——请接着上文继续写，让场景自然往下走一段，不需要等待对方回应。）" }, l = hist[hist.length - 1];
     if (l && l.role == "user") l.content += "\n" + dir.content;
     else hist.push(dir);
   }
@@ -4332,7 +4443,7 @@ const smBody = (L) => {
     let tm = "";
     if (m.ts && (!prev || m.ts - prev > 3e5)) tm = `<div class="sy tm">${tmLabel(m.ts)}</div>`;
     if (m.ts) prev = m.ts;
-    if (m.s) return tm + `<div class="sy" data-i="${i}" role="button" tabindex="0">${esc(m.t)}</div>`;
+    if (m.s) return tm + `<div class="sy${m.a ? " xj" + (!tm && L[i - 1] && L[i - 1].a ? " xjc" : "") : ""}" data-i="${i}" role="button" tabindex="0">${esc(m.t)}</div>`;
     if (m.p) return tm + `<div class="mr"><div class="mc"><div class="bb gf ge typ"><i></i><i></i><i></i></div></div></div>`;
     const g = grpCls(L, i), rx = m.rx ? `<i class="rx" aria-label="已回应">${rxh(m.rx)}</i>` : "";
     return tm + `<div class="mr${m.me ? " me" : ""}${g}${m.q ? " hq" : ""}" data-i="${i}"><div class="mc">${m.q ? qpHtml(m.q) : ""}<div class="bb${g}${m.old ? " old" : ""}">${esc(rxRun(m.t, m.me ? "user" : "ai", "show"))}${m.old ? "<br><small>验证码已失效</small>" : ""}${rx}</div>${m.me && i == li ? `<div class="dl">${late ? "已读" : "已送达"}</div>` : ""}</div></div>`;
@@ -7559,8 +7670,8 @@ function thR(keep) {
  ${typeof diyCard == "function" ? diyCard() : ""}${typeof icoCard == "function" ? icoCard() : ""}
  ${typeof lbCard == "function" ? lbCard() : ""}
  ${sndCard()}
- <div class="xkc"><small>启动界面</small>${thSw("sp", CFG.sp !== 0, "开机动画", "每次打开雪穗机时显示，轻点可跳过")}
- <div class="seg" style="margin:10px 0 0">${[["both", "猫与皇冠"], ["cat", "小猫"], ["crown", "皇冠"]].map(([v, l]) => `<button data-xa="sm" data-v="${v}" class="${(CFG.sm || "both") == v ? "on" : ""}">${l}</button>`).join("")}</div><div class="xkb" style="margin-top:12px"><button data-xa="spv">预览</button></div></div></div>`;
+ <div class="xkc"><small>启动界面</small>${thSw("sp", CFG.sp !== 0, "开机动画", "月相、星座与二十八宿，每次打开时显示")}${thSw("xjs", CFG.xjs !== 0, "星轨提示", "在聊天里为你执行的操作留下系统提示，像星座一样串起每一步")}
+ <div class="seg" style="margin:10px 0 0">${[["both", "月相星图"], ["cat", "仅月相"], ["crown", "仅星宿"]].map(([v, l]) => `<button data-xa="sm" data-v="${v}" class="${(CFG.sm || "both") == v ? "on" : ""}">${l}</button>`).join("")}</div><div class="xkb" style="margin-top:12px"><button data-xa="spv">预览</button></div></div></div>`;
   a11y();
   if (keep) {
     const s = $("#app .sc");
@@ -7840,6 +7951,10 @@ function xaDo(a, d) {
     }, "已指定使用这个字体的应用会恢复为默认。");
   } else if (a == "sp") {
     CFG.sp = CFG.sp === 0 ? 1 : 0;
+    savePrefs();
+    thR(1);
+  } else if (a == "xjs") {
+    CFG.xjs = CFG.xjs === 0 ? 1 : 0;
     savePrefs();
     thR(1);
   } else if (a == "sm") {
@@ -15037,7 +15152,10 @@ function wxFavAdd(c, i) {
   } else if (m.img && !m.shot) o.img = m.img;
   F.unshift(o);
   if (F.length > 300) F.length = 300;
-  if (wsave()) gtoast("已收藏");
+  if (wsave()) {
+    gtoast("已收藏");
+    xjSys(c.id, "已收藏一条" + (m.stk ? "表情" : m.img ? "图片" : "消息"));
+  }
   else {
     F.shift();
     gtoast("空间不足，收藏失败");
@@ -15463,8 +15581,8 @@ function maskTxt(c) {
   return p.length ? "\n\n【对方的身份（面具）】对方现在以下面这个身份与你相处，请按这个身份称呼和对待TA，把它当作你本来就知道的事，不要说破这是设定：" + p.join("；") + "。" : "";
 }
 const wxSys = (c) => wxSys0(c) + maskTxt(c) + "\n\n【引用】偶尔（不是每条）想针对我之前说过的某一句话单独回应时，可以在那一行最前面写「[引用:我那句话里的几个字] 你的回复」，聊天里会显示成你引用了我那句话。只在确实需要指明回应哪句话时用，大多数消息正常发就好。不要自己写「（回复「…」）」这种格式。" + (typeof acctTxt == "function" ? acctTxt(c) : "");
-const smsSys = (c) => smsSys0(c) + maskTxt(c);
-const callSys = (c, ...r) => callSys0(c, ...r) + maskTxt(c);
+const smsSys = (c) => smsSys0(c) + xjSchRule(c) + maskTxt(c);
+const callSys = (c, ...r) => callSys0(c, ...r) + xjSchRule(c) + maskTxt(c);
 const offSys = (c, ...r) => offSys0(c, ...r) + maskTxt(c);
 const MK = { id: null };
 function rMasks() {
@@ -22577,6 +22695,212 @@ sysNote = function (n, force) {
   };
 }
 
+//XEND
+</script>
+<script type="text/plain" class="mp">
+/* 星轨：操作 → 聊天系统提示，把每一步串起来 */
+const XJ_TOG = { pin: ["置顶聊天", "已置顶聊天", "已取消置顶"], mute: ["消息免打扰", "已开启消息免打扰", "已关闭消息免打扰"], auto: ["自动回复", "自动回复已开启", "自动回复已关闭"], recall: ["允许撤回", "已允许撤回消息", "已关闭撤回功能"], novc: ["不让 TA 发语音条"], noimg: ["不让 TA 用我的图片换头像/背景"], nomom: ["不让 TA 发朋友圈"], nomem: ["不使用记忆库"] };
+function xjOn() {
+  return typeof CFG === "undefined" || CFG.xjs !== 0;
+}
+function xjMk(text, k) {
+  const o = { s: 1, a: 1, t: String(text), h: hm(), ts: Date.now() };
+  if (k) o.xk = k;
+  return o;
+}
+function xjSys(id, text, k) {
+  try {
+    if (!xjOn() || id == null || !text) return;
+    const L = WX.msgs[id] || (WX.msgs[id] = []), last = L[L.length - 1];
+    if (k && last && last.a && last.xk === k && Date.now() - (last.ts || 0) < (k === "sch" ? 3e5 : 15e3)) {
+      last.t = String(text);
+      last.h = hm();
+      last.ts = Date.now();
+    } else if (last && last.a && last.t === text && Date.now() - (last.ts || 0) < 2e3) return;
+    else L.push(xjMk(text, k));
+    wsave();
+    if (WX.cur == id && document.getElementById("ml")) ml();
+  } catch (e) {
+  }
+}
+function xjIn(L, idx, text) {
+  try {
+    if (!xjOn() || !Array.isArray(L) || !text) return;
+    L.splice(Math.max(0, Math.min(idx, L.length)), 0, xjMk(text));
+  } catch (e) {
+  }
+}
+function xjTog(id, k, on) {
+  const d = XJ_TOG[k] || [k];
+  xjSys(id, d[1] ? on ? d[1] : d[2] : "你" + (on ? "开启" : "关闭") + "了「" + d[0] + "」", "tog" + k);
+}
+function xjSeg(id, k, v, el) {
+  try {
+    const g = el && el.parentNode && el.parentNode.getAttribute("aria-label") || k;
+    xjSys(id, "「" + g + "」已设为「" + (el && el.textContent || v) + "」", "seg" + k);
+  } catch (e) {
+  }
+}
+
+/* 角色日程：每个角色每天一份，聊天时按它说话 */
+const xjDay = () => ymd(new Date());
+const xjSchBusy = {};
+function xjSchOf(c) {
+  const s = c && c.sch;
+  return s && s.d === xjDay() && Array.isArray(s.items) && s.items.length ? s : null;
+}
+function xjSchText(c) {
+  const s = xjSchOf(c);
+  return s ? s.items.map((x) => x.t + " " + x.x).join("\n") : "";
+}
+function xjSchParse(txt) {
+  const out = [];
+  String(txt || "").split(/\n+/).forEach((l) => {
+    const m = l.trim().match(/^[\-\*\d.、)\s]*?(\d{1,2})[:：](\d{2})\s*(?:[-—~～到至]+\s*\d{1,2}[:：]\d{2})?\s*[，,:：\-—]?\s*(.+)$/);
+    if (!m) return;
+    const h = +m[1], mi = +m[2], x = m[3].replace(/[「」"]/g, "").trim().slice(0, 30);
+    if (h > 23 || mi > 59 || !x) return;
+    out.push({ t: String(h).padStart(2, "0") + ":" + String(mi).padStart(2, "0"), x });
+  });
+  return out.sort((a, b) => a.t.localeCompare(b.t)).slice(0, 10);
+}
+function xjSchCur(items) {
+  const n = /* @__PURE__ */ new Date(), now = f2(n.getHours()) + ":" + f2(n.getMinutes());
+  let cur = -1;
+  items.forEach((x, i) => {
+    if (x.t <= now) cur = i;
+  });
+  return cur;
+}
+function xjSchSet(c, items, src) {
+  const o = c.sch || {};
+  c.sch = { d: xjDay(), items, ts: Date.now(), src: src || "ai", auto: o.auto, say: o.say, gts: o.gts, ann: xjSchCur(items), anC: 0 };
+}
+async function xjSchGen(id, hint, quiet) {
+  const c = WX.cons.find((x) => x.id == id);
+  if (!c || xjSchBusy[id]) return;
+  xjSchBusy[id] = 1;
+  if (!quiet) gtoast("正在更新 TA 今天的日程…", 2200);
+  xjSys(id, "正在更新 TA 今天的日程…", "sch");
+  try {
+    const wd = "日一二三四五六"[(/* @__PURE__ */ new Date()).getDay()], mine = (typeof CL !== "undefined" && CL.ev || []).filter((x) => x.d == xjDay()).sort((a, b) => (a.t || "").localeCompare(b.t || "")).slice(0, 6);
+    const dir = "（请不要聊天，只输出你今天（星期" + wd + "）从早到晚的日程，5 到 8 行，每行格式「HH:MM 事情」，按时间顺序。要符合你的人设、身份和今天是星期几；已经过去的时段也写，当作已发生的事。每条不超过 16 个字，不要序号、不要解释、不要任何其他文字。" + (mine.length ? "对方今天的安排是：" + mine.map((x) => (x.t || "全天") + " " + x.x.slice(0, 20)).join("；") + "。如果你们有可能碰面或联系，可以在日程里自然留出空档。" : "") + (hint ? "方向提示：" + hint + "。" : "") + "）";
+    const sys = "你是「" + c.name + "」，人设：" + (c.persona || "普通朋友") + "。现在是" + nowStr() + "。\n" + humanOf(c);
+    const items = xjSchParse(await chat([{ role: "user", content: dir }], sys, null, 1));
+    if (items.length < 2) throw new Error("没有生成有效的日程，请再试一次");
+    xjSchSet(c, items, "ai");
+    wsave();
+    xjSys(id, "已更新 TA 今天的日程（" + items.length + " 项）", "sch");
+    if (!quiet) gtoast("已更新 TA 今天的日程");
+  } catch (e) {
+    xjSys(id, "日程更新失败", "sch");
+    gtoast("日程更新失败：" + (typeof em == "function" ? em(e) : e && e.message || e), 2800);
+  }
+  delete xjSchBusy[id];
+  try {
+    if (WX.cur == id && document.getElementById("vc") && document.querySelector('#vc [data-a="csch"]')) rCS(id);
+  } catch (e) {
+  }
+}
+function xjSchRule(c) {
+  try {
+    const s = xjSchOf(c);
+    if (!s) {
+      if (c && c.sch && c.sch.auto !== 0 && !xjSchBusy[c.id] && (CFG.a && CFG.a.url)) xjSchGen(c.id, "", true);
+      return "";
+    }
+    const n = /* @__PURE__ */ new Date(), now = f2(n.getHours()) + ":" + f2(n.getMinutes()), I = s.items;
+    let cur = -1;
+    I.forEach((x, i) => {
+      if (x.t <= now) cur = i;
+    });
+    const nx = I[cur + 1], mk = (i) => i < cur ? "［已过］" : i == cur ? "［进行中］" : "［还没到］";
+    return "\n- 你今天的日程（这是你自己的安排，决定你此刻在做什么、状态如何；对方问起就按它回答，自然体现在语气里，不要像念清单）：" + I.map((x, i) => x.t + " " + x.x + mk(i)).join("；") + "。现在是 " + now + "，" + (cur >= 0 ? "你此刻正在「" + I[cur].x + "」" : "你还没开始今天的安排") + (nx ? "，接下来 " + nx.t + " 要「" + nx.x + "」" : "") + "。";
+  } catch (e) {
+    return "";
+  }
+}
+function xjSchTag(c) {
+  const s = xjSchOf(c);
+  return s ? "（" + s.items.length + " 项" + (s.auto !== 0 ? "·自动" : "") + "）" : c && c.sch && c.sch.auto !== 0 ? "（每天自动）" : "（未生成）";
+}
+function xjSchMenu(id) {
+  const c = WX.cons.find((x) => x.id == id);
+  if (!c) return;
+  const has = !!xjSchOf(c), s = c.sch || {};
+  const it = [{ t: has ? "让 AI 重新生成今天的日程" : "让 AI 生成今天的日程", f: () => xjSchGen(id) }, { t: "按方向生成…", f: () => editSheet("日程方向（可留空）", "", (v) => xjSchGen(id, v.trim()), "例如：今天要考试 / 周末在家休息 / 晚上有约") }];
+  if (has) it.push({ t: "查看今天的日程", f: () => previewSheet("「" + nm(c) + "」今天的日程", xjSchText(c)) });
+  it.push({ t: has ? "手动编辑" : "手动填写", f: () => editSheet("编辑 TA 今天的日程", xjSchText(c), (v) => {
+    const items = xjSchParse(v);
+    if (items.length < 1) return gtoast("每行写成「08:00 起床」");
+    xjSchSet(c, items, "man");
+    wsave();
+    xjSys(id, "已手动调整 TA 今天的日程（" + items.length + " 项）", "sch");
+    rCS(id);
+  }, "每行一项：08:00 起床") });
+  it.push({ t: s.auto !== 0 ? "关闭每天自动更新" : "开启每天自动更新", f: () => {
+    c.sch = Object.assign({ d: "", items: [] }, c.sch || {}, { auto: s.auto !== 0 ? 0 : 1 });
+    wsave();
+    xjSys(id, s.auto !== 0 ? "已关闭 TA 的日程自动更新" : "已开启 TA 的日程自动更新（每天自己生成）", "schauto");
+    rCS(id);
+  } });
+  it.push({ t: s.say !== 0 ? "关闭「到点自己发状态」" : "开启「到点自己发状态」", f: () => {
+    c.sch = Object.assign({ d: "", items: [] }, c.sch || {}, { say: s.say !== 0 ? 0 : 1 });
+    wsave();
+    xjSys(id, s.say !== 0 ? "TA 不会再主动发日程状态了" : "TA 会在日程到点时自己发来状态（页面开着时）", "schsay");
+    rCS(id);
+  } });
+  if (has) it.push({ t: "清空今天的日程", dg: 1, f: () => {
+    c.sch = Object.assign({}, c.sch, { items: [], d: "" });
+    wsave();
+    xjSys(id, "已清空 TA 今天的日程", "sch");
+    rCS(id);
+  } });
+  actSheet("「" + nm(c) + "」的日程", it);
+}
+
+function xjSchDir(h) {
+  const a = String(h).slice(6).split("|"), t = a[0] || "", x = a[1] || "", meal = /吃|饭|餐|早点|午饭|晚饭|宵夜|外卖|咖啡|奶茶|零食|下午茶/.test(x);
+  return "（你今天的安排刚进行到 " + t + "「" + x + "」。请你主动给我发一条或几条消息，像随手发的一样，自然地说说你现在在做什么、是什么状态、周围怎么样；不要像汇报日程，不要提到“日程”“系统”“提示”“主动”。" + (meal ? "这是吃东西的时间：你自己决定吃什么、去哪吃、和谁吃，按你的习惯和人设来，不用我提醒或投喂。" : "") + "一两句话即可，要符合你的性格和此刻的时间。）";
+}
+function xjSchTick() {
+  try {
+    if (typeof CALL != "undefined" && CALL.on) return;
+    if (!CFG.a || !CFG.a.url || !CFG.a.model) return;
+    const now = Date.now(), n = new Date(), hmNow = f2(n.getHours()) + ":" + f2(n.getMinutes());
+    for (const c of WX.cons) {
+      if (!c.sch || c.off == 1 || xjSchBusy[c.id]) continue;
+      if (!xjSchOf(c)) {
+        if (c.sch.auto !== 0 && n.getHours() >= 6 && now - (c.sch.gts || 0) > 36e5) {
+          c.sch.gts = now;
+          wsave();
+          xjSchGen(c.id, "", true);
+        }
+        continue;
+      }
+      const I = c.sch.items, cur = xjSchCur(I);
+      if (cur < 0) continue;
+      if (c.sch.ann == null) c.sch.ann = cur;
+      if (cur <= c.sch.ann) continue;
+      const it = I[cur], L = WX.msgs[c.id] || [];
+      c.sch.ann = cur;
+      wsave();
+      const [h, m] = it.t.split(":"), late = (n.getHours() * 60 + n.getMinutes()) - (+h * 60 + +m) > 30;
+      const real = L.filter((x) => !x.s && !x.p && x.ts), lastTs = real.length ? real[real.length - 1].ts : 0;
+      if (c.sch.say === 0 || late || L.some((x) => x.p) || typeof qhOn == "function" && qhOn()) continue;
+      if (now - lastTs < 6e5 || (c.sch.anC || 0) >= 6) continue;
+      c.sch.anC = (c.sch.anC || 0) + 1;
+      xjSys(c.id, "日程更新：" + it.t + " " + it.x, "schnow");
+      wxReply(c.id, "__sch:" + it.t + "|" + it.x);
+      break;
+    }
+  } catch (e) {
+  }
+}
+setTimeout(() => {
+  xjSchTick();
+  setInterval(xjSchTick, 3e4);
+}, 15e3);
 //XEND
 </script>
 <script type="text/plain" class="mp">
