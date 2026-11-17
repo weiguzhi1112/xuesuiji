@@ -680,44 +680,71 @@ mark.p{background:rgba(255,204,0,.55)}mark.s{background:rgba(52,199,89,.45)}
 .xjct{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 8px;margin:0 -2px;scrollbar-width:none}.xjct::-webkit-scrollbar{display:none}
 .xjct button{flex:none;border:0;border-radius:14px;height:28px;padding:0 12px;font-size:12.5px;background:rgba(128,128,128,.14);color:inherit;cursor:pointer}
 .xjct button.on{background:var(--ink,#222);color:var(--bg,#fff)}
-.fmw{display:flex;flex-direction:column;height:100%;min-height:0}
-.fmsc{flex:1;min-height:0;overflow-y:auto;padding:4px 14px 18px;-webkit-overflow-scrolling:touch}
-.fmtabs,.fmbs{display:flex;gap:6px;overflow-x:auto;padding:4px 14px 8px;scrollbar-width:none}.fmtabs::-webkit-scrollbar,.fmbs::-webkit-scrollbar{display:none}
-.fmtabs button{flex:none;border:0;background:none;color:inherit;font-size:16px;padding:4px 10px;opacity:.5;cursor:pointer}.fmtabs button.on{opacity:1;font-weight:600}
-.fmbs button{flex:none;border:0;border-radius:14px;height:28px;padding:0 12px;font-size:12.5px;background:rgba(128,128,128,.14);color:inherit;cursor:pointer}.fmbs button.on{background:var(--ink,#222);color:var(--bg,#fff)}
-.fmc{padding:12px 4px;border-bottom:1px solid rgba(128,128,128,.14);cursor:pointer}.fmc h4{margin:8px 0 4px;font-size:15.5px;line-height:1.4}.fmc p{margin:0;font-size:13.5px;opacity:.7;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.fmcm{display:flex;align-items:center;gap:8px}.fmcm b{display:block;font-size:13.5px;font-weight:600}.fmcm s{text-decoration:none;font-size:11.5px;opacity:.5}
+.lu{flex:none;vertical-align:-3px}
+.fmw{display:flex;flex-direction:column;height:100%;min-height:0;position:relative}
+.fmsc{flex:1;min-height:0;overflow-y:auto;padding:4px 14px 100px;-webkit-overflow-scrolling:touch}
+.fmse{display:flex;align-items:center;gap:8px;margin:2px 16px 10px;padding:0 13px;height:38px;border-radius:19px;background:rgba(128,128,128,.12)}.fmse input{flex:1;min-width:0;border:0;background:none;outline:none;color:inherit;font:inherit;font-size:15px}.fmse .lu{opacity:.5}
+.fmseg,.xlseg{display:flex;padding:3px;border-radius:19px;background:rgba(128,128,128,.14)}.fmseg{margin:0 16px 10px}
+.fmseg button,.xlseg button{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;height:32px;border:0;border-radius:16px;background:none;color:inherit;font:inherit;font-size:13.5px;opacity:.6;cursor:pointer;transition:background .2s}
+.fmseg button.on,.xlseg button.on{background:var(--card,#fff);opacity:1;font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.fmbs{display:flex;gap:7px;overflow-x:auto;padding:0 16px 10px;scrollbar-width:none}.fmbs::-webkit-scrollbar{display:none}.fmbs.wrap{flex-wrap:wrap;padding:0 0 10px}
+.fmbs button{flex:none;border:1px solid var(--line,#e4e4e4);border-radius:16px;height:30px;padding:0 13px;font:inherit;font-size:13px;background:var(--card,#fff);color:inherit;cursor:pointer}.fmbs button.on{background:var(--ink,#111);color:var(--card,#fff);border-color:transparent}
+.fmcard,.xlcard{background:var(--card,#fff);border-radius:20px;padding:14px 16px;margin-bottom:10px;border:1px solid var(--line,#eee);box-shadow:0 1px 3px rgba(0,0,0,.04)}.fmcard.flush,.xlcard.flush{padding:2px 0;overflow:hidden}
+.fmc{cursor:pointer;transition:transform .15s}.fmc:active{transform:scale(.985)}
+.fmc h4{margin:11px 0 4px;font-size:16px;font-weight:600;line-height:1.4}
+.fmc p{margin:0;font-size:14px;opacity:.65;line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.fmcm{display:flex;align-items:center;gap:10px}.fmcm>div{min-width:0;flex:1}.fmcm b{display:block;font-size:14px;font-weight:600}.fmcm s{text-decoration:none;font-size:11.5px;opacity:.5}
+.fmbt{font-style:normal;font-size:11.5px;padding:3px 9px;border-radius:11px;background:rgba(128,128,128,.12);opacity:.8;flex:none}
+.fmft{display:flex;gap:18px;margin-top:12px;font-size:12.5px;opacity:.55}.fmft span{display:flex;align-items:center;gap:5px}
 .fma{display:flex;align-items:center;justify-content:center;border-radius:50%;color:#fff;font-style:normal;flex:none}
-.fmtg{font-style:normal;font-size:10px;margin-left:5px;padding:1px 5px;border-radius:7px;background:rgba(80,140,255,.16);color:#4a7cf0;font-weight:500}.fmtg.me{background:rgba(60,190,120,.18);color:#2a9d63}.fmtg.lz{background:rgba(255,160,40,.2);color:#d98200}
-.fmft{display:flex;gap:14px;margin-top:8px;font-size:11.5px;opacity:.5}
+.fmtg{font-style:normal;font-size:10px;margin-left:5px;padding:1px 6px;border-radius:7px;background:rgba(80,140,255,.16);color:#4a7cf0;font-weight:500;vertical-align:1px}.fmtg.me{background:rgba(60,190,120,.18);color:#2a9d63}.fmtg.lz{background:rgba(255,160,40,.2);color:#d98200}
 .fmem{text-align:center;opacity:.45;font-size:13px;padding:36px 0}
-.fmbar{display:flex;border-top:1px solid rgba(128,128,128,.16);padding:6px 0 calc(env(safe-area-inset-bottom,0px) + 8px)}
-.fmbar button{flex:1;border:0;background:none;color:inherit;font-size:13px;padding:8px 0;opacity:.5;position:relative;cursor:pointer}.fmbar button.on{opacity:1;font-weight:600}.fmbar .bd{position:absolute;top:2px;left:calc(50% + 8px)}
-.fmpv h3,.fmsc h3{margin:12px 0 6px;font-size:19px;line-height:1.4}.fmbody{font-size:15px;line-height:1.75;margin-bottom:10px;word-break:break-word}
-.fmact{display:flex;gap:8px;margin:10px 0 4px}.fmact button,.fmfa button{border:0;border-radius:15px;height:30px;padding:0 14px;font-size:12.5px;background:rgba(128,128,128,.14);color:inherit;cursor:pointer}.fmact button.on,.fmfa button.on{background:rgba(255,90,90,.16);color:#e5484d}
-.fmsc h5{margin:16px 0 4px;font-size:12.5px;opacity:.55;font-weight:500}
-.fmfl{padding:10px 0;border-bottom:1px solid rgba(128,128,128,.12)}.fmfl p{margin:6px 0 4px 38px;font-size:14px;line-height:1.6;word-break:break-word}.fmfl q{display:block;font-size:12px;opacity:.6;padding:4px 8px;margin-bottom:4px;border-left:2px solid rgba(128,128,128,.4);quotes:none}
-.fmfa{display:flex;gap:8px;margin-left:38px}.fmfa button{height:24px;padding:0 10px;font-size:11.5px}
-.fmin{display:flex;gap:8px;padding:8px 14px calc(env(safe-area-inset-bottom,0px) + 12px);border-top:1px solid rgba(128,128,128,.16)}.fmin input{flex:1;min-width:0;height:40px;border:0;border-radius:20px;padding:0 16px;background:rgba(128,128,128,.14);color:inherit;font:inherit}.fmin button{border:0;border-radius:20px;height:40px;padding:0 18px;background:var(--ink,#222);color:var(--bg,#fff);font:inherit;cursor:pointer}
-.fmt{width:100%;box-sizing:border-box;border:0;border-bottom:1px solid rgba(128,128,128,.2);background:none;color:inherit;font:600 17px/1.4 inherit;padding:12px 2px;outline:none}.fmx{width:100%;box-sizing:border-box;border:0;background:none;color:inherit;font:15px/1.7 inherit;padding:12px 2px;resize:none;outline:none}.fmlb{display:block;font-size:12.5px;opacity:.65;padding:8px 2px}
-.fmnt{padding:12px 4px;border-bottom:1px solid rgba(128,128,128,.12);cursor:pointer;position:relative}.fmnt b{font-size:14px;margin-right:6px}.fmnt span{font-size:13.5px;opacity:.75}.fmnt s{display:block;text-decoration:none;font-size:11px;opacity:.45;margin-top:3px}.fmnt.un::after{content:"";position:absolute;right:6px;top:18px;width:8px;height:8px;border-radius:50%;background:#ff5a5f}
-.fmme{display:flex;align-items:center;gap:12px;padding:10px 2px 14px}.fmme b{display:block;font-size:17px}.fmme s{text-decoration:none;font-size:12.5px;opacity:.55}
-.fmls{border-radius:14px;background:rgba(128,128,128,.1);overflow:hidden}.fmrw{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px 14px;border-bottom:1px solid rgba(128,128,128,.12);cursor:pointer}.fmrw:last-child{border:0}.fmrw b{font-size:14.5px;font-weight:500;flex:none}.fmrw span{font-size:12px;opacity:.5;text-align:right}.fmrw.dg b{color:#e5484d}
-.fmspin{animation:fmsp 1s linear infinite}@keyframes fmsp{to{transform:rotate(360deg)}}
-.xlb{display:flex;align-items:center;gap:10px;padding:8px 14px;background:rgba(80,140,255,.07);cursor:pointer;position:relative}
-.xla{position:relative;flex:none;display:flex}.xld{position:absolute;right:-1px;bottom:-1px;width:12px;height:12px;border-radius:50%;border:2px solid var(--bg,#fff);background:#b5b5b5;box-sizing:border-box}
-.xld.on{background:#2ecc71}.xld.bz{background:#ff5a5f}.xld.lv{background:#ffb800}.xld.hid{background:#9b7bff}.xld.off{background:#b5b5b5}
-.xlm{flex:1;min-width:0}.xlm b{display:flex;align-items:center;gap:6px;font-size:15px;font-weight:600}.xlm s{display:block;text-decoration:none;font-size:12.5px;opacity:.55;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
-.xls{font-size:10px;font-weight:500;padding:1px 6px;border-radius:8px;background:rgba(128,128,128,.14);color:#888}.xls.on{background:rgba(46,204,113,.16);color:#1fa65b}.xls.bz{background:rgba(255,90,95,.16);color:#e5484d}.xls.lv{background:rgba(255,184,0,.2);color:#c98a00}
-.xlr{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex:none}.xlr em{font-style:normal;font-size:11px;opacity:.45}
-.xlc{border:0;background:none;color:inherit;opacity:.45;font-size:14px;padding:6px 2px 6px 6px;cursor:pointer}
-.pxlr.xpin{background:rgba(128,128,128,.08)}.pxlr.xq .rl2{display:flex;align-items:center;gap:6px}.xmu{font-style:normal;opacity:.4;font-size:12px;flex:none}.bd.xm{background:rgba(128,128,128,.55);min-width:8px;height:8px;padding:0;border-radius:4px}
-.xlw{padding:2px 2px 8px}.xlme{display:flex;align-items:center;gap:12px;padding:6px 2px 10px}.xlme b{display:block;font-size:17px}.xlme s{text-decoration:none;font-size:12px;opacity:.55}
-.xlst{display:flex;gap:6px;flex-wrap:wrap;padding-bottom:6px}.xlst button{display:flex;align-items:center;gap:5px;border:0;border-radius:15px;height:30px;padding:0 12px;font-size:12.5px;background:rgba(128,128,128,.14);color:inherit;cursor:pointer}.xlst button.on{background:var(--ink,#222);color:var(--bg,#fff)}.xlst .xld{position:static;width:9px;height:9px;border:0}
-.xlw h5{margin:12px 0 4px;font-size:12px;opacity:.5;font-weight:500}
-.xlac{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(128,128,128,.12)}.xlac>button{border:0;background:none;font-size:16px;padding:6px;cursor:pointer;color:inherit}
-.xlbt{padding:10px 0 2px}.xlbt button{width:100%;height:42px;border:0;border-radius:21px;background:rgba(80,140,255,.14);color:#4a7cf0;font:inherit;font-weight:600;cursor:pointer}
-#app .fmc p,#app .fmfl p,#app .fmbody,#app .fmem{padding-left:0;padding-right:0;text-align:left}#app .fmc p{margin:0}#app .fmfl p{margin:6px 0 4px 38px}#app .fmem{text-align:center}
+.fmcard h3{margin:14px 0 8px;font-size:20px;font-weight:600;line-height:1.4}.fmbody{font-size:15.5px;line-height:1.75;word-break:break-word}
+.fmact{display:flex;gap:8px;margin-top:14px}.fmact button,.fmfa button{display:flex;align-items:center;gap:6px;border:0;border-radius:16px;height:32px;padding:0 14px;font:inherit;font-size:13px;background:rgba(128,128,128,.12);color:inherit;cursor:pointer}.fmact button.on,.fmfa button.on{background:rgba(255,90,90,.14);color:#e5484d}
+.fmsc h5,.xlw h5{margin:16px 8px 6px;font-size:12.5px;opacity:.5;font-weight:500}
+.fmfl{padding:13px 16px}.fmfl+.fmfl{border-top:1px solid var(--line,#eee)}.fmfl p{margin:7px 0 6px 42px;font-size:14.5px;line-height:1.6;word-break:break-word}.fmfl q{display:block;font-size:12.5px;opacity:.6;padding:5px 10px;margin-bottom:5px;border-radius:8px;background:rgba(128,128,128,.1);quotes:none}
+.fmfa{display:flex;gap:8px;margin-left:42px}.fmfa button{height:26px;padding:0 11px;font-size:12px}
+.fmin{display:flex;align-items:center;gap:8px;padding:8px 14px calc(env(safe-area-inset-bottom,0px) + 12px)}
+.fmip{flex:1;min-width:0;border-radius:22px;background:var(--card,#fff);border:1px solid var(--line,#e4e4e4);padding:0 16px}.fmip input{display:block;width:100%;border:0;background:none;outline:none;color:inherit;font:inherit;font-size:15px;height:40px}.fmrt{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;opacity:.6;padding-top:7px;cursor:pointer}
+.fmin>button{flex:none;width:42px;height:42px;border-radius:50%;border:0;background:var(--ink,#111);color:var(--card,#fff);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.fmtb{position:absolute;left:16px;right:16px;bottom:calc(env(safe-area-inset-bottom,0px) + 10px);display:flex;padding:5px;border-radius:32px;background:var(--card,#fff);border:1px solid var(--line,#eee);box-shadow:0 6px 24px rgba(0,0,0,.1)}
+.fmtb button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 0 5px;border:0;border-radius:26px;background:none;color:inherit;opacity:.45;font:inherit;font-size:10.5px;position:relative;cursor:pointer;transition:background .2s}.fmtb button.on{opacity:1;background:rgba(128,128,128,.12)}.fmtb .bd{position:absolute;top:3px;left:calc(50% + 7px)}
+.fmtx{border:0;background:none;color:inherit;font:inherit;font-size:16px;padding:6px 10px;cursor:pointer}.fmtx.pri{color:#2f7cf6;font-weight:600}
+.fmt{width:100%;box-sizing:border-box;border:0;border-bottom:1px solid var(--line,#eee);background:none;color:inherit;font:600 18px/1.4 inherit;padding:6px 0 12px;outline:none}.fmx{width:100%;box-sizing:border-box;border:0;background:none;color:inherit;font:15.5px/1.7 inherit;padding:12px 0 2px;resize:none;outline:none}
+.fmrow{display:flex;align-items:center;justify-content:space-between;gap:12px}.fmrow small{display:block;font-size:12px;opacity:.5;margin-top:1px}
+.fmsw{-webkit-appearance:none;appearance:none;width:51px;height:31px;border-radius:16px;background:rgba(128,128,128,.3);position:relative;transition:background .2s;flex:none;outline:none;border:0;cursor:pointer}.fmsw::after{content:"";position:absolute;left:2px;top:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.25);transition:transform .2s}.fmsw:checked{background:#34c759}.fmsw:checked::after{transform:translateX(20px)}
+.fmnt{display:flex;align-items:center;gap:12px;padding:12px 16px 12px 20px;position:relative;cursor:pointer}.fmnt+.fmnt{border-top:1px solid var(--line,#eee)}.fmnt div{flex:1;min-width:0}.fmnt b{display:block;font-size:14.5px}.fmnt em{font-style:normal;font-weight:400;opacity:.55;margin-left:6px;font-size:12.5px}.fmnt span{display:block;font-size:13px;opacity:.65;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.fmnt s{text-decoration:none;font-size:11px;opacity:.45;flex:none}.fmnt.un::before{content:"";position:absolute;left:7px;top:50%;width:7px;height:7px;margin-top:-3.5px;border-radius:50%;background:#2f7cf6}
+.fmme{display:flex;align-items:center;gap:14px}.fmme b{display:block;font-size:19px;font-weight:600}.fmme s{text-decoration:none;font-size:12.5px;opacity:.55}
+.fmrw{display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer}.fmrw+.fmrw{border-top:1px solid var(--line,#eee)}.fmrw>div{flex:1;min-width:0}.fmrw b{display:block;font-size:15px;font-weight:500}.fmrw span{display:block;font-size:12px;opacity:.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.fmrw>.lu{opacity:.3}.fmrw.dg b{color:#e5484d}
+.fmic{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;flex:none;font-style:normal}
+.fmspin .lu{animation:fmsp 1s linear infinite}@keyframes fmsp{to{transform:rotate(360deg)}}
+.xlg{margin:6px 12px 12px;border-radius:20px;background:var(--card,#fff);border:1px solid var(--line,#eee);box-shadow:0 1px 3px rgba(0,0,0,.04);overflow:hidden}
+.xlb{display:flex;align-items:center;gap:11px;padding:11px 12px 11px 14px;cursor:pointer}
+.xla{position:relative;flex:none;display:flex}.xld{position:absolute;right:-1px;bottom:-1px;width:12px;height:12px;border-radius:50%;border:2px solid var(--card,#fff);background:#b5b5b5;box-sizing:border-box}
+.xld.on{background:#34c759}.xld.bz{background:#ff5a5f}.xld.lv{background:#ffb800}.xld.hid{background:#9b7bff}.xld.off{background:#b5b5b5}
+.xlm{flex:1;min-width:0}.xlm b{display:flex;align-items:center;gap:6px;font-size:15px;font-weight:600}.xlm s{display:flex;align-items:center;gap:4px;text-decoration:none;font-size:12.5px;opacity:.55;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.xls{font-size:10px;font-weight:500;padding:1px 7px;border-radius:8px;background:rgba(128,128,128,.14);color:#888}.xls.on{background:rgba(52,199,89,.16);color:#22a447}.xls.bz{background:rgba(255,90,95,.16);color:#e5484d}.xls.lv{background:rgba(255,184,0,.2);color:#c98a00}
+.xlr{display:flex;align-items:center;flex:none}
+.xlc{border:0;background:rgba(128,128,128,.12);color:inherit;opacity:.75;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none}
+.xll{position:relative;padding-bottom:2px}.xll::before{content:"";position:absolute;left:34px;top:-6px;bottom:34px;width:1px;background:linear-gradient(rgba(128,128,128,.4),rgba(128,128,128,.1))}
+.xll .xq{position:relative;margin:0 6px 0 52px;padding-left:0;padding-right:8px;border-radius:14px;border:0}.xll .xq::before{content:"";position:absolute;left:-19px;top:50%;width:5px;height:5px;margin-top:-2.5px;border-radius:50%;background:rgba(128,128,128,.55)}
+.xlmore{margin:2px 6px 8px 52px!important;padding:6px 8px!important;font-size:12.5px;opacity:.55}
+.pxlr.xpin{background:rgba(128,128,128,.08)}.xpn{margin-left:5px;opacity:.45;font-style:normal}.xmu{font-style:normal;opacity:.4;flex:none}.bd.xm{background:rgba(128,128,128,.55);min-width:8px;height:8px;padding:0;border-radius:4px}.pxlr.xq .rl2{display:flex;align-items:center;gap:6px}
+.xlw{padding:0 0 6px}.xlme{display:flex;align-items:center;gap:14px}.xlme b{display:block;font-size:18px;font-weight:600}.xlme s{text-decoration:none;font-size:12.5px;opacity:.55}
+.xlseg{margin-bottom:4px}.xlseg button{font-size:12.5px}.xlseg .xld{position:static;width:8px;height:8px;border:0}
+.xlac{display:flex;align-items:center;gap:11px;padding:11px 14px}.xlac+.xlac{border-top:1px solid var(--line,#eee)}.xlac>button{border:0;background:none;color:inherit;opacity:.55;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.xladd{display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;color:#2f7cf6;font-weight:600;cursor:pointer}
+.bb.xhb{background:none!important;padding:0!important;box-shadow:none!important;border:0!important;max-width:none!important}
+.xhc{width:min(290px,74vw);border-radius:16px;overflow:hidden;background:var(--bg,#fff);border:1px solid rgba(128,128,128,.18);box-shadow:0 4px 18px rgba(0,0,0,.08)}
+.xhh{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 10px;font-size:12px;background:rgba(128,128,128,.07);cursor:pointer}
+.xhh b{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}.xhh span{display:flex;gap:6px;flex:none}
+.xhh button{border:0;border-radius:10px;height:22px;padding:0 9px;font-size:11px;background:rgba(128,128,128,.16);color:inherit;cursor:pointer}
+.xhf{display:block;width:100%;border:0;background:transparent;height:260px}
+#xhfs{position:absolute;left:0;top:0;right:0;bottom:0;z-index:99990;display:flex;flex-direction:column;background:var(--bg,#fff);color:inherit;padding-top:env(safe-area-inset-top,0px)}
+.xhfb{display:flex;justify-content:space-between;align-items:center;padding:14px 16px 8px;font-weight:600}.xhfb button{border:0;border-radius:15px;height:30px;padding:0 14px;background:rgba(128,128,128,.16);color:inherit;cursor:pointer}
+#xhfs .xhf{flex:1;height:auto}
+.lu{display:inline-block}.xpn{display:inline-flex;vertical-align:middle}.rl1 b{display:inline-flex;align-items:center}
+#app .fmcard p,#app .fmbody{padding-left:0;padding-right:0;text-align:left}#app .fmfl p{padding:0;margin:7px 0 6px 42px;text-align:left}#app .fmem{padding:36px 0;text-align:center}
 html,body{background:#141414}@media (prefers-color-scheme:light){html:not([data-theme="dark"]){background:#e8e8e8}}.gmw{display:flex;flex-direction:column;height:calc(100% - 78px);padding:0 14px 36px;box-sizing:border-box}.gmv{position:relative;flex:1 1 0;min-height:150px;border-radius:22px;overflow:hidden;background:var(--soft);touch-action:none;box-shadow:0 0 0 1px var(--line2)}
 .gmt{position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden}.gmti{position:absolute;left:0;top:0;width:256px;height:256px;max-width:none;user-select:none;-webkit-user-drag:none;pointer-events:none}.gmti.bad{opacity:0}
 :root[data-theme="dark"] .gmti{filter:invert(1) hue-rotate(180deg) brightness(.92) contrast(.9)}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .gmti{filter:invert(1) hue-rotate(180deg) brightness(.92) contrast(.9)}}
@@ -2773,7 +2800,7 @@ $("#vo").addEventListener("input", (e) => {
     t.style.height = Math.min(120, t.scrollHeight) + "px";
   }
 });
-const histOf = (m) => (m.q ? "（回复「" + m.q.t + "」）" : "") + (m.stk ? stkHist(m) : m.loc ? (m.me ? "（我发给你一个位置：" : "[位置] ") + m.loc.n + (m.loc.a ? "，" + m.loc.a : "") + (m.me ? "）" : "") : m.tf ? tfHist(m) : m.img ? (m.gif ? "[GIF 动图]" : "") + (m.shot ? "[我发给对方一张聊天截图，截图里是：" + (m.alt || "") + "]" : m.alt ? "[图片，内容：" + m.alt + "]" : "[图片]") : m.v ? "[语音]" + m.t : m.call !== void 0 ? "[语音通话" + (m.call ? " " + mmss(m.call) : "：" + m.t) + "]" + ((m.log || []).length ? "\n" + m.log.map((l) => (l.me ? "我" : "对方") + "：" + l.t).join("\n") : "") : m.t);
+const histOf = (m) => m.html ? xjHtmlHist(m) : (m.q ? "（回复「" + m.q.t + "」）" : "") + (m.stk ? stkHist(m) : m.loc ? (m.me ? "（我发给你一个位置：" : "[位置] ") + m.loc.n + (m.loc.a ? "，" + m.loc.a : "") + (m.me ? "）" : "") : m.tf ? tfHist(m) : m.img ? (m.gif ? "[GIF 动图]" : "") + (m.shot ? "[我发给对方一张聊天截图，截图里是：" + (m.alt || "") + "]" : m.alt ? "[图片，内容：" + m.alt + "]" : "[图片]") : m.v ? "[语音]" + m.t : m.call !== void 0 ? "[语音通话" + (m.call ? " " + mmss(m.call) : "：" + m.t) + "]" + ((m.log || []).length ? "\n" + m.log.map((l) => (l.me ? "我" : "对方") + "：" + l.t).join("\n") : "") : m.t);
 const qpHtml = (q) => `<div class="qp ${q.me ? "qm" : "qo"}"><span>${esc(q.t)}</span></div>`;
 const splitLines = (t) => String(t || "").split(/\n+/).map((x) => x.trim()).filter(Boolean);
 const newGid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -2926,8 +2953,8 @@ function ml() {
       if (m.pat) return tm + `<div class="sy pat" data-i="${i}">${esc(patTxt(m, c))}</div>`;
       if (m.p) return tm + `<div class="mr"><div class="mc"><div class="bb gf ge typ"><i></i><i></i><i></i></div></div></div>`;
       const g2 = grpCls(L, i), rx = m.rx ? `<i class="rx" aria-label="已回应">${rxh(m.rx)}</i>` : "";
-      const body = m.stk ? stkHtml(m) : m.loc ? locHtml(m, i) : m.tf ? tfHtml(m, i) : m.pic && typeof igHtml == "function" ? igHtml(m, i) : m.img ? `<img${m.shot ? ' class="shot"' : ""} src="${m.img}" alt="${m.shot ? "聊天截图" : "图片"}">` : m.v ? voiceHtml(m, i) : m.call !== void 0 ? callHtml(m, i) : m.off ? offHtml(m) : esc(rxRun(m.t, m.me ? "user" : "ai", "show"));
-      return tm + `<div class="mr${m.me ? " me" : ""}${g2}${m.q ? " hq" : ""}${m.off ? " off" : ""}" data-i="${i}"><div class="mc">${m.q ? qpHtml(m.q) : ""}${!m.me && g2.includes("gf") ? `<div class="nl">${esc(nm(c))}</div>` : ""}<div class="bb${g2}${m.stk ? " sk" : m.tf || m.loc ? " tfx" + (m.tf && m.tf.k == "hb" ? " hbk" : "") : m.pic ? " pk" : m.img ? " im" : m.v ? " vo" : m.call !== void 0 ? " ca" : ""}${m.off ? " offb" : ""}">${body}${rx}</div>${m.xs || m.xp || m.cot ? xsHtml(m, c) : ""}${m.me && i == li ? `<div class="dl">${late ? "已读" : "已送达"}</div>` : ""}</div></div>`;
+      const body = m.html ? xjHtmlCard(m, i) : m.stk ? stkHtml(m) : m.loc ? locHtml(m, i) : m.tf ? tfHtml(m, i) : m.pic && typeof igHtml == "function" ? igHtml(m, i) : m.img ? `<img${m.shot ? ' class="shot"' : ""} src="${m.img}" alt="${m.shot ? "聊天截图" : "图片"}">` : m.v ? voiceHtml(m, i) : m.call !== void 0 ? callHtml(m, i) : m.off ? offHtml(m) : esc(rxRun(m.t, m.me ? "user" : "ai", "show"));
+      return tm + `<div class="mr${m.me ? " me" : ""}${g2}${m.q ? " hq" : ""}${m.off ? " off" : ""}" data-i="${i}"><div class="mc">${m.q ? qpHtml(m.q) : ""}${!m.me && g2.includes("gf") ? `<div class="nl">${esc(nm(c))}</div>` : ""}<div class="bb${g2}${m.html ? " xhb" : m.stk ? " sk" : m.tf || m.loc ? " tfx" + (m.tf && m.tf.k == "hb" ? " hbk" : "") : m.pic ? " pk" : m.img ? " im" : m.v ? " vo" : m.call !== void 0 ? " ca" : ""}${m.off ? " offb" : ""}">${body}${rx}</div>${m.xs || m.xp || m.cot ? xsHtml(m, c) : ""}${m.me && i == li ? `<div class="dl">${late ? "已读" : "已送达"}</div>` : ""}</div></div>`;
     }).join("");
     fitIb("#vk");
   });
@@ -3000,7 +3027,7 @@ ${H("回复方式")}<div class="ls">${sg("sty", "回复风格", "影响对方每
 <div class="ls">${sg("xs", "心声", "长按任意消息可生成 TA 的内心独白；也可以让 TA 每次回复都自动附上", [["man", "手动"], ["tap", "自动·点开"], ["show", "自动·显示"], ["off", "关闭"]], "man")}${rw("cxsl", "心声记录")}</div>
 ${H("声音与素材")}<div class="ls">${rw("cvoice", "TA 的声音" + (c.tts && (c.tts.vidc || c.tts.vid || c.tts.wv) ? "：" + esc(c.tts.vidc || c.tts.vid || c.tts.wv) : "（跟随全局）"))}${sw("novc", "不让 TA 发语音条", "开启后，TA 只用文字回复")}${rw("csnd2", "专属提示音" + (c.snd ? "（" + sndName(c.snd) + "）" : "（跟随全局）"))}${rw("cvp", "视频通话画面" + (c.vpic ? "（已设置）" : "（使用头像）"))}${rw("capi", "TA 的独立 API" + (typeof capiOn == "function" && capiOn(c) ? "：已设置" : "（跟随全局）"))}${rw("cvis", "TA 的识图设置")}</div>
 <div class="ls">${sw("noimg", "不让 TA 用我发的图片换头像/背景", "关闭时，TA 可以自己决定把我发的图片设成头像、聊天背景或通话画面")}${rw("crn", "TA 给我的备注（截图里显示）" + (c.rn ? "：" + esc(c.rn) : ""))}${rw("cbg", "聊天背景（聊天界面和截图都会用）" + (c.bg ? c.bg.u ? "：相册图片" : "：纯色" : "：默认"))}${rw("cshot", "让 TA 发来聊天截图")}${sw("nomom", "不让 TA 发朋友圈", "开启后，TA 不再发朋友圈，也不会回应我的动态")}</div>
-${H("记忆与剧情")}<div class="ls">${sw("nomem", "不使用记忆库", "开启后，这位角色不会再回忆过往的经历")}${rw("csch", "TA 今天的日程" + xjSchTag(c))}${rw("cpre", "线上使用预设" + xjPreTag(c))}${rw("cof", "进入线下剧情")}${rw("cos", "线下剧情设置")}</div>
+${H("记忆与剧情")}<div class="ls">${sw("nomem", "不使用记忆库", "开启后，这位角色不会再回忆过往的经历")}${rw("csch", "TA 今天的日程" + xjSchTag(c))}${rw("cpre", "线上使用预设" + xjPreTag(c))}${rw("chs", "网页惊喜" + xjHsTag(c))}${rw("cof", "进入线下剧情")}${rw("cos", "线下剧情设置")}</div>
 ${H("工具")}<div class="ls">${rw("cmcp2", "工具调用（MCP）" + (c.mcp === 0 ? "：已关闭" : ""))}${mxs ? `<p class="stt" style="margin:0 0 6px">${mxs}</p>` : ""}</div>
 ${H("提示词")}<div class="ls">${rw("csys", "专属提示词" + (c.sys && c.sys.trim() ? "（已设置）" : "（使用全局）"))}${rw("cprev", "预览提示词")}</div>
 ${H("聊天记录")}<div class="ls">${rw("csearch", "查找聊天记录")}${rw("ccall", "对方来电")}${rw("cins", "插入系统提示")}${rw("cclr", "清空聊天记录", 0, " dg")}</div>
@@ -3054,6 +3081,7 @@ function csDo(a, el) {
   }, "TA 手机里对你的备注，例如：笨蛋、小祖宗；留空则用你的微信昵称");
   else if (a == "csch") xjSchMenu(id);
   else if (a == "cpre") xjPreMenu(id);
+  else if (a == "chs") xjHsMenu(id);
   else if (a == "cbg") bgPick(c);
   else if (a == "cshot") shotAsk();
   else if (a == "csearch") wxFind(id);
@@ -4135,7 +4163,7 @@ async function wxReply(id, hint) {
   }
   const hist = wxHist(c);
   if (hint !== void 0) {
-    const dir = { role: "user", content: typeof hint == "string" && hint.indexOf("__sch:") == 0 ? xjSchDir(hint) : hint == "__pro" ? "（你们已经有一段时间没有聊天了。请你主动给我发一条或几条消息（几条看你当下的心情，不必固定）：可以自然地想起你们之前聊过的某件事、分享你此刻的状态，或者随口问候一句。要符合你的性格和现在的时间，像真人一样，不要提到“系统”“提示”或“主动”。）" : "（推进剧情" + (hint ? "：" + hint : "") + "——请接着上文继续写，让场景自然往下走一段，不需要等待对方回应。）" }, l = hist[hist.length - 1];
+    const dir = { role: "user", content: typeof hint == "string" && (hint.indexOf("__sch:") == 0 || hint == "__hs") ? xjSchDir(hint) : hint == "__pro" ? "（你们已经有一段时间没有聊天了。请你主动给我发一条或几条消息（几条看你当下的心情，不必固定）：可以自然地想起你们之前聊过的某件事、分享你此刻的状态，或者随口问候一句。要符合你的性格和现在的时间，像真人一样，不要提到“系统”“提示”或“主动”。）" : "（推进剧情" + (hint ? "：" + hint : "") + "——请接着上文继续写，让场景自然往下走一段，不需要等待对方回应。）" }, l = hist[hist.length - 1];
     if (l && l.role == "user") l.content += "\n" + dir.content;
     else hist.push(dir);
   }
@@ -4166,7 +4194,7 @@ async function wxReply(id, hint) {
     await memPrep(c.id, hist);
   } catch (e) {
   }
-  const W = xjOnPre(c, wbApply(c.id, hist, c.off == 1 ? offSys(c) : wxSys(c), { ck: c.off == 1 ? "wx:o" + c.id : "wx:" + c.id }));
+  const W = xjHtmlW(c, xjOnPre(c, wbApply(c.id, hist, c.off == 1 ? offSys(c) : wxSys(c), { ck: c.off == 1 ? "wx:o" + c.id : "wx:" + c.id })));
   try {
     let tkT = 0;
     const tk = (t) => {
@@ -4192,7 +4220,7 @@ async function wxReply(id, hint) {
         if (i0 < 0) L.push(nm1);
         else L.splice(i0, 1, nm1);
       } else {
-        const x = takeReact(splitLines(out), L), XS = xsTake(x.ls), ls = XS.ls;
+        const x = takeReact(splitLines(xjHtmlPre(out)), L), XS = xsTake(x.ls), ls = XS.ls;
         if (!ls.length && x.react && i0 >= 0) L.splice(i0, 1);
         else if (!ls.length || i0 < 0) {
           r.t = "…";
@@ -16038,6 +16066,7 @@ $("#app").addEventListener("click", (e) => {
 
 /* ---- 角色引用我的消息 / 聊天背景 / 聊天设置里的面具 ---- */
 const parseLine = (t) => {
+  { const _hm = /^\s*\[网页#(\d+)\]\s*$/.exec(String(t)); if (_hm && XJH.tmp[_hm[1]]) { const b = XJH.tmp[_hm[1]]; return { t: "[网页] " + b.t, html: b.h, ht: b.t, hs: xjHtmlSum(b.h) }; } }
   if (typeof igParse == "function") { const _ig = igParse(t); if (_ig) return _ig; }
   if (/^[\[【]顶号[\]】]\s*$/.test(String(t))) return { t: "[顶号]", s: 1, kick: 1 };
   const m = String(t).match(/^[\[【]引用[:：]\s*(.+?)[\]】]\s*([\s\S]*)$/);
@@ -16577,7 +16606,8 @@ function pxCtx(c) {
   const hist = (WX.msgs[c.id] || []).filter((m) => !m.s && !m.p).slice(-16).map((m) => (m.me ? "我：" : nm(c) + "：") + histOf(m)).join("\n");
   let wbt = "";
   try { const w = wbBuild(c.id, [{ content: (c.persona || "") + "\n" + hist }]); wbt = [...w.before, ...w.after, ...w.depth.map((x) => x.content)].join("\n").slice(0, 2500); } catch (e) {}
-  return `角色：${nm(c)}\n人设：${c.persona || "（未填写，请根据名字和聊天内容合理设想）"}\n${wbt ? "世界书设定：\n" + wbt + "\n" : ""}${hist ? "TA 和我最近的聊天：\n" + hist.slice(-900) + "\n" : ""}我在 TA 微信里的备注：${c.rn || (WX.acc && (WX.acc.nick || WX.acc.wid)) || "我"}\n现在是${nowStr()}。`;
+  return `角色：${nm(c)}\n人设：${c.persona || "（未填写，请根据名字和聊天内容合理设想）"}\n${wbt ? "世界书设定：\n" + wbt + "\n" : ""}${hist ? "TA 和我最近的聊天：\n" + hist.slice(-900) + "\n" : ""}我的人设（用户本人）：${CFG.persona ? String(CFG.persona).slice(0, 600) : "（未填写）"}
+我在 TA 微信里的备注：${c.rn || (WX.acc && (WX.acc.nick || WX.acc.wid)) || "我"}\n现在是${nowStr()}。`;
 }
 async function pxGen(c, st) {
   if (!CFG.a.url || !CFG.a.model) throw new Error("请先在「设置」中配置接口与模型");
@@ -17013,7 +17043,7 @@ function pxSwapIn(c, mode, fid) {
   const meL = (WX.msgs[c.id] || []).filter((m) => !m.p).map((m) => Object.assign({}, m, { me: m.me ? 0 : 1, q: m.q ? Object.assign({}, m.q, { me: m.q.me ? 0 : 1 }) : m.q }));
   WX.msgs[meId] = meL;
   const lm = meL[meL.length - 1];
-  cons.unshift({ id: meId, name: c.rn || real.nick || real.wid || "我", remark: "", wid: real.wid || "", grp: "我", chat: 1, px: 1, fid: "me", ro: 1, av: real.av || "", unread: 0, persona: "" });
+  cons.unshift({ id: meId, name: c.rn || real.nick || real.wid || "我", remark: "", wid: real.wid || "", grp: "我", chat: 1, px: 1, fid: "me", ro: 1, av: real.av || "", unread: 0, persona: CFG.persona || "" });
   const idOf = (n) => { const f = d.fr.find((x) => x.n == n || x.rm == n || x.id == n); return f ? "px_" + f.id : n == "me" ? "me" : n; };
   WX.acc = owner; WX.cons = cons; WX.cov = ""; WX.fav = []; WX.cur = null; WX.tab = 0; WX.q = ""; WX.rq = null;
   WX.mom = (d.mom || []).map((m, i) => ({ id: "pm" + i, w: m.w == "me" ? "me" : idOf(m.w), t: m.t, ts: Date.now() - pxAgoMs(m.ago), lk: (m.lk || []).map(idOf), cm: (m.cm || []).map((x) => ({ w: idOf(x.w), t: x.t })), im: [], vis: "all" }));
@@ -22906,6 +22936,7 @@ function xjSchMenu(id) {
 }
 
 function xjSchDir(h) {
+  if (h === "__hs") return "（你突然想给对方一个惊喜。请主动发消息，并按系统提示里的【惊喜】要求，附上一个网页。）";
   const a = String(h).slice(6).split("|"), t = a[0] || "", x = a[1] || "", meal = /吃|饭|餐|早点|午饭|晚饭|宵夜|外卖|咖啡|奶茶|零食|下午茶/.test(x), bed = /睡|午休|小憩/.test(x) && !/醒/.test(x);
   return "（你今天的安排刚进行到 " + t + "「" + x + "」。请你主动给我发一条或几条消息，像随手发的一样，自然地说说你现在在做什么、是什么状态、周围怎么样；不要像汇报日程，不要提到“日程”“系统”“提示”“主动”。" + (meal ? "这是吃东西的时间：你自己决定吃什么、去哪吃、和谁吃，按你的习惯和人设来，不用我提醒或投喂。" : "") + ""+ (bed ? "你这是要去睡了：自然地跟对方说一声（晚安 / 先睡会儿），说完就不再回复。" : "") + "一两句话即可，要符合你的性格和此刻的时间。）";
 }
@@ -23197,6 +23228,7 @@ function xjOnPre(c, W) {
       if (window.__xjps && OFX.sys === window.__xjps) { OFX.sys = null; OFX.p = null; }
       window.__xjps = null;
       if (window.__xjcm) { window.CHATMAX = 0; window.__xjcm = 0; }
+      XJH.armed = 0;
     }
   };
 }
@@ -23307,6 +23339,33 @@ document.addEventListener("click", (e) => {
   XJ_STK.act = k;
   stkSheet(STKM);
 }, true);
+
+/* ---- Lucide 图标（ISC 许可，内联，不依赖网络） ---- */
+const LU = {
+  house: '<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+  pen: '<path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z"/>',
+  bell: '<path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/>',
+  bellOff: '<path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M17 17H4a1 1 0 0 1-.74-1.673C4.59 13.956 6 12.499 6 8a6 6 0 0 1 .258-1.742"/><path d="m2 2 20 20"/><path d="M8.668 3.01A6 6 0 0 1 18 8c0 2.687.77 4.653 1.707 6.05"/>',
+  user: '<circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/>',
+  search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+  refresh: '<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
+  heart: '<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>',
+  msg: '<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>',
+  eye: '<path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/>',
+  left: '<path d="m15 18-6-6 6-6"/>', right: '<path d="m9 18 6-6-6-6"/>', down: '<path d="m6 9 6 6 6-6"/>',
+  up: '<path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>',
+  plus: '<path d="M5 12h14"/><path d="M12 5v14"/>',
+  sliders: '<path d="M10 5H3"/><path d="M12 19H3"/><path d="M14 3v4"/><path d="M16 17v4"/><path d="M21 12h-9"/><path d="M21 19h-5"/><path d="M21 5h-7"/><path d="M8 10v4"/><path d="M8 12H3"/>',
+  hash: '<path d="M4 9h16"/><path d="M4 15h16"/><path d="M10 3 8 21"/><path d="M16 3l-2 18"/>',
+  trash: '<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><path d="M10 11v6"/><path d="M14 11v6"/>',
+  link: '<path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><path d="M8 12h8"/>',
+  pin: '<path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/>',
+  check: '<path d="M20 6 9 17l-5-5"/>',
+  x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+  corner: '<polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/>',
+  star: '<path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/>'
+};
+const lu = (n, s, w) => '<svg class="lu" width="' + (s || 20) + '" height="' + (s || 20) + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="' + (w || 1.8) + '" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + LU[n] + "</svg>";
 
 /* ===================== 论坛 ===================== */
 var FM = { boards: [], posts: [], nt: [], fol: [], me: {} };
@@ -23456,37 +23515,48 @@ async function fmReplies(p, tcm) {
 }
 function fmSchedule(p) { setTimeout(() => fmReplies(p), fmRand(5e3, 15e3)); }
 /* ---- 页面 ---- */
+function fmListHtml() {
+  let L = FM.posts.slice();
+  const q = (FS.q || "").trim().toLowerCase();
+  if (q) L = L.filter((p) => (p.t + p.c + p.a.n).toLowerCase().includes(q));
+  if (FS.b !== "all") L = L.filter((p) => p.b === FS.b);
+  if (FS.tab === "fol") L = L.filter((p) => FM.fol.includes(p.b));
+  L = FS.tab === "hot" ? L.sort((x, y) => y.lk + y.cm.length * 3 - (x.lk + x.cm.length * 3)) : L.sort((x, y) => (y.pin ? 1 : 0) - (x.pin ? 1 : 0) || y.ts - x.ts);
+  return L.length ? L.map(fmCard).join("") : '<p class="fmem">' + (q ? "没有找到相关帖子" : FS.tab === "fol" ? "关注版块后，这里会显示它们的帖子" : FM.posts.length ? "这个版块还没有帖子" : "论坛还很安静，点右上角刷新让它热闹起来") + "</p>";
+}
+function fmTabbar() {
+  const it = [["l", "house", "首页"], ["c", "pen", "发帖"], ["n", "bell", "消息"], ["m", "user", "我的"]], cu = FS.v === "p" ? "l" : FS.v;
+  return '<nav class="fmtb">' + it.map((x) => '<button data-fm="nav" data-id="' + x[0] + '" class="' + (cu === x[0] ? "on" : "") + '">' + lu(x[1], 22, cu === x[0] ? 2 : 1.6) + "<span>" + x[2] + "</span>" + (x[0] === "n" && fmUnread() ? '<i class="bd">' + fmUnread() + "</i>" : "") + "</button>").join("") + "</nav>";
+}
 function fmRender(force) {
   const e = $("#app");
   if (!e || !force && (typeof cur == "undefined" || cur !== "forum")) return;
   fmInit();
-  const bar = (k) => '<div class="fmbar">' + [["l", "首页"], ["c", "发帖"], ["n", "消息"], ["m", "我的"]].map((x) => '<button data-fm="nav" data-id="' + x[0] + '" class="' + (FS.v === x[0] || x[0] === "l" && FS.v === "p" ? "on" : "") + '">' + x[1] + (x[0] === "n" && fmUnread() ? '<i class="bd">' + fmUnread() + "</i>" : "") + "</button>").join("") + "</div>";
   let h = "";
   if (FS.v === "p") {
     const p = fmFind(FS.pid);
     if (!p) { FS.v = "l"; return fmRender(); }
     const rtc = FS.rt && p.cm.find((x) => x.id === FS.rt);
-    h = '<div class="fmw"><div class="tb"><button class="tbn" data-fm="back" aria-label="返回">' + ic("back") + "</button><b>" + esc(fmB(p.b)) + '</b><div class="tbr">' + (p.a.k === "me" ? '<button class="tbn" data-fm="del" aria-label="删除">' + ic("trash") + "</button>" : "") + '</div></div><div class="fmsc"><div class="fmcm">' + fmAv(p.a, 40) + "<div><b>" + fmWho(p.a) + "</b><s>" + fmT(p.ts) + " · 浏览 " + p.v + "</s></div></div><h3>" + esc(p.t) + '</h3><div class="fmbody">' + esc(p.c).replace(/\n/g, "<br>") + '</div><div class="fmact"><button data-fm="lk" class="' + (p.lkd ? "on" : "") + '">赞 ' + p.lk + '</button><button data-fm="rp" data-id="">评论 ' + p.cm.length + '</button><button data-fm="fol" class="' + (FM.fol.includes(p.b) ? "on" : "") + '">' + (FM.fol.includes(p.b) ? "已关注版块" : "关注版块") + "</button></div><h5>全部评论 " + p.cm.length + "</h5>" + (p.cm.length ? p.cm.map((c, i) => { const q = c.rt && p.cm.find((x) => x.id === c.rt); return '<div class="fmfl"><div class="fmcm">' + fmAv(c.a, 30) + "<div><b>" + fmWho(c.a) + (c.a.k === p.a.k && c.a.n === p.a.n ? '<i class="fmtg lz">楼主</i>' : "") + "</b><s>" + (i + 1) + " 楼 · " + fmT(c.ts) + "</s></div></div><p>" + (q ? "<q>回复 " + esc(q.a.n) + "：" + esc(q.t.slice(0, 30)) + "</q>" : "") + esc(c.t) + '</p><div class="fmfa"><button data-fm="clk" data-id="' + c.id + '" class="' + (c.lkd ? "on" : "") + '">赞 ' + c.lk + '</button><button data-fm="rp" data-id="' + c.id + '">回复</button></div></div>'; }).join("") : '<p class="fmem">还没有评论，来抢沙发吧</p>') + '</div><div class="fmin"><input id="fm_in" placeholder="' + (rtc ? "回复 " + esc(rtc.a.n) + "…" : "写评论…") + '" autocomplete="off"><button data-fm="send">发送</button></div></div>';
+    h = '<div class="fmw"><div class="tb"><button class="tbn" data-fm="back" aria-label="返回">' + lu("left", 22) + "</button><b>" + esc(fmB(p.b)) + '</b><div class="tbr">' + (p.a.k === "me" ? '<button class="tbn" data-fm="del" aria-label="删除">' + lu("trash", 19) + "</button>" : "") + '</div></div><div class="fmsc"><article class="fmcard"><div class="fmcm">' + fmAv(p.a, 42) + "<div><b>" + fmWho(p.a) + "</b><s>" + fmT(p.ts) + " · 浏览 " + p.v + "</s></div></div><h3>" + esc(p.t) + '</h3><div class="fmbody">' + esc(p.c).replace(/\n/g, "<br>") + '</div><div class="fmact"><button data-fm="lk" class="' + (p.lkd ? "on" : "") + '">' + lu("heart", 16) + " " + p.lk + '</button><button data-fm="rp" data-id="">' + lu("msg", 16) + " " + p.cm.length + '</button><button data-fm="fol" class="' + (FM.fol.includes(p.b) ? "on" : "") + '">' + lu("hash", 16) + " " + (FM.fol.includes(p.b) ? "已关注" : "关注版块") + '</button></div></article><h5>评论 ' + p.cm.length + "</h5>" + (p.cm.length ? '<div class="fmcard flush">' + p.cm.map((c, i) => { const q = c.rt && p.cm.find((x) => x.id === c.rt); return '<div class="fmfl"><div class="fmcm">' + fmAv(c.a, 32) + "<div><b>" + fmWho(c.a) + (c.a.k === p.a.k && c.a.n === p.a.n ? '<i class="fmtg lz">楼主</i>' : "") + "</b><s>" + (i + 1) + " 楼 · " + fmT(c.ts) + "</s></div></div><p>" + (q ? "<q>" + esc(q.a.n) + "：" + esc(q.t.slice(0, 30)) + "</q>" : "") + esc(c.t) + '</p><div class="fmfa"><button data-fm="clk" data-id="' + c.id + '" class="' + (c.lkd ? "on" : "") + '">' + lu("heart", 14) + " " + c.lk + '</button><button data-fm="rp" data-id="' + c.id + '">' + lu("corner", 14) + " 回复</button></div></div>"; }).join("") + "</div>" : '<p class="fmem">还没有评论，来抢沙发吧</p>') + '</div><div class="fmin"><div class="fmip">' + (rtc ? '<span class="fmrt" data-fm="rp" data-id="">回复 ' + esc(rtc.a.n) + " " + lu("x", 12) + "</span>" : "") + '<input id="fm_in" placeholder="写评论…" autocomplete="off"></div><button data-fm="send" aria-label="发送">' + lu("up", 20, 2.2) + "</button></div></div>";
   } else if (FS.v === "c") {
-    h = '<div class="fmw"><div class="ph" style="padding-top:20px"><b>发帖</b><button class="tbn" data-fm="pub" aria-label="发布">发布</button></div><div class="fmsc"><div class="fmbs">' + FM.boards.map((b) => '<button data-fm="cb" data-id="' + b.id + '" class="' + (FS.cb === b.id ? "on" : "") + '">' + esc(b.n) + "</button>").join("") + '</div><input class="fmt" id="fm_t" maxlength="40" placeholder="标题" value="' + esc(FS.dt) + '"><textarea class="fmx" id="fm_c" placeholder="说点什么吧…" rows="9">' + esc(FS.dc) + '</textarea><label class="fmlb"><input type="checkbox" id="fm_an"' + (FS.anon ? " checked" : "") + "> 匿名发布（角色不会知道是你）</label></div>" + bar() + "</div>";
+    h = '<div class="fmw"><div class="tb"><button class="fmtx" data-fm="nav" data-id="l">取消</button><b>发帖</b><button class="fmtx pri" data-fm="pub">发布</button></div><div class="fmsc"><div class="fmbs wrap">' + FM.boards.map((b) => '<button data-fm="cb" data-id="' + b.id + '" class="' + (FS.cb === b.id ? "on" : "") + '">' + esc(b.n) + "</button>").join("") + '</div><div class="fmcard"><input class="fmt" id="fm_t" maxlength="40" placeholder="标题" value="' + esc(FS.dt) + '"><textarea class="fmx" id="fm_c" placeholder="说点什么吧…" rows="9">' + esc(FS.dc) + '</textarea></div><div class="fmcard fmrow"><span>匿名发布<small>角色不会知道是你</small></span><input type="checkbox" id="fm_an" class="fmsw"' + (FS.anon ? " checked" : "") + "></div></div></div>";
   } else if (FS.v === "n") {
-    h = '<div class="fmw"><div class="ph" style="padding-top:20px"><b>消息</b><button class="tbn" data-fm="clr">全部已读</button></div><div class="fmsc">' + (FM.nt.length ? FM.nt.map((n) => '<div class="fmnt' + (n.seen ? "" : " un") + '" data-fm="nt" data-id="' + n.id + '" role="button" tabindex="0"><b>' + esc(n.w) + "</b><span>" + (n.k === "cm" ? "回复了你" : n.k === "lk" ? "赞了你" : "提到了你") + "：" + esc(n.t) + "</span><s>" + fmT(n.ts) + "</s></div>").join("") : '<p class="fmem">暂时没有新消息</p>') + "</div>" + bar() + "</div>";
+    h = '<div class="fmw"><div class="ph" style="padding-top:20px"><b>消息</b><button class="fmtx" data-fm="clr">全部已读</button></div><div class="fmsc">' + (FM.nt.length ? '<div class="fmcard flush">' + FM.nt.map((n) => '<div class="fmnt' + (n.seen ? "" : " un") + '" data-fm="nt" data-id="' + n.id + '" role="button" tabindex="0">' + fmAv({ k: "npc", n: n.w }, 38) + "<div><b>" + esc(n.w) + "<em>" + (n.k === "cm" ? "回复了你" : n.k === "lk" ? "赞了你" : "提到了你") + "</em></b><span>" + esc(n.t) + "</span></div><s>" + fmT(n.ts) + "</s></div>").join("") + "</div>" : '<p class="fmem">暂时没有新消息</p>') + "</div>" + fmTabbar() + "</div>";
   } else if (FS.v === "m") {
-    const my = FM.posts.filter((p) => p.a.k === "me");
-    h = '<div class="fmw"><div class="ph" style="padding-top:20px"><b>我的</b></div><div class="fmsc"><div class="fmme">' + fmAv({ k: "me", n: fmMeN() }, 56) + "<div><b>" + esc(fmMeN()) + "</b><s>发帖 " + my.length + " · 获赞 " + my.reduce((n, p) => n + p.lk, 0) + '</s></div></div><div class="fmls"><div class="fmrw" data-fm="nick"><b>论坛昵称</b><span>' + esc(fmMeN()) + '</span></div><div class="fmrw" data-fm="cp"><b>让角色发帖</b><span>用 TA 自己的 API 和口吻</span></div><div class="fmrw" data-fm="capi"><b>角色独立 API</b><span>每个角色可单独换模型 / 套用 API 预设</span></div><div class="fmrw" data-fm="nb"><b>新建版块</b><span>自己建一个版块</span></div><div class="fmrw dg" data-fm="wipe"><b>清空论坛</b><span>删除所有帖子和消息</span></div></div><h5>我的帖子</h5>' + (my.length ? my.map(fmCard).join("") : '<p class="fmem">还没有发过帖子</p>') + "</div>" + bar() + "</div>";
+    const my = FM.posts.filter((p) => p.a.k === "me"), row = (a, ic, col, t, d, cls) => '<div class="fmrw ' + (cls || "") + '" data-fm="' + a + '"><i class="fmic" style="background:' + col + '">' + lu(ic, 17, 2) + "</i><div><b>" + t + "</b><span>" + d + "</span></div>" + lu("right", 16) + "</div>";
+    h = '<div class="fmw"><div class="ph" style="padding-top:20px"><b>我的</b></div><div class="fmsc"><div class="fmcard fmme">' + fmAv({ k: "me", n: fmMeN() }, 60) + "<div><b>" + esc(fmMeN()) + "</b><s>发帖 " + my.length + " · 获赞 " + my.reduce((n, p) => n + p.lk, 0) + '</s></div></div><div class="fmcard flush">' + row("nick", "user", "#4f8cff", "论坛昵称", esc(fmMeN())) + row("cp", "pen", "#ff9f43", "让角色发帖", "用 TA 自己的 API 和口吻") + row("capi", "sliders", "#8e6bff", "角色独立 API", "每个角色可单独换模型 / 套用预设") + row("nb", "hash", "#34c27a", "新建版块", "自己建一个版块") + row("wipe", "trash", "#ff5a5f", "清空论坛", "删除所有帖子和消息", "dg") + "</div><h5>我的帖子</h5>" + (my.length ? my.map(fmCard).join("") : '<p class="fmem">还没有发过帖子</p>') + "</div>" + fmTabbar() + "</div>";
   } else {
-    let L = FM.posts.slice();
-    if (FS.b !== "all") L = L.filter((p) => p.b === FS.b);
-    if (FS.tab === "fol") L = L.filter((p) => FM.fol.includes(p.b));
-    L = FS.tab === "hot" ? L.sort((x, y) => y.lk + y.cm.length * 3 - (x.lk + x.cm.length * 3)) : L.sort((x, y) => (y.pin ? 1 : 0) - (x.pin ? 1 : 0) || y.ts - x.ts);
-    h = '<div class="fmw"><div class="ph" style="padding-top:20px"><b>论坛</b><button class="tbn' + (FS.busy ? " fmspin" : "") + '" data-fm="gen" aria-label="刷新">↻</button></div><div class="fmtabs">' + [["rec", "推荐"], ["hot", "热门"], ["fol", "关注"]].map((x) => '<button data-fm="tab" data-id="' + x[0] + '" class="' + (FS.tab === x[0] ? "on" : "") + '">' + x[1] + "</button>").join("") + '</div><div class="fmbs"><button data-fm="bd" data-id="all" class="' + (FS.b === "all" ? "on" : "") + '">全部</button>' + FM.boards.map((b) => '<button data-fm="bd" data-id="' + b.id + '" class="' + (FS.b === b.id ? "on" : "") + '">' + esc(b.n) + "</button>").join("") + '</div><div class="fmsc">' + (L.length ? L.map(fmCard).join("") : '<p class="fmem">' + (FS.tab === "fol" ? "关注版块后，这里会显示它们的帖子" : FM.posts.length ? "这个版块还没有帖子" : "论坛还很安静，点右上角 ↻ 让它热闹起来") + "</p>") + "</div>" + bar() + "</div>";
+    h = '<div class="fmw"><div class="ph" style="padding-top:20px"><b>论坛</b><button class="tbn' + (FS.busy ? " fmspin" : "") + '" data-fm="gen" aria-label="刷新">' + lu("refresh", 20) + '</button></div><div class="fmse">' + lu("search", 16) + '<input id="fm_q" placeholder="搜索帖子、昵称" value="' + esc(FS.q || "") + '" autocomplete="off"></div><div class="fmseg">' + [["rec", "推荐"], ["hot", "热门"], ["fol", "关注"]].map((x) => '<button data-fm="tab" data-id="' + x[0] + '" class="' + (FS.tab === x[0] ? "on" : "") + '">' + x[1] + "</button>").join("") + '</div><div class="fmbs"><button data-fm="bd" data-id="all" class="' + (FS.b === "all" ? "on" : "") + '">全部</button>' + FM.boards.map((b) => '<button data-fm="bd" data-id="' + b.id + '" class="' + (FS.b === b.id ? "on" : "") + '">' + esc(b.n) + '</button>').join("") + '</div><div class="fmsc" id="fm_list">' + fmListHtml() + "</div>" + fmTabbar() + "</div>";
   }
   e.innerHTML = h;
   if (FS.v === "p") { const s = e.querySelector(".fmsc"); if (s && FS.keep !== void 0) s.scrollTop = FS.keep; FS.keep = void 0; }
 }
 function fmCard(p) {
-  return '<div class="fmc" data-fm="op" data-id="' + p.id + '" role="button" tabindex="0"><div class="fmcm">' + fmAv(p.a, 34) + "<div><b>" + fmWho(p.a) + "</b><s>" + fmT(p.ts) + " · " + esc(fmB(p.b)) + "</s></div></div><h4>" + esc(p.t) + "</h4><p>" + esc(p.c.slice(0, 90)) + '</p><div class="fmft"><span>赞 ' + p.lk + "</span><span>评论 " + p.cm.length + "</span><span>浏览 " + p.v + "</span></div></div>";
+  return '<article class="fmcard fmc" data-fm="op" data-id="' + p.id + '" role="button" tabindex="0"><div class="fmcm">' + fmAv(p.a, 34) + "<div><b>" + fmWho(p.a) + "</b><s>" + fmT(p.ts) + '</s></div><em class="fmbt"># ' + esc(fmB(p.b)) + "</em></div><h4>" + esc(p.t) + "</h4><p>" + esc(p.c.slice(0, 90)) + '</p><div class="fmft"><span>' + lu("heart", 15) + " " + p.lk + "</span><span>" + lu("msg", 15) + " " + p.cm.length + "</span><span>" + lu("eye", 15) + " " + p.v + "</span></div></article>";
 }
+document.addEventListener("input", (e) => {
+  if (e.target && e.target.id === "fm_q") { FS.q = e.target.value; const l = $("#fm_list"); if (l) l.innerHTML = fmListHtml(); }
+});
 function fmDo(a, b) {
   const id = b.dataset.id;
   if (a === "nav") { FS.v = id; FS.pid = null; if (id === "c") { FS.dt = ""; FS.dc = ""; FS.anon = 0; } fmRender(); }
@@ -23594,12 +23664,14 @@ function xjLinkRows() {
     const all = d.fr.filter((f) => !f.hid).sort((a, b) => (b.pin ? 1 : 0) - (a.pin ? 1 : 0) || (b.ts || 0) - (a.ts || 0)), fs = c.lkx ? all : all.slice(0, topN);
     const un = all.reduce((n, f) => n + (f.un || 0), 0), last = all.slice().sort((a, b) => (b.ts || 0) - (a.ts || 0))[0], pr = xjPresence(c);
     const lt = last && last.m[last.m.length - 1];
-    h += '<div class="xlb" data-xlk="sw" data-id="' + c.id + '" role="button" tabindex="0"><div class="xla">' + av(c, 44) + '<i class="xld ' + pr.k + '"></i></div><div class="xlm"><b>' + esc(nm(c)) + '<span class="xls ' + pr.k + '">' + esc(pr.t) + "</span></b><s>" + esc(un && last ? "[" + un + "条] " + (last.rm || last.n) + "：" + (lt ? lt.t : "") : "关联账号 · QQ " + xjQQ(c)) + '</s></div><div class="xlr"><em>' + (last ? xjFmtT(last.ts, last.last) : "") + "</em>" + (un && LS.bd !== 0 ? '<i class="bd">' + (un > 99 ? "99+" : un) + "</i>" : "") + '</div><button class="xlc" data-pxc="' + c.id + '" aria-label="' + (c.lkc ? "展开" : "收起") + '">' + (c.lkc ? "▸" : "▾") + "</button></div>";
-    if (c.lkc) return;
-    h += fs.map((f) => {
-      const m = f.m[f.m.length - 1] || { t: "" }, nn = f.rm || f.n, mu = !!mt[f.id];
-      return '<div class="rw cl pxlr xq' + (f.pin ? " xpin" : "") + '" data-pxo="' + c.id + '" data-fid="' + f.id + '" role="button" tabindex="0">' + av({ name: nn }, 50) + '<div class="cm"><div class="rl1"><b>' + esc(nn) + '<i class="pxtg">' + esc(nm(c).slice(0, 4)) + "</i></b><em>" + xjFmtT(f.ts, f.last) + '</em></div><div class="rl2"><s>' + (f.un && mu ? "[" + f.un + "条] " : "") + esc(m.t) + "</s>" + (mu ? '<i class="xmu">◌</i>' : "") + (f.un ? '<i class="bd' + (mu ? " xm" : "") + '">' + (mu ? "" : f.un > 99 ? "99+" : f.un) + "</i>" : "") + "</div></div></div>";
-    }).join("") + (all.length > topN ? '<div class="pxmore" data-pxx="' + c.id + '" role="button" tabindex="0">' + (c.lkx ? "收起" : "查看 TA 的全部 " + all.length + " 个会话") + "</div>" : "");
+    h += '<section class="xlg"><div class="xlb" data-xlk="sw" data-id="' + c.id + '" role="button" tabindex="0"><div class="xla">' + av(c, 40) + '<i class="xld ' + pr.k + '"></i></div><div class="xlm"><b>' + esc(nm(c)) + '<span class="xls ' + pr.k + '">' + esc(pr.t) + "</span></b><s>" + lu("link", 12, 2) + " " + esc(un && last ? (last.rm || last.n) + "：" + (lt ? lt.t : "") : "关联账号 · QQ " + xjQQ(c)) + '</s></div><div class="xlr">' + (un && LS.bd !== 0 ? '<i class="bd">' + (un > 99 ? "99+" : un) + "</i>" : "") + '</div><button class="xlc" data-pxc="' + c.id + '" aria-label="' + (c.lkc ? "展开" : "收起") + '">' + lu(c.lkc ? "right" : "down", 16, 2) + "</button></div>";
+    if (!c.lkc) {
+      h += '<div class="xll">' + fs.map((f) => {
+        const m = f.m[f.m.length - 1] || { t: "" }, nn = f.rm || f.n, mu = !!mt[f.id];
+        return '<div class="rw cl pxlr xq' + (f.pin ? " xpin" : "") + '" data-pxo="' + c.id + '" data-fid="' + f.id + '" role="button" tabindex="0">' + av({ name: nn }, 46) + '<div class="cm"><div class="rl1"><b>' + esc(nn) + (f.pin ? '<i class="xpn">' + lu("pin", 11, 2) + "</i>" : "") + "</b><em>" + xjFmtT(f.ts, f.last) + '</em></div><div class="rl2"><s>' + (f.un && mu ? "[" + f.un + "条] " : "") + esc(m.t) + "</s>" + (mu ? '<i class="xmu">' + lu("bellOff", 13) + "</i>" : "") + (f.un ? '<i class="bd' + (mu ? " xm" : "") + '">' + (mu ? "" : f.un > 99 ? "99+" : f.un) + "</i>" : "") + "</div></div></div>";
+      }).join("") + "</div>" + (all.length > topN ? '<div class="pxmore xlmore" data-pxx="' + c.id + '" role="button" tabindex="0">' + (c.lkx ? "收起" : "查看 TA 的全部 " + all.length + " 个会话") + "</div>" : "");
+    }
+    h += "</section>";
   });
   return h;
 }
@@ -23615,7 +23687,7 @@ function xjRowMenu(c, f) {
 function xjAcctSheet() {
   const cs = WX.cons.filter((c) => c.link && PX[c.id]), me = WX.acc || {}, st = me.st || "on", lvm = 10 + xjHash(me.wid || "me") % 30;
   const chips = [["on", "在线"], ["bz", "忙碌"], ["lv", "离开"], ["hid", "隐身"], ["off", "离线"]];
-  const html = '<div class="xlw"><div class="xlme">' + av(me.name ? me : { name: me.nick || me.wid || "我", av: me.av }, 52) + "<div><b>" + esc(me.nick || me.wid || "我") + "</b><s>QQ " + esc(me.qq || me.wid || "—") + " · LV." + lvm + " " + xjLvIc(lvm) + '</s></div></div><div class="xlst">' + chips.map((x) => '<button data-xlk="st" data-id="' + x[0] + '" class="' + (st === x[0] ? "on" : "") + '"><i class="xld ' + x[0] + '"></i>' + x[1] + "</button>").join("") + "</div><h5>关联账号</h5>" + (cs.length ? cs.map((c) => { const pr = xjPresence(c), un = PX[c.id].fr.reduce((n, f) => n + (f.un || 0), 0), lv = xjLv(c), L = c.ls || {}; return '<div class="xlac"><div class="xla" data-xlk="go" data-id="' + c.id + '">' + av(c, 42) + '<i class="xld ' + pr.k + '"></i></div><div class="xlm" data-xlk="go" data-id="' + c.id + '"><b>' + esc(nm(c)) + '<span class="xls ' + pr.k + '">' + esc(pr.t) + "</span></b><s>QQ " + xjQQ(c) + " · LV." + lv + " " + xjLvIc(lv) + "</s></div>" + (un ? '<i class="bd">' + (un > 99 ? "99+" : un) + "</i>" : "") + '<button data-xlk="ntf" data-id="' + c.id + '" aria-label="消息提醒">' + (L.n === 0 ? "🔕" : "🔔") + '</button><button data-xlk="mng" data-id="' + c.id + '" aria-label="管理">⚙︎</button></div>'; }).join("") : '<p class="fmem">还没有关联账号</p>') + '</div><div class="xlbt"><button data-xlk="add">添加关联账号</button></div>';
+  const html = '<div class="xlw"><div class="xlcard xlme">' + av(me.name ? me : { name: me.nick || me.wid || "我", av: me.av }, 54) + "<div><b>" + esc(me.nick || me.wid || "我") + "</b><s>QQ " + esc(me.qq || me.wid || "—") + " · LV." + lvm + " " + xjLvIc(lvm) + '</s></div></div><div class="xlseg">' + chips.map((x) => '<button data-xlk="st" data-id="' + x[0] + '" class="' + (st === x[0] ? "on" : "") + '"><i class="xld ' + x[0] + '"></i>' + x[1] + "</button>").join("") + "</div><h5>关联账号</h5>" + (cs.length ? '<div class="xlcard flush">' + cs.map((c) => { const pr = xjPresence(c), un = PX[c.id].fr.reduce((n, f) => n + (f.un || 0), 0), lv = xjLv(c), L = c.ls || {}; return '<div class="xlac"><div class="xla" data-xlk="go" data-id="' + c.id + '">' + av(c, 42) + '<i class="xld ' + pr.k + '"></i></div><div class="xlm" data-xlk="go" data-id="' + c.id + '"><b>' + esc(nm(c)) + '<span class="xls ' + pr.k + '">' + esc(pr.t) + "</span></b><s>QQ " + xjQQ(c) + " · LV." + lv + " " + xjLvIc(lv) + "</s></div>" + (un ? '<i class="bd">' + (un > 99 ? "99+" : un) + "</i>" : "") + '<button data-xlk="ntf" data-id="' + c.id + '" aria-label="消息提醒">' + lu(L.n === 0 ? "bellOff" : "bell", 19) + '</button><button data-xlk="mng" data-id="' + c.id + '" aria-label="管理">' + lu("sliders", 19) + "</button></div>"; }).join("") + "</div>" : '<p class="fmem">还没有关联账号</p>') + '<div class="xlcard flush"><div class="xladd" data-xlk="add">' + lu("plus", 18, 2.2) + "<span>添加关联账号</span></div></div></div>";
   shOpen("账号切换", "关联账号的消息会直接出现在聊天列表里", html);
 }
 {
@@ -23654,6 +23726,106 @@ function xjMyRule() {
   const st = WX.acc && WX.acc.st;
   if (!st || st === "on") return "";
   return "\n- 对方此刻的在线状态：" + ({ bz: "忙碌（可能不方便立刻回复，别一直催）", lv: "离开（人可能不在手机旁）", hid: "隐身（其实在线，只是不想被你看到在线）", off: "离线（可能不会马上看到消息）" }[st] || "") + "。";
+}
+
+/* ===================== 聊天里的网页惊喜 ===================== */
+const XJH = { tmp: {}, n: 0, h: {}, armed: 0 };
+const XJ_HS = "【惊喜】这一次，你想用一个小网页给对方一个惊喜（不要解释你在做什么，像随手做的礼物）。根据你们此刻的关系、聊天内容、对方的心情和你今天的状态，自选形式：会动的小卡片、打字机效果的信、倒计时、烟花 / 星空 / 下雪动画、点一点就能玩的迷你小游戏、心情天气卡、专属证书、占卜签、拍立得相纸……\n格式要求：用 [网页:标题] 和 [/网页] 把完整的 HTML 包起来（可以带 <style> 和 <script>）。网页必须自包含：不要引用任何外部资源、字体、图片链接，图片只能用 CSS 或内联 SVG；不要用 100vh；宽度自适应手机，高度大约 220–420px；颜色柔和好看，字号不小于 14px；文字用中文，内容要贴合你们之间的事，有具体细节，不要空泛。网页前后可以各配一两句自然的话。";
+function xjHtmlClean(h) {
+  return String(h).replace(/^\s*```(?:html)?\s*/i, "").replace(/```\s*$/, "").trim().slice(0, 60000);
+}
+function xjHtmlPre(out) {
+  let t = String(out);
+  if (!/\[网页|```html/i.test(t)) return t;
+  const put = (ti, h) => {
+    h = xjHtmlClean(h);
+    if (h.length < 30) return "";
+    const id = ++XJH.n;
+    XJH.tmp[id] = { t: String(ti || "惊喜").trim().slice(0, 20) || "惊喜", h };
+    return "\n[网页#" + id + "]\n";
+  };
+  t = t.replace(/\[网页(?:[:：]([^\]\n]*))?\]\s*([\s\S]*?)\s*\[\/网页\]/g, (m, ti, h) => put(ti, h));
+  t = t.replace(/\[网页(?:[:：]([^\]\n]*))?\]\s*([\s\S]+)$/, (m, ti, h) => put(ti, h));
+  if (XJH.armed) t = t.replace(/```html\s*\n([\s\S]*?)```/gi, (m, h) => put("惊喜", h));
+  return t;
+}
+const xjHtmlSum = (h) => String(h).replace(/<(script|style)[\s\S]*?<\/\1>/gi, " ").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 100);
+const xjHtmlHist = (m) => "（你发给对方一个小网页《" + (m.ht || "惊喜") + "》，内容：" + (m.hs || "动画卡片") + "）";
+function xjHtmlDoc(h, key) {
+  h = String(h).replace(/<meta[^>]*http-equiv[^>]*>/gi, "").replace(/<(link|base)\b[^>]*>/gi, "").replace(/<\/?(iframe|object|embed)\b[^>]*>/gi, "");
+  let head = "", body = h;
+  const hm = /<head[^>]*>([\s\S]*?)<\/head>/i.exec(h), bm = /<body[^>]*>([\s\S]*?)(<\/body>|$)/i.exec(h);
+  if (hm) head = hm[1].replace(/<title[\s\S]*?<\/title>/gi, "");
+  if (bm) body = bm[1]; else if (hm) body = h.replace(/[\s\S]*<\/head>/i, "");
+  body = body.replace(/<!doctype[^>]*>/gi, "").replace(/<\/?(html|head)[^>]*>/gi, "");
+  let col = "#111";
+  try { col = getComputedStyle(document.body).color || col; } catch (e) {}
+  const csp = '<meta http-equiv="Content-Security-Policy" content="default-src \'none\'; style-src \'unsafe-inline\'; script-src \'unsafe-inline\'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src \'none\'; form-action \'none\'">';
+  const base = '<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>html,body{margin:0;padding:0}body{font:14px/1.6 -apple-system,system-ui,"PingFang SC",sans-serif;color:' + col + ";background:transparent;overflow-x:hidden}*{box-sizing:border-box}img,svg,canvas{max-width:100%}</style>";
+  const js = '<script>(function(){var k=' + JSON.stringify(key) + ';function s(){try{var m=Math.ceil(document.body.getBoundingClientRect().height),n=document.body.querySelectorAll("*"),i,r;for(i=0;i<n.length&&i<500;i++){r=n[i].getBoundingClientRect();if(r.bottom>m)m=Math.ceil(r.bottom)}parent.postMessage({xjH:m,k:k},"*")}catch(e){}}addEventListener("load",s);try{new ResizeObserver(s).observe(document.body)}catch(e){}setTimeout(s,300);setTimeout(s,1200)})()<\/script>';
+  return "<!doctype html><html><head>" + csp + base + head + "</head><body>" + body + js + "</body></html>";
+}
+function xjHtmlCard(m, i) {
+  const key = "h" + (m.ts || 0) + "_" + i, hh = XJH.h[key] || 260;
+  return '<div class="xhc"><div class="xhh" data-xh="fs" data-i="' + i + '"><b>✦ ' + esc(m.ht || "惊喜") + '</b><span><button data-xh="fs" data-i="' + i + '">全屏</button><button data-xh="sv" data-i="' + i + '">保存</button></span></div><iframe class="xhf" data-k="' + key + '" sandbox="allow-scripts" referrerpolicy="no-referrer" style="height:' + hh + 'px" srcdoc="' + esc(xjHtmlDoc(m.html, key)) + '"></iframe></div>';
+}
+window.addEventListener("message", (e) => {
+  const d = e.data;
+  if (!d || typeof d != "object" || !d.xjH || !d.k || d.k === "full") return;
+  const f = [...document.querySelectorAll("iframe.xhf")].find((x) => x.dataset.k == d.k);
+  if (!f || e.source !== f.contentWindow) return;
+  const h = Math.min(460, Math.max(80, Math.round(d.xjH)));
+  XJH.h[d.k] = h;
+  if (Math.abs((parseFloat(f.style.height) || 0) - h) > 1) f.style.height = h + "px";
+});
+window.addEventListener("click", (e) => {
+  const b = e.target.closest && e.target.closest("[data-xh]");
+  if (!b) return;
+  e.stopImmediatePropagation(); e.preventDefault();
+  const a = b.dataset.xh;
+  if (a === "cl") { const o = $("#xhfs"); if (o) o.remove(); return; }
+  const m = (WX.msgs[WX.cur] || [])[+b.dataset.i];
+  if (!m || !m.html) return;
+  if (a === "fs") {
+    const o0 = $("#xhfs"); if (o0) o0.remove();
+    const o = document.createElement("div");
+    o.id = "xhfs";
+    o.innerHTML = '<div class="xhfb"><b>✦ ' + esc(m.ht || "惊喜") + '</b><button data-xh="cl">关闭</button></div><iframe class="xhf" data-k="full" sandbox="allow-scripts" referrerpolicy="no-referrer" srcdoc="' + esc(xjHtmlDoc(m.html, "full")) + '"></iframe>';
+    ($("#phone") || document.body).appendChild(o);
+  } else if (a === "sv") {
+    try {
+      const u = URL.createObjectURL(new Blob([xjHtmlDoc(m.html, "save")], { type: "text/html" })), x = document.createElement("a");
+      x.href = u; x.download = (m.ht || "惊喜").replace(/[\\/:*?"<>|]/g, "_") + ".html";
+      document.body.appendChild(x); x.click(); x.remove();
+      setTimeout(() => URL.revokeObjectURL(u), 4000);
+      gtoast("已保存为网页文件", 1400);
+    } catch (er) { gtoast("保存失败", 1400); }
+  }
+}, true);
+function xjHtmlW(c, W) {
+  try {
+    const H = c.hs || {}, now = Date.now(), p = H.p == null ? .05 : H.p;
+    if (!H.force) {
+      if (!p || c.off == 1 || now - (H.last || 0) < 6 * 36e5 || Math.random() > p) return W;
+      if ((WX.msgs[c.id] || []).filter((m) => !m.s && !m.p).length < 8) return W;
+    }
+    c.hs = Object.assign({}, H, { force: 0, last: now });
+    XJH.armed = 1;
+    return Object.assign({}, W, { sys: W.sys + "\n\n" + XJ_HS });
+  } catch (e) { return W; }
+}
+function xjHsTag(c) {
+  const p = c.hs && c.hs.p != null ? c.hs.p : .05;
+  return p === 0 ? "（关闭）" : "（约 " + Math.round(p * 100) + "%）";
+}
+function xjHsMenu(id) {
+  const c = WX.cons.find((x) => x.id == id);
+  if (!c) return;
+  const H = c.hs = c.hs || {}, cur0 = H.p == null ? .05 : H.p, set = (p, l) => { H.p = p; wsave(); xjSys(id, "网页惊喜：" + l, "hs"); rCS(id); }, mk = (p, l) => ({ t: l + (cur0 === p ? " ✓" : ""), f: () => set(p, l.split("（")[0]) });
+  actSheet("网页惊喜 · " + nm(c), [
+    { t: "现在就给我一个惊喜", f: () => { if (!fmApi(c)) return gtoast("请先配置接口"); H.force = 1; wsave(); xjSys(id, "TA 正在准备一个网页惊喜…", "hs"); wxReply(id, "__hs"); gtoast("TA 正在准备…", 1800); } },
+    mk(0, "关闭"), mk(.05, "偶尔（约 5%）"), mk(.15, "常常（约 15%）"), mk(.35, "频繁（约 35%）")
+  ], "TA 会在聊天时随机做一个小网页送你：会动的卡片、小游戏、一封信、烟花……每个角色两次惊喜之间至少隔 6 小时。网页在沙箱里运行，不能联网。");
 }
 //XEND
 </script>
