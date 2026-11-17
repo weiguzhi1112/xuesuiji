@@ -676,6 +676,10 @@ mark.p{background:rgba(255,204,0,.55)}mark.s{background:rgba(52,199,89,.45)}
 .sy.xj::before{content:"";position:absolute;left:50%;top:1px;width:5px;height:5px;margin-left:-2.5px;background:currentColor;opacity:.65;transform:rotate(45deg);border-radius:1px}
 .sy.xj.xjc{margin-top:-6px!important}
 .sy.xj.xjc::after{content:"";position:absolute;left:50%;top:-6px;width:1px;height:8px;background:currentColor;opacity:.28}
+.gb.xjend{width:auto;border-radius:21px;padding:0 14px;font-size:14px}
+.xjct{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 8px;margin:0 -2px;scrollbar-width:none}.xjct::-webkit-scrollbar{display:none}
+.xjct button{flex:none;border:0;border-radius:14px;height:28px;padding:0 12px;font-size:12.5px;background:rgba(128,128,128,.14);color:inherit;cursor:pointer}
+.xjct button.on{background:var(--ink,#222);color:var(--bg,#fff)}
 html,body{background:#141414}@media (prefers-color-scheme:light){html:not([data-theme="dark"]){background:#e8e8e8}}.gmw{display:flex;flex-direction:column;height:calc(100% - 78px);padding:0 14px 36px;box-sizing:border-box}.gmv{position:relative;flex:1 1 0;min-height:150px;border-radius:22px;overflow:hidden;background:var(--soft);touch-action:none;box-shadow:0 0 0 1px var(--line2)}
 .gmt{position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden}.gmti{position:absolute;left:0;top:0;width:256px;height:256px;max-width:none;user-select:none;-webkit-user-drag:none;pointer-events:none}.gmti.bad{opacity:0}
 :root[data-theme="dark"] .gmti{filter:invert(1) hue-rotate(180deg) brightness(.92) contrast(.9)}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .gmti{filter:invert(1) hue-rotate(180deg) brightness(.92) contrast(.9)}}
@@ -2465,7 +2469,7 @@ function rOff(id) {
   if (!c) return;
   WX.cur = id;
   OF.id = id;
-  $("#vo").innerHTML = `<div class="g26"><button class="gb" data-a="ofback" aria-label="返回">${ic("back")}</button><div class="gt">${esc(nm(c))} · 线下</div><button class="gb" data-a="ofmore" aria-label="更多">${ic("more")}</button></div><div class="xo-s" id="ol"></div><div class="xo-i" id="oi"><div class="xo-c"><button data-a="ofadv">推进剧情</button><button data-a="ofre">重新生成</button></div><div class="xo-r"><textarea id="oin" rows="1" placeholder="写下你的行动或对白…" aria-label="线下剧情输入"></textarea><button class="sd" data-a="ofsend" aria-label="发送">${ic("up")}</button></div></div>`;
+  $("#vo").innerHTML = `<div class="g26"><button class="gb" data-a="ofback" aria-label="返回">${ic("back")}</button><div class="gt">${esc(nm(c))} · 线下</div><button class="gb xjend" data-a="ofend" aria-label="结束线下">结束</button><button class="gb" data-a="ofmore" aria-label="更多">${ic("more")}</button></div><div class="xo-s" id="ol"></div><div class="xo-i" id="oi"><div class="xo-c"><button data-a="ofadv">推进剧情</button><button data-a="ofre">重新生成</button></div><div class="xo-r"><textarea id="oin" rows="1" placeholder="写下你的行动或对白…" aria-label="线下剧情输入"></textarea><button class="sd" data-a="ofsend" aria-label="发送">${ic("up")}</button></div></div>`;
   ofPaint();
   view("o");
   {
@@ -2955,7 +2959,7 @@ ${H("回复方式")}<div class="ls">${sg("sty", "回复风格", "影响对方每
 <div class="ls">${sg("xs", "心声", "长按任意消息可生成 TA 的内心独白；也可以让 TA 每次回复都自动附上", [["man", "手动"], ["tap", "自动·点开"], ["show", "自动·显示"], ["off", "关闭"]], "man")}${rw("cxsl", "心声记录")}</div>
 ${H("声音与素材")}<div class="ls">${rw("cvoice", "TA 的声音" + (c.tts && (c.tts.vidc || c.tts.vid || c.tts.wv) ? "：" + esc(c.tts.vidc || c.tts.vid || c.tts.wv) : "（跟随全局）"))}${sw("novc", "不让 TA 发语音条", "开启后，TA 只用文字回复")}${rw("csnd2", "专属提示音" + (c.snd ? "（" + sndName(c.snd) + "）" : "（跟随全局）"))}${rw("cvp", "视频通话画面" + (c.vpic ? "（已设置）" : "（使用头像）"))}${rw("capi", "TA 的独立 API" + (typeof capiOn == "function" && capiOn(c) ? "：已设置" : "（跟随全局）"))}${rw("cvis", "TA 的识图设置")}</div>
 <div class="ls">${sw("noimg", "不让 TA 用我发的图片换头像/背景", "关闭时，TA 可以自己决定把我发的图片设成头像、聊天背景或通话画面")}${rw("crn", "TA 给我的备注（截图里显示）" + (c.rn ? "：" + esc(c.rn) : ""))}${rw("cbg", "聊天背景（聊天界面和截图都会用）" + (c.bg ? c.bg.u ? "：相册图片" : "：纯色" : "：默认"))}${rw("cshot", "让 TA 发来聊天截图")}${sw("nomom", "不让 TA 发朋友圈", "开启后，TA 不再发朋友圈，也不会回应我的动态")}</div>
-${H("记忆与剧情")}<div class="ls">${sw("nomem", "不使用记忆库", "开启后，这位角色不会再回忆过往的经历")}${rw("csch", "TA 今天的日程" + xjSchTag(c))}${rw("cof", "进入线下剧情")}${rw("cos", "线下剧情设置")}</div>
+${H("记忆与剧情")}<div class="ls">${sw("nomem", "不使用记忆库", "开启后，这位角色不会再回忆过往的经历")}${rw("csch", "TA 今天的日程" + xjSchTag(c))}${rw("cpre", "线上使用预设" + xjPreTag(c))}${rw("cof", "进入线下剧情")}${rw("cos", "线下剧情设置")}</div>
 ${H("工具")}<div class="ls">${rw("cmcp2", "工具调用（MCP）" + (c.mcp === 0 ? "：已关闭" : ""))}${mxs ? `<p class="stt" style="margin:0 0 6px">${mxs}</p>` : ""}</div>
 ${H("提示词")}<div class="ls">${rw("csys", "专属提示词" + (c.sys && c.sys.trim() ? "（已设置）" : "（使用全局）"))}${rw("cprev", "预览提示词")}</div>
 ${H("聊天记录")}<div class="ls">${rw("csearch", "查找聊天记录")}${rw("ccall", "对方来电")}${rw("cins", "插入系统提示")}${rw("cclr", "清空聊天记录", 0, " dg")}</div>
@@ -3008,6 +3012,7 @@ function csDo(a, el) {
     rCS(id);
   }, "TA 手机里对你的备注，例如：笨蛋、小祖宗；留空则用你的微信昵称");
   else if (a == "csch") xjSchMenu(id);
+  else if (a == "cpre") xjPreMenu(id);
   else if (a == "cbg") bgPick(c);
   else if (a == "cshot") shotAsk();
   else if (a == "csearch") wxFind(id);
@@ -3404,7 +3409,7 @@ $("#wx").addEventListener("click", (e) => {
   }, cxsl: () => csDo("cxsl", a), accp: () => rAcc(), mask: () => rMasks(), crn: () => csDo("crn", a), cbg: () => csDo("cbg", a), cshot: () => csDo("cshot", a), msgjump: () => {
     WX.jump = +a.dataset.i;
     rChat(a.dataset.id);
-  }, vplay: () => vPlay(+a.closest(".mr").dataset.i, a), vtxt: () => vTxt(+a.closest(".mr").dataset.i), ctog: () => vTxt(+a.closest(".mr").dataset.i), ofback: () => rChat(OF.id), ofmore: ofMore, ofadv: ofAdv, ofre: ofRegen, ofsend: ofSend, ofset: ofSet, tfc: () => tfTap(+a.closest(".mr").dataset.i), lcc: () => locTap(+a.closest(".mr").dataset.i), cos: () => csDo("cos", a), cof: () => csDo("cof", a), otog: () => {
+  }, vplay: () => vPlay(+a.closest(".mr").dataset.i, a), vtxt: () => vTxt(+a.closest(".mr").dataset.i), ctog: () => vTxt(+a.closest(".mr").dataset.i), ofback: () => rChat(OF.id), ofmore: ofMore, ofend: () => xjOfEnd(OF.id), ofadv: ofAdv, ofre: ofRegen, ofsend: ofSend, ofset: ofSet, tfc: () => tfTap(+a.closest(".mr").dataset.i), lcc: () => locTap(+a.closest(".mr").dataset.i), cos: () => csDo("cos", a), cof: () => csDo("cof", a), otog: () => {
     const m = (WX.msgs[WX.cur] || [])[+a.closest(".mr").dataset.i];
     if (m) {
       m.oc = m.oc ? 0 : 1;
@@ -4064,7 +4069,7 @@ const smsHist = (k, c) => {
 };
 const nowStr = () => (/* @__PURE__ */ new Date()).toLocaleString("zh-CN", { hour12: false, weekday: "long", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" });
 const wxSys0 = (c) => `你是「${c.name}」，正在和对方用微信聊天。人设：${c.persona || "普通朋友"}。现在是${nowStr()}，请按这个时间点该有的状态说话（比如深夜会困、饭点会提吃的）。
-` + humanOf(c) + RXRULE + timeBlock(WX.msgs[c.id]) + xjSchRule(c) + (c.novc ? "" : "\n- 偶尔（不要频繁，大多数时候还是打字）可以发语音：把那一条单独写一行，以「[语音]」开头，后面是你说的话，口语化。") + TFRULE + (typeof gmRule == "function" ? gmRule(c) : "") + (typeof calRule == "function" ? calRule(c) : "") + (typeof shotRule == "function" && c.off != 1 ? shotRule(c) : "") + (typeof xsRule == "function" && c.off != 1 ? xsRule(c) : "") + (typeof imgRule == "function" && c.off != 1 ? imgRule(c) : "") + (typeof momRule == "function" && c.off != 1 ? momRule(c) : "") + (typeof stkRule == "function" && c.off != 1 ? stkRule(c) : "") + (typeof pcRule == "function" && c.off != 1 ? pcRule(c) : "") + ({ one: "\n回复尽量集中在一条消息里，除非确实有不同的话要分开说。", few: "\n一般发一到三条，按内容需要决定，不要凑数。", many: "\n想到什么说什么，可以连着发较多条短消息，但不要为了凑数拆句。" }[c.rp] || "") + ({ short: "\n这次尽量简短，每条不超过 20 个字。", long: "\n这次可以多说一些，想说多少说多少，但仍然是口语，不要写成长篇文章。" }[c.sty] || "") + mcpRule(c);
+` + humanOf(c) + RXRULE + timeBlock(WX.msgs[c.id]) + xjCtx(c) + (c.novc ? "" : "\n- 偶尔（不要频繁，大多数时候还是打字）可以发语音：把那一条单独写一行，以「[语音]」开头，后面是你说的话，口语化。") + TFRULE + (typeof gmRule == "function" ? gmRule(c) : "") + (typeof calRule == "function" ? calRule(c) : "") + (typeof shotRule == "function" && c.off != 1 ? shotRule(c) : "") + (typeof xsRule == "function" && c.off != 1 ? xsRule(c) : "") + (typeof imgRule == "function" && c.off != 1 ? imgRule(c) : "") + (typeof momRule == "function" && c.off != 1 ? momRule(c) : "") + (typeof stkRule == "function" && c.off != 1 ? stkRule(c) : "") + (typeof pcRule == "function" && c.off != 1 ? pcRule(c) : "") + ({ one: "\n回复尽量集中在一条消息里，除非确实有不同的话要分开说。", few: "\n一般发一到三条，按内容需要决定，不要凑数。", many: "\n想到什么说什么，可以连着发较多条短消息，但不要为了凑数拆句。" }[c.rp] || "") + ({ short: "\n这次尽量简短，每条不超过 20 个字。", long: "\n这次可以多说一些，想说多少说多少，但仍然是口语，不要写成长篇文章。" }[c.sty] || "") + mcpRule(c);
 async function wxReply(id, hint) {
   var _a, _b;
   const c = WX.cons.find((x) => x.id == id), L = (_b = (_a = WX.msgs)[id]) != null ? _b : _a[id] = [];
@@ -4120,7 +4125,7 @@ async function wxReply(id, hint) {
     await memPrep(c.id, hist);
   } catch (e) {
   }
-  const W = wbApply(c.id, hist, c.off == 1 ? offSys(c) : wxSys(c), { ck: c.off == 1 ? "wx:o" + c.id : "wx:" + c.id });
+  const W = xjOnPre(c, wbApply(c.id, hist, c.off == 1 ? offSys(c) : wxSys(c), { ck: c.off == 1 ? "wx:o" + c.id : "wx:" + c.id }));
   try {
     let tkT = 0;
     const tk = (t) => {
@@ -15021,8 +15026,8 @@ function stkUniq(n) {
 }
 function stkAdd(u, n) {
   const L = stkAll();
-  if (L.length >= 60) {
-    gtoast("表情包最多 60 个");
+  if (L.length >= XJ_STK_MAX) {
+    gtoast("表情包最多 " + XJ_STK_MAX + " 个");
     return null;
   }
   const o = { id: xkId(), n: stkUniq(n), u };
@@ -15086,7 +15091,7 @@ $("#sh").addEventListener("click", (e) => {
     const d = await stkDescribe(s);
     gtoast(d ? "已更新描述" : "识别失败，请检查接口和模型是否支持图片", 2600);
     stkSheet(1);
-  } }, { t: "删除", dg: 1, f: () => {
+  } }, { t: "分类：" + (s.g || "未分类") + "（点击更改）", f: () => setTimeout(() => xjStkMove(s), 260) }, { t: "删除", dg: 1, f: () => {
     STKS = stkAll().filter((x) => x !== s);
     stkSave();
     stkSheet(1);
@@ -15414,11 +15419,11 @@ async function stkPrep(f) {
 }
 function stkAdd(u, n, x) {
   const L = stkAll();
-  if (L.length >= 60) {
-    gtoast("表情包最多 60 个");
+  if (L.length >= XJ_STK_MAX) {
+    gtoast("表情包最多 " + XJ_STK_MAX + " 个");
     return null;
   }
-  const o = Object.assign({ id: xkId(), n: stkUniq(n), u }, x || {});
+  const o = Object.assign({ id: xkId(), n: stkUniq(n), u, g: xjStkAct() }, x || {});
   L.push(o);
   stkSave();
   stkDescribe(o);
@@ -15427,7 +15432,7 @@ function stkAdd(u, n, x) {
 function stkRule(c) {
   const L = stkAll();
   let r = "\n- 对方可能会“拍一拍”你（聊天里显示为（我拍了拍你））：像微信里一样自然地回应，也可以单独一行写 [拍一拍] 拍回去，偶尔用就好。";
-  if (L.length) r += "\n- 你可以偶尔发表情包：把它单独写一行，格式 [表情:名字]，名字只能从下面选（括号里是画面内容，帮你挑选合适的）：" + L.slice(0, 40).map((x) => x.n + (x.d ? "（" + x.d.slice(0, 30) + "）" : "")).join("、") + "。气氛合适才发，不要每条都发，也不要连发。对方发来的表情包会显示给你看。";
+  if (L.length) r += "\n- 你可以偶尔发表情包：把它单独写一行，格式 [表情:名字]，名字只能从下面选（括号里是画面内容，帮你挑选合适的）：" + xjStkList(L) + "。气氛合适才发，不要每条都发，也不要连发。对方发来的表情包会显示给你看。";
   return r;
 }
 const vsel = (k, o, v) => sel('data-vis="' + k + '"', o, v);
@@ -15581,9 +15586,9 @@ function maskTxt(c) {
   return p.length ? "\n\n【对方的身份（面具）】对方现在以下面这个身份与你相处，请按这个身份称呼和对待TA，把它当作你本来就知道的事，不要说破这是设定：" + p.join("；") + "。" : "";
 }
 const wxSys = (c) => wxSys0(c) + maskTxt(c) + "\n\n【引用】偶尔（不是每条）想针对我之前说过的某一句话单独回应时，可以在那一行最前面写「[引用:我那句话里的几个字] 你的回复」，聊天里会显示成你引用了我那句话。只在确实需要指明回应哪句话时用，大多数消息正常发就好。不要自己写「（回复「…」）」这种格式。" + (typeof acctTxt == "function" ? acctTxt(c) : "");
-const smsSys = (c) => smsSys0(c) + xjSchRule(c) + maskTxt(c);
-const callSys = (c, ...r) => callSys0(c, ...r) + xjSchRule(c) + maskTxt(c);
-const offSys = (c, ...r) => offSys0(c, ...r) + maskTxt(c);
+const smsSys = (c) => smsSys0(c) + xjCtx(c) + maskTxt(c);
+const callSys = (c, ...r) => callSys0(c, ...r) + xjCtx(c) + maskTxt(c);
+const offSys = (c, ...r) => offSys0(c, ...r) + xjSchRule(c) + maskTxt(c);
 const MK = { id: null };
 function rMasks() {
   const a = WX.acc;
@@ -22785,7 +22790,7 @@ async function xjSchGen(id, hint, quiet) {
   try {
     const wd = "日一二三四五六"[(/* @__PURE__ */ new Date()).getDay()], mine = (typeof CL !== "undefined" && CL.ev || []).filter((x) => x.d == xjDay()).sort((a, b) => (a.t || "").localeCompare(b.t || "")).slice(0, 6);
     const dir = "（请不要聊天，只输出你今天（星期" + wd + "）从早到晚的日程，5 到 8 行，每行格式「HH:MM 事情」，按时间顺序。要符合你的人设、身份和今天是星期几；已经过去的时段也写，当作已发生的事。每条不超过 16 个字，不要序号、不要解释、不要任何其他文字。" + (mine.length ? "对方今天的安排是：" + mine.map((x) => (x.t || "全天") + " " + x.x.slice(0, 20)).join("；") + "。如果你们有可能碰面或联系，可以在日程里自然留出空档。" : "") + (hint ? "方向提示：" + hint + "。" : "") + "）";
-    const sys = "你是「" + c.name + "」，人设：" + (c.persona || "普通朋友") + "。现在是" + nowStr() + "。\n" + humanOf(c);
+    const sys = "你是「" + c.name + "」，人设：" + (c.persona || "普通朋友") + "。现在是" + nowStr() + "。\n" + humanOf(c) + (typeof cstTxt == "function" ? "\n" + cstTxt(c, true) + "\n（日程要和你当前的身体与情绪状态相符：生病、宿醉、很累就安排得轻松些，可以请假休息。）" : "");
     const items = xjSchParse(await chat([{ role: "user", content: dir }], sys, null, 1));
     if (items.length < 2) throw new Error("没有生成有效的日程，请再试一次");
     xjSchSet(c, items, "ai");
@@ -22815,7 +22820,7 @@ function xjSchRule(c) {
       if (x.t <= now) cur = i;
     });
     const nx = I[cur + 1], mk = (i) => i < cur ? "［已过］" : i == cur ? "［进行中］" : "［还没到］";
-    return "\n- 你今天的日程（这是你自己的安排，决定你此刻在做什么、状态如何；对方问起就按它回答，自然体现在语气里，不要像念清单）：" + I.map((x, i) => x.t + " " + x.x + mk(i)).join("；") + "。现在是 " + now + "，" + (cur >= 0 ? "你此刻正在「" + I[cur].x + "」" : "你还没开始今天的安排") + (nx ? "，接下来 " + nx.t + " 要「" + nx.x + "」" : "") + "。";
+    return "\n- 你今天的日程（这是你自己的安排，决定你此刻在做什么、状态如何；对方问起就按它回答，自然体现在语气里，不要像念清单）：" + I.map((x, i) => x.t + " " + x.x + mk(i)).join("；") + "。现在是 " + now + "，" + (cur >= 0 ? "你此刻正在「" + I[cur].x + "」" : "你还没开始今天的安排") + (nx ? "，接下来 " + nx.t + " 要「" + nx.x + "」" : "") + "。如果你此刻的身体或情绪状态（生病、很累、很饿、心情差）和日程冲突，以状态为准：可以推掉、迟到、改成休息或自己找吃的，并自然地说出来。";
   } catch (e) {
     return "";
   }
@@ -22844,6 +22849,12 @@ function xjSchMenu(id) {
     xjSys(id, s.auto !== 0 ? "已关闭 TA 的日程自动更新" : "已开启 TA 的日程自动更新（每天自己生成）", "schauto");
     rCS(id);
   } });
+  it.push({ t: s.link !== 0 ? "关闭「状态联动」（日程影响心情/体力/饥饿）" : "开启「状态联动」（日程影响心情/体力/饥饿）", f: () => {
+    c.sch = Object.assign({ d: "", items: [] }, c.sch || {}, { link: s.link !== 0 ? 0 : 1 });
+    wsave();
+    xjSys(id, s.link !== 0 ? "已关闭日程与状态的联动" : "已开启日程与状态的联动：吃饭、睡觉、运动会真实影响 TA 的状态", "schlink");
+    rCS(id);
+  } });
   it.push({ t: s.say !== 0 ? "关闭「到点自己发状态」" : "开启「到点自己发状态」", f: () => {
     c.sch = Object.assign({ d: "", items: [] }, c.sch || {}, { say: s.say !== 0 ? 0 : 1 });
     wsave();
@@ -22860,47 +22871,407 @@ function xjSchMenu(id) {
 }
 
 function xjSchDir(h) {
-  const a = String(h).slice(6).split("|"), t = a[0] || "", x = a[1] || "", meal = /吃|饭|餐|早点|午饭|晚饭|宵夜|外卖|咖啡|奶茶|零食|下午茶/.test(x);
-  return "（你今天的安排刚进行到 " + t + "「" + x + "」。请你主动给我发一条或几条消息，像随手发的一样，自然地说说你现在在做什么、是什么状态、周围怎么样；不要像汇报日程，不要提到“日程”“系统”“提示”“主动”。" + (meal ? "这是吃东西的时间：你自己决定吃什么、去哪吃、和谁吃，按你的习惯和人设来，不用我提醒或投喂。" : "") + "一两句话即可，要符合你的性格和此刻的时间。）";
-}
-function xjSchTick() {
-  try {
-    if (typeof CALL != "undefined" && CALL.on) return;
-    if (!CFG.a || !CFG.a.url || !CFG.a.model) return;
-    const now = Date.now(), n = new Date(), hmNow = f2(n.getHours()) + ":" + f2(n.getMinutes());
-    for (const c of WX.cons) {
-      if (!c.sch || c.off == 1 || xjSchBusy[c.id]) continue;
-      if (!xjSchOf(c)) {
-        if (c.sch.auto !== 0 && n.getHours() >= 6 && now - (c.sch.gts || 0) > 36e5) {
-          c.sch.gts = now;
-          wsave();
-          xjSchGen(c.id, "", true);
-        }
-        continue;
-      }
-      const I = c.sch.items, cur = xjSchCur(I);
-      if (cur < 0) continue;
-      if (c.sch.ann == null) c.sch.ann = cur;
-      if (cur <= c.sch.ann) continue;
-      const it = I[cur], L = WX.msgs[c.id] || [];
-      c.sch.ann = cur;
-      wsave();
-      const [h, m] = it.t.split(":"), late = (n.getHours() * 60 + n.getMinutes()) - (+h * 60 + +m) > 30;
-      const real = L.filter((x) => !x.s && !x.p && x.ts), lastTs = real.length ? real[real.length - 1].ts : 0;
-      if (c.sch.say === 0 || late || L.some((x) => x.p) || typeof qhOn == "function" && qhOn()) continue;
-      if (now - lastTs < 6e5 || (c.sch.anC || 0) >= 6) continue;
-      c.sch.anC = (c.sch.anC || 0) + 1;
-      xjSys(c.id, "日程更新：" + it.t + " " + it.x, "schnow");
-      wxReply(c.id, "__sch:" + it.t + "|" + it.x);
-      break;
-    }
-  } catch (e) {
-  }
+  const a = String(h).slice(6).split("|"), t = a[0] || "", x = a[1] || "", meal = /吃|饭|餐|早点|午饭|晚饭|宵夜|外卖|咖啡|奶茶|零食|下午茶/.test(x), bed = /睡|午休|小憩/.test(x) && !/醒/.test(x);
+  return "（你今天的安排刚进行到 " + t + "「" + x + "」。请你主动给我发一条或几条消息，像随手发的一样，自然地说说你现在在做什么、是什么状态、周围怎么样；不要像汇报日程，不要提到“日程”“系统”“提示”“主动”。" + (meal ? "这是吃东西的时间：你自己决定吃什么、去哪吃、和谁吃，按你的习惯和人设来，不用我提醒或投喂。" : "") + ""+ (bed ? "你这是要去睡了：自然地跟对方说一声（晚安 / 先睡会儿），说完就不再回复。" : "") + "一两句话即可，要符合你的性格和此刻的时间。）";
 }
 setTimeout(() => {
   xjSchTick();
   setInterval(xjSchTick, 3e4);
 }, 15e3);
+
+/* ---- 日程 ↔ 状态联动 ---- */
+const XJ_CL = [["wake", /起床|醒来|睡醒/], ["sleep", /睡|午休|小憩|补觉|入睡/], ["meal", /早饭|午饭|晚饭|早餐|午餐|晚餐|吃|饭|外卖|宵夜|夜宵|火锅|烧烤/], ["snack", /咖啡|奶茶|零食|下午茶|甜点|水果|茶/], ["sport", /跑步|健身|运动|游泳|球|瑜伽|散步|骑行|锻炼|爬山/], ["work", /上课|学习|工作|加班|开会|写代码|作业|考试|项目|复习|论文|会议|上班|培训/], ["fun", /游戏|电影|追剧|逛街|约会|聚会|唱歌|朋友|玩|旅行|看剧|桌游/], ["wash", /洗澡|洗漱|护肤|洗头/]];
+function xjKind(x) {
+  for (const [k, r] of XJ_CL) if (r.test(x)) return k;
+  return "";
+}
+function xjStApply(c, it, nt) {
+  const s = cstOf(c);
+  if (s.on === 0) return "";
+  cstTick(c);
+  const k = xjKind(it.x), now = Date.now(), cl = cstClamp;
+  let msg = "";
+  if (k == "wake") {
+    s.sleep = 0; s.s = Math.min(s.s, 25); s.e = Math.max(s.e, 80); msg = "起床了，精神恢复";
+  } else if (k == "sleep") {
+    let until = now + (/午休|小憩/.test(it.x) ? 1 : 7) * 36e5;
+    if (nt) {
+      const [h, m] = nt.split(":"), d = new Date();
+      d.setHours(+h, +m, 0, 0);
+      if (d.getTime() > now) until = d.getTime();
+    }
+    s.sleep = until; msg = "去睡觉了";
+  } else if (k == "meal") {
+    s.h = cl(s.h - 55); s.e = cl(s.e + 6); s.m = cl(s.m + 3); msg = "吃过东西，不饿了";
+  } else if (k == "snack") {
+    s.h = cl(s.h - 18); s.s = cl(s.s - 8); s.m = cl(s.m + 2); msg = "补充了点零食饮料";
+  } else if (k == "sport") {
+    s.e = cl(s.e - 15); s.h = cl(s.h + 10); s.m = cl(s.m + 6); s.s = cl(s.s - 6); msg = "运动后体力下降，心情变好";
+  } else if (k == "work") {
+    s.e = cl(s.e - 8); s.s = cl(s.s + 4); msg = "专注忙碌，体力慢慢消耗";
+  } else if (k == "fun") {
+    s.m = cl(s.m + 8); s.e = cl(s.e - 4); msg = "玩得开心，心情变好";
+  } else if (k == "wash") {
+    s.s = cl(s.s - 5); msg = "洗漱完，清爽了";
+  } else return "";
+  cstEv(s, "日程：" + it.t + " " + it.x);
+  try { savePrefs(); } catch (e) {}
+  return msg;
+}
+function xjHungry(c, now, n) {
+  try {
+    const s = cstTick(c), h = n.getHours();
+    if (s.on === 0 || s.h < 80 || s.sleep > now || h < 7 || h > 23) return 0;
+    if (now - (c.sch.hts || 0) < 4 * 36e5) return 0;
+    const L = WX.msgs[c.id] || [], real = L.filter((x) => !x.s && !x.p && x.ts), lastTs = real.length ? real[real.length - 1].ts : 0;
+    if (c.sch.say === 0 || L.some((x) => x.p) || now - lastTs < 6e5 || typeof qhOn == "function" && qhOn()) return 0;
+    c.sch.hts = now;
+    const t = f2(h) + ":" + f2(n.getMinutes()), it = { t, x: "肚子饿了，自己找点吃的" };
+    const msg = xjStApply(c, it);
+    xjSys(c.id, "状态联动：饿了，自己去找吃的" + (msg ? "（" + msg + "）" : ""), "schhg");
+    wxReply(c.id, "__sch:" + t + "|" + it.x);
+    return 1;
+  } catch (e) {
+    return 0;
+  }
+}
+function xjSchTick() {
+  try {
+    if (typeof CALL != "undefined" && CALL.on) return;
+    const api = !!(CFG.a && CFG.a.url && CFG.a.model);
+    const now = Date.now(), n = new Date();
+    let sent = 0;
+    for (const c of WX.cons) {
+      if (!c.sch || c.off == 1 || xjSchBusy[c.id]) continue;
+      const link = c.sch.link !== 0;
+      if (!xjSchOf(c)) {
+        if (api && c.sch.auto !== 0 && n.getHours() >= 6 && now - (c.sch.gts || 0) > 36e5) {
+          c.sch.gts = now;
+          wsave();
+          xjSchGen(c.id, "", true);
+        } else if (!sent && api && link && xjHungry(c, now, n)) sent = 1;
+        continue;
+      }
+      const I = c.sch.items, cur = xjSchCur(I);
+      if (cur < 0) continue;
+      if (c.sch.ann == null) c.sch.ann = cur;
+      if (cur <= c.sch.ann) {
+        if (!sent && api && link && xjHungry(c, now, n)) sent = 1;
+        continue;
+      }
+      const it = I[cur], L = WX.msgs[c.id] || [], kind = xjKind(it.x);
+      c.sch.ann = cur;
+      const [h, m] = it.t.split(":"), late = n.getHours() * 60 + n.getMinutes() - (+h * 60 + +m) > 30;
+      const real = L.filter((x) => !x.s && !x.p && x.ts), lastTs = real.length ? real[real.length - 1].ts : 0;
+      let msg = "";
+      if (link && kind != "sleep") {
+        try { msg = xjStApply(c, it, (I[cur + 1] || {}).t); } catch (e) {}
+      }
+      const ok = api && !sent && c.sch.say !== 0 && !late && !L.some((x) => x.p) && !(typeof qhOn == "function" && qhOn()) && now - lastTs >= 6e5 && (c.sch.anC || 0) < 6 && !(cstOf(c).sleep > now);
+      const tip = "日程更新：" + it.t + " " + it.x + (msg ? "（" + msg + "）" : "");
+      if (ok) {
+        c.sch.anC = (c.sch.anC || 0) + 1;
+        xjSys(c.id, tip, "schnow");
+        wxReply(c.id, "__sch:" + it.t + "|" + it.x);
+        sent = 1;
+      } else if (msg) xjSys(c.id, tip, "schnow");
+      if (link && kind == "sleep") {
+        setTimeout(() => { try { const mm = xjStApply(c, it, (I[cur + 1] || {}).t); xjSys(c.id, "状态联动：" + mm, "schst"); } catch (e) {} }, ok ? 6e4 : 0);
+      }
+      wsave();
+    }
+  } catch (e) {
+  }
+}
+
+/* ---- 线上/线下不割裂：结束线下 ---- */
+function xjAgo(ts) {
+  const m = Math.max(1, Math.round((Date.now() - ts) / 6e4));
+  return m < 60 ? m + " 分钟前" : m < 1440 ? Math.round(m / 60) + " 小时前" : Math.round(m / 1440) + " 天前";
+}
+function xjOfRule(c) {
+  try {
+    const e = c && c.ofend;
+    if (!e || Date.now() - e.ts > (e.keep || 3) * 864e5) return "";
+    const body = e.mode == "sum" ? e.sum : e.ex;
+    if (!body) return "";
+    return "\n- 【你们刚刚线下面对面发生的事】（" + xjAgo(e.ts) + "结束，" + (e.mode == "sum" ? "这是你自己记下的经过" : "这是线下剧情的原文片段") + "；这些真实发生过，你都记得：地点、情绪、说过的话和约定要自然延续，不要复述，也不要装作没发生过）\n" + body;
+  } catch (er) {
+    return "";
+  }
+}
+function xjCtx(c) {
+  return xjSchRule(c) + xjOfRule(c);
+}
+function xjOfPart(c) {
+  const M = ofL(c.id).filter((m) => !m.p), s = Math.min(c.oen || 0, M.length);
+  return { M, part: M.slice(s).filter((m) => m && m.t != null) };
+}
+function xjOfTxt(c, part, lim) {
+  const one = (m) => (m.me ? "【我】" : "【" + nm(c) + "】") + String(m.t).replace(/<think>[\s\S]*?<\/think>/g, "").trim().slice(0, 1500);
+  let t = part.map(one).join("\n");
+  if (t.length > lim) t = t.slice(0, 500) + "\n……（中间省略）……\n" + t.slice(-(lim - 500));
+  return t;
+}
+function xjOfEnd(id) {
+  const c = WX.cons.find((x) => x.id == id);
+  if (!c) return;
+  if (xjOfPart(c).part.length < 2) return gtoast("这次线下还没有足够的内容");
+  actSheet("结束线下 · " + nm(c), [
+    { t: "总结这次线下，并计入记忆", f: () => xjOfDo(id, "sum") },
+    { t: "不总结，仅保留上下文（不计入记忆）", f: () => xjOfDo(id, "ctx") }
+  ], "两种方式 TA 都会记得刚刚发生了什么，回到线上也会自然接上；区别只在于有没有写进长期记忆。");
+}
+async function xjOfDo(id, mode) {
+  const c = WX.cons.find((x) => x.id == id);
+  if (!c || OF.busy[id]) return;
+  const { M, part } = xjOfPart(c), ck = "wx:o" + id, hasMem = typeof MEM != "undefined";
+  const eat = () => { if (hasMem) MEM.pos[ck] = ofL(id).filter((m) => isObj(m) && !m.s && !m.p).length; };
+  if (mode == "sum") {
+    if (!CFG.a.url && !capiOn(c)) return gtoast("请先配置接口，才能总结");
+    gtoast("正在总结这次线下…", 2600);
+    xjSys(id, "正在总结这次线下…", "ofend");
+    let out = "";
+    try {
+      const sys = "你是「" + nm(c) + "」，人设：" + (c.persona || "普通朋友") + "。你刚刚和「" + prUser() + "」面对面经历了一段线下剧情，现在要把它写成自己的记忆。";
+      const ask = "这是刚刚线下剧情的内容：\n" + xjOfTxt(c, part, 9e3) + "\n\n请以你（" + nm(c) + "）的视角，严格按下面格式输出，不要其他文字：\n【经过】150 到 260 字，按时间顺序写清楚：在哪里、发生了什么、说了哪些重要的话、有什么约定或承诺、你的感受，以及你对对方态度的变化。\n【要点】\n- 最多 6 条，每条不超过 40 字，只写具体事实（地点、事件、承诺、称呼、情绪）。";
+      const prev = CAPI.id; CAPI.id = id;
+      try { out = String(await chat([{ role: "user", content: ask }], sys, null, 1)); } finally { CAPI.id = prev; }
+    } catch (e) {
+      xjSys(id, "总结失败，线下尚未结束", "ofend");
+      return gtoast("总结失败：" + (typeof em == "function" ? em(e) : e && e.message) + "。可以重试，或选择「仅保留上下文」", 3200);
+    }
+    const nm1 = out.match(/【经过】([\s\S]*?)(?=【要点】|$)/), text = (nm1 ? nm1[1] : out).replace(/^\s+|\s+$/g, "").slice(0, 400);
+    const pts = (out.split("【要点】")[1] || "").split(/\n+/).map((l) => l.replace(/^[-*•\d.、\s]+/, "").trim()).filter((l) => l.length >= 4 && l.length <= 80).slice(0, 6);
+    if (text.length < 20) {
+      xjSys(id, "总结失败，线下尚未结束", "ofend");
+      return gtoast("没有得到有效的总结，请再试一次");
+    }
+    if (hasMem && MEM.on) {
+      const now = Date.now(), add = (t, imp, pin, i) => MEM.items.push({ id: xkId() + i, cid: id, src: "sum", ck: "", e: 0, t, ts: now, imp, pin, v: memVec(t, 64), of: 1 });
+      add(text.slice(0, 300), 3, 1, 0);
+      pts.forEach((t, i) => add(t, 3, 0, i + 1));
+      eat();
+      memSave();
+    }
+    c.ofend = { ts: Date.now(), mode: "sum", sum: text, n: part.length, keep: 7 };
+    c.oen = M.length;
+    wsave();
+    xjSys(id, hasMem && MEM.on ? "线下已结束：已总结并计入 TA 的记忆（" + (pts.length + 1) + " 条）" : "线下已结束：已总结（记忆功能未开启，只作为近期印象保留 7 天）", "ofend");
+    gtoast(hasMem && MEM.on ? "已总结并计入记忆" : "已总结（记忆功能未开启，仅作近期印象）", 2600);
+  } else {
+    const t0 = (part[0] && part[0].ts) || 0;
+    if (hasMem) {
+      MEM.items = MEM.items.filter((it) => !(it.ck === ck && it.ts >= t0 - 1e3));
+      eat();
+      memSave();
+    }
+    c.ofend = { ts: Date.now(), mode: "ctx", ex: xjOfTxt(c, part, 2400), n: part.length, keep: 3 };
+    c.oen = M.length;
+    wsave();
+    xjSys(id, "线下已结束：仅保留上下文，未计入记忆（接下来 3 天聊天里 TA 都会记得）", "ofend");
+    gtoast("线下已结束，已保留上下文", 2600);
+  }
+  try { rChat(id); } catch (e) {}
+}
+
+/* ---- 单角色 API：只换模型 / 套用预设 ---- */
+function capiRes(c) {
+  const P = c && c.capi;
+  if (!P) return null;
+  const pr = P.pn && (CFG.presets || []).find((x) => x && x.name === P.pn);
+  let a = capiOK(P.a) ? P.a : pr && capiOK(pr.a) ? pr.a : null;
+  if (!a && P.m && capiOK(CFG.a)) a = Object.assign({}, CFG.a, { model: P.m });
+  const b = capiOK(P.b) ? P.b : pr && capiOK(pr.b) ? pr.b : null;
+  return { a, b, fb: P.fb != null ? P.fb : pr ? pr.fb ? 1 : 0 : 0, gl: P.gl };
+}
+function xjCapiItems(c, P, re, wsv) {
+  const prs = (CFG.presets || []).filter((x) => x && x.name);
+  const ms = ((typeof mlist == "function" ? mlist("a") : []) || []).map((m) => typeof m == "string" ? m : m && (m.id || m.name)).filter(Boolean);
+  const setM = (v) => {
+    v = String(v || "").trim();
+    if (v) P.m = v; else delete P.m;
+    wsv();
+    xjSys(c.id, v ? "已为 TA 单独指定模型「" + v + "」" : "TA 的模型恢复跟随全局", "capi");
+    re();
+  };
+  return [
+    { t: "只换模型：" + (P.m || "跟随全局") + (CFG.a.model ? "（全局：" + CFG.a.model + "）" : ""), f: () => setTimeout(() => {
+      if (ms.length) actSheet("选择模型 · " + nm(c), ms.slice(0, 40).map((m) => ({ t: m + (P.m === m ? " ✓" : ""), f: () => setM(m) })).concat([{ t: "手动输入…", f: () => setTimeout(() => editSheet("模型名", P.m || "", setM, "例如 " + MEX), 260) }, { t: "跟随全局", f: () => setM("") }]), "沿用全局的地址和密钥，只换这位角色用的模型");
+      else editSheet("只换模型（沿用全局地址和密钥）", P.m || "", setM, "例如 " + MEX + "，留空跟随全局");
+    }, 260) },
+    { t: "套用 API 预设（备用方案）：" + (P.pn || "未选择"), f: () => setTimeout(() => {
+      if (!prs.length && !P.pn) return gtoast("还没有 API 预设，请先在「设置 → 接口」里另存一个", 2600);
+      const set = (n) => { if (n) P.pn = n; else delete P.pn; wsv(); xjSys(c.id, n ? "已为 TA 套用 API 预设「" + n + "」" : "TA 不再使用 API 预设", "capi"); re(); };
+      actSheet("选择 API 预设", prs.map((x) => ({ t: x.name + (P.pn === x.name ? " ✓" : ""), f: () => set(x.name) })).concat(P.pn ? [{ t: "不使用预设", f: () => set("") }] : []), "预设里的主接口和副接口只用于这位角色；上面单独填写的主/备用 API 优先于预设");
+    }, 260) }
+  ];
+}
+
+/* ---- 线上也能用预设 ---- */
+function xjPreOf(c) {
+  const v = c && c.wpre;
+  if (!v) return null;
+  return v === "o" ? pstOf(c) : pstGet(v);
+}
+function xjPreTag(c) {
+  const x = xjPreOf(c);
+  return x ? "（" + x.name + "）" : "（未使用）";
+}
+function xjOnPre(c, W) {
+  try {
+    const pr = xjPreOf(c);
+    if (!pr || c.off == 1 || !W) return W;
+    const ea = capiRes(c) && capiRes(c).a || CFG.a, an = ea.type == "anthropic";
+    const ex = { input: (W.hist[W.hist.length - 1] || {}).content || "" }, before = [], after = [], abs = [];
+    let seen = 0;
+    for (const e of pr.items) {
+      if (!e.on) continue;
+      if (e.mk) {
+        if (e.mk == "chatHistory") seen = 1;
+        continue;
+      }
+      const t = pstMacro(e.content, c, ex);
+      if (!t.trim()) continue;
+      if (e.pos == 1) abs.push({ d: Math.max(0, +e.depth || 0), role: e.role || "system", t });
+      else (seen ? after : before).push({ role: e.role || "system", t });
+    }
+    let sys = W.sys;
+    const bs = before.filter((x) => x.role == "system").map((x) => x.t).join("\n\n"), as = after.filter((x) => x.role == "system").map((x) => x.t).join("\n\n");
+    if (bs) sys = bs + "\n\n" + sys;
+    if (as) sys += "\n\n" + as;
+    const rl = (r) => an && r == "system" ? "user" : r;
+    let H = before.filter((x) => x.role != "system").map((x) => ({ role: rl(x.role), content: x.t })).concat(W.hist);
+    abs.forEach((x) => { H.splice(Math.max(0, H.length - x.d), 0, { role: rl(x.role), content: x.t }); });
+    after.filter((x) => x.role != "system").forEach((x) => H.push({ role: an && x.role != "user" ? "user" : x.role, content: x.t }));
+    H = mergeH(H);
+    if (!H.length || H[H.length - 1].role != "user") H.push({ role: "user", content: "（请继续。）" });
+    OFX.sys = sys;
+    OFX.p = pr.p || null;
+    window.__xjps = sys;
+    if (pr.p && pr.p.max > 0) { window.CHATMAX = pr.p.max; window.__xjcm = 1; }
+    return Object.assign({}, W, { sys, hist: H });
+  } catch (e) {
+    return W;
+  }
+}
+{
+  const w0 = wxReply;
+  wxReply = async function () {
+    try { return await w0.apply(this, arguments); } finally {
+      if (window.__xjps && OFX.sys === window.__xjps) { OFX.sys = null; OFX.p = null; }
+      window.__xjps = null;
+      if (window.__xjcm) { window.CHATMAX = 0; window.__xjcm = 0; }
+    }
+  };
+}
+function xjPreMenu(id) {
+  const c = WX.cons.find((x) => x.id == id);
+  if (!c) return;
+  const cur = c.wpre || "", set = (v, label) => {
+    if (v) c.wpre = v; else delete c.wpre;
+    wsave();
+    xjSys(id, v ? "线上聊天已套用预设「" + label + "」" : "线上聊天不再使用预设", "wpre");
+    rCS(id);
+  }, off = pstOf(c), items = [{ t: "不使用" + (!cur ? " ✓" : ""), f: () => set("", "") }];
+  items.push({ t: "跟随线下绑定的预设" + (off ? "（" + off.name + "）" : "（线下未绑定）") + (cur === "o" ? " ✓" : ""), f: () => set("o", off ? off.name : "线下预设") });
+  pstList().forEach((x) => items.push({ t: x.name + (cur === x.id ? " ✓" : ""), f: () => set(x.id, x.name) }));
+  actSheet("线上预设 · " + nm(c), items, "预设会作用于和 TA 的微信文字聊天：它的提示词条目、顺序、深度注入和采样参数叠加到线上提示词上；角色人设和世界书不会重复加入。短信和通话暂不使用。");
+}
+
+/* ---- 表情包：上限与分类 ---- */
+const XJ_STK_MAX = 400, XJ_STK = { act: "" };
+function xjStkCats() {
+  const b = rd("stkc"), o = [];
+  (Array.isArray(b) ? b : []).forEach((x) => { if (x && !o.includes(x)) o.push(x); });
+  stkAll().forEach((s) => { if (s.g && !o.includes(s.g)) o.push(s.g); });
+  return o;
+}
+const xjStkSaveCats = (a) => { try { store("stkc", a); } catch (e) {} };
+const xjStkAct = () => XJ_STK.act && XJ_STK.act !== "*" ? XJ_STK.act : void 0;
+function xjStkList(L) {
+  const MAXN = 90, grp = {};
+  L.forEach((x) => { (grp[x.g || ""] = grp[x.g || ""] || []).push(x); });
+  const keys = Object.keys(grp), many = L.length > 60, hasG = keys.some((k) => k);
+  return keys.map((g) => {
+    let a = grp[g];
+    if (L.length > MAXN) a = a.slice(0, Math.max(5, Math.round(MAXN * a.length / L.length)));
+    return (hasG ? "【" + (g || "未分类") + "】" : "") + a.map((x) => x.n + (x.d ? "（" + x.d.slice(0, many ? 14 : 30) + "）" : "")).join("、");
+  }).join(" ｜ ");
+}
+function xjStkTabs() {
+  const sh = document.querySelector("#sh"), g = sh && sh.querySelector(".stg");
+  if (!g) return;
+  const cats = xjStkCats(), all = stkAll(), a = XJ_STK.act;
+  const old = sh.querySelector(".xjct");
+  if (old) old.remove();
+  const bar = document.createElement("div");
+  bar.className = "xjct";
+  const mk = (k, l, n) => '<button data-xjc="' + esc(k) + '"' + (a === k ? ' class="on"' : "") + ">" + esc(l) + (n != null ? " " + n : "") + "</button>";
+  bar.innerHTML = mk("", "全部", all.length) + (cats.length ? mk("*", "未分类", all.filter((s) => !s.g).length) : "") + cats.map((x) => mk(x, x, all.filter((s) => s.g === x).length)).join("") + '<button data-xjc="+">＋</button>' + (a && a !== "*" ? '<button data-xjc="~">⋯</button>' : "");
+  g.parentNode.insertBefore(bar, g);
+  g.querySelectorAll(".stc").forEach((b) => {
+    const s = all.find((x) => x.id == b.dataset.stk);
+    b.style.display = !a || s && (a === "*" ? !s.g : s.g === a) ? "" : "none";
+  });
+}
+{
+  const s1 = stkSheet;
+  stkSheet = function () {
+    s1.apply(this, arguments);
+    try { xjStkTabs(); } catch (e) {}
+  };
+}
+function xjStkMove(s) {
+  const cats = xjStkCats(), mv = (g) => {
+    if (g) s.g = g; else delete s.g;
+    stkSave();
+    xjSys(WX.cur, "表情「" + s.n + "」" + (g ? "已归入「" + g + "」" : "已移到未分类"), "stkc");
+    stkSheet(1);
+  };
+  actSheet("移动到分类 · " + s.n, cats.map((x) => ({ t: x + (s.g === x ? " ✓" : ""), f: () => mv(x) })).concat([{ t: "新建分类…", f: () => setTimeout(() => editSheet("新建表情分类", "", (v) => { v = v.trim().slice(0, 8); if (!v) return; const cs = xjStkCats(); if (!cs.includes(v)) { cs.push(v); xjStkSaveCats(cs); } mv(v); }, "例如：开心、委屈、阴阳怪气"), 260) }, { t: "未分类" + (!s.g ? " ✓" : ""), f: () => mv("") }]));
+}
+document.addEventListener("click", (e) => {
+  const b = e.target.closest && e.target.closest("[data-xjc]");
+  if (!b) return;
+  e.stopPropagation();
+  const k = b.dataset.xjc, sh = $("#sh");
+  if (k === "+") {
+    if (sh) sh._stk = 0;
+    return editSheet("新建表情分类", "", (v) => {
+      v = v.trim().slice(0, 8);
+      if (!v) return;
+      const cs = xjStkCats();
+      if (!cs.includes(v)) { cs.push(v); xjStkSaveCats(cs); }
+      XJ_STK.act = v;
+      xjSys(WX.cur, "已新建表情分类「" + v + "」", "stkc");
+      stkSheet(STKM);
+    }, "例如：开心、委屈、阴阳怪气");
+  }
+  if (k === "~") {
+    const g = XJ_STK.act;
+    if (sh) sh._stk = 0;
+    return actSheet("分类「" + g + "」", [{ t: "重命名", f: () => setTimeout(() => editSheet("分类名称", g, (v) => {
+      v = v.trim().slice(0, 8);
+      if (!v || v === g) return stkSheet(STKM);
+      stkAll().forEach((s) => { if (s.g === g) s.g = v; });
+      xjStkSaveCats(xjStkCats().map((x) => x === g ? v : x).filter((x, i, a) => a.indexOf(x) === i));
+      stkSave();
+      XJ_STK.act = v;
+      xjSys(WX.cur, "表情分类「" + g + "」已改名为「" + v + "」", "stkc");
+      stkSheet(STKM);
+    }), 260) }, { t: "删除分类（表情回到未分类）", dg: 1, f: () => {
+      stkAll().forEach((s) => { if (s.g === g) delete s.g; });
+      xjStkSaveCats(xjStkCats().filter((x) => x !== g));
+      stkSave();
+      XJ_STK.act = "";
+      xjSys(WX.cur, "已删除表情分类「" + g + "」", "stkc");
+      stkSheet(STKM);
+    } }]);
+  }
+  XJ_STK.act = k;
+  stkSheet(STKM);
+}, true);
 //XEND
 </script>
 <script type="text/plain" class="mp">
@@ -22908,11 +23279,11 @@ setTimeout(() => {
 // ---- 角色独立 API ----
 const CAPI = { id: null };
 const capiOK = (a) => !!(a && a.url && a.model);
-function capiOn(c) { const P = c && c.capi; return !!(P && (capiOK(P.a) || (P.fb && capiOK(P.b)))); }
+function capiOn(c) { const R = capiRes(c); return !!(R && (R.a || (R.fb && R.b))); }
 {
   const chat0 = chat;
   chat = async function (msgs, sys, onD, nb, tl) {
-    const c = CAPI.id != null ? WX.cons.find((x) => x.id == CAPI.id) : null, P = c && c.capi;
+    const c = CAPI.id != null ? WX.cons.find((x) => x.id == CAPI.id) : null, P = c && capiRes(c);
     const chain = [];
     if (P && capiOK(P.a)) chain.push(P.a);
     if (P && P.fb && capiOK(P.b)) chain.push(P.b);
@@ -22944,6 +23315,7 @@ function capiSet(c) {
   }), 260);
   const st = (a) => capiOK(a) ? a.model : a && (a.url || a.model) ? "未填完整" : "未设置";
   actSheet("TA 的独立 API · " + nm(c), [
+    ...xjCapiItems(c, P, re, wsv),
     { t: "主 API：" + st(P.a), f: () => edit("a", "主 API（只用于 " + nm(c) + "）", "填全地址和模型后，和 TA 的聊天、通话、朋友圈等都用这套，可以换成不同的模型") },
     { t: "备用 API：" + st(P.b), f: () => edit("b", "备用 API（只用于 " + nm(c) + "）", "主 API 出错时自动换这一套") },
     { t: "启用备用 API：" + (P.fb ? "开" : "关"), f: () => { P.fb = P.fb ? 0 : 1; wsv(); re(); } },
